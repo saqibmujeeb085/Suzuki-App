@@ -21,7 +21,6 @@ function AppText({
         textAlign: textAlign,
         maxWidth: width,
         fontSize: fontSize,
-        textTransform: "capitalize",
         ...styles,
       }}
     >

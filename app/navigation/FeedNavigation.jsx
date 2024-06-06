@@ -22,7 +22,7 @@ const FeedNavigation = () => {
       {authenticatedUser ? (
         <>
           <Stack.Screen name="Home" component={BottomTabNavigation} />
-          
+
           <Stack.Screen name="SingleCar" component={SingleCarInfo} />
           <Stack.Screen name="DraftSingleCar" component={DraftSingleCar} />
           <Stack.Screen name="InspectionBoard" component={InspectionBoard} />

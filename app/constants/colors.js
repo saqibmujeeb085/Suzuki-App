@@ -8,7 +8,7 @@ export const colors = {
 
   // Fonts Colors
   fontBlack: "#323232",
-  fontGrey: "#A9A9A9",
+  fontGrey: "#A5A5A5",
   fontWhite: "#FFFFFF",
   fontRed: "#D20000",
   searchBoxContent: "#BBBBBB",

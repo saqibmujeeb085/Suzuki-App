@@ -8,15 +8,15 @@ import AppTextInput from "../components/formFields/TextInput";
 import Dropdown from "../components/formFields/Dropdown";
 import IconButton from "../components/buttons/IconButton";
 import GradientButton from "../components/buttons/GradientButton";
-import { Dimensions } from "react-native";
+
 import AppText from "../components/text/Text";
 import { AuthContext } from "../context/authContext";
+import { mainStyles } from "../constants/style";
+import { colors } from "../constants/colors";
+import ToastManager, { Toast } from "toastify-react-native";
 
 const LogIn = ({ navigation }) => {
-  const windowHeight = Dimensions.get("window").height;
-
   const [userData, setUserData] = useContext(AuthContext);
-  console.log(userData);
 
   const [dealershipList, setDealershipList] = useState([]);
   const [dealershipUserList, setDealershipUserList] = useState([]);
@@ -27,23 +27,23 @@ const LogIn = ({ navigation }) => {
     useState("");
 
   useEffect(() => {
-    dealershipName();
+    fetchDealershipNames();
   }, []);
 
   useEffect(() => {
-    if (selectedDealership >= 1) {
-      dealershipUserName();
+    if (selectedDealership) {
+      fetchDealershipUserNames();
     }
   }, [selectedDealership]);
 
-  const DealershipSelected = (selected) => {
+  const handleDealershipSelection = (selected) => {
     setSelectedDealership(selected);
   };
-  const DealershipUserSelected = (selected) => {
+  const handleDealershipUserSelection = (selected) => {
     setSelectedDealershipUser(selected);
   };
 
-  const dealershipName = async () => {
+  const fetchDealershipNames = async () => {
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -65,7 +65,7 @@ const LogIn = ({ navigation }) => {
     }
   };
 
-  const dealershipUserName = async () => {
+  const fetchDealershipUserNames = async () => {
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -92,20 +92,19 @@ const LogIn = ({ navigation }) => {
     }
   };
 
-  const userLogin = async () => {
+  const handleUserLogin = async () => {
     if (
-      selectedDealershipUser !== "" &&
-      selectedDealershipUserPassword !== "" &&
-      selectedDealership !== ""
+      selectedDealershipUser &&
+      selectedDealershipUserPassword &&
+      selectedDealership
     ) {
+      let config = {
+        method: "get",
+        maxBodyLength: Infinity,
+        url: `/auth/login.php?userName=${selectedDealershipUser}&password=${selectedDealershipUserPassword}&dId=${selectedDealership}`,
+        headers: {},
+      };
       try {
-        let config = {
-          method: "get",
-          maxBodyLength: Infinity,
-          url: `/auth/login.php?userName=${selectedDealershipUser}&password=${selectedDealershipUserPassword}&dId=${selectedDealership}`,
-          headers: {},
-        };
-
         const response = await axios.request(config);
         if (response.data.code === 200) {
           setUserData(response.data);
@@ -118,90 +117,114 @@ const LogIn = ({ navigation }) => {
         alert(error);
       }
     } else {
-      alert("Please select both fields and type your password");
+      Toast.error(
+        <AppText fontSize={mainStyles.h3FontSize}>
+          Please Select And Fill All The Fields
+        </AppText>
+      );
     }
   };
 
   return (
     <AppScreen>
+      <ToastManager />
       <ImageBackground
         style={styles.fullScreenBackground}
         source={require("../assets/login/screen-background.png")}
       >
         <KeyboardAwareScrollView>
-          <View style={{ height: windowHeight }}>
-            <ImageBackground
-              style={styles.headerBackground}
-              source={require("../assets/login/header-background.png")}
+          <ImageBackground
+            style={styles.headerBackground}
+            source={require("../assets/login/header-background.png")}
+          >
+            <AppText
+              color={colors.fontWhite}
+              fontSize={33}
+              lineHeight={45}
+              width={320}
+              paddingLeft={20}
+              paddingTop={70}
+              paddingBottom={100}
             >
-              <Text style={styles.headerHeading}>
-                Welcome to Suzuki Vehcile Valuation Portal.
-              </Text>
-            </ImageBackground>
-            <View style={styles.formAndCopyright}>
-              <View style={styles.formContainer}>
-                <Text style={styles.pageHeading}>Sign In</Text>
-                <View style={styles.formFieldContainer}>
-                  <Dropdown
-                    DropItems="Dealership Name"
-                    Data={dealershipList}
-                    Search={true}
-                    save={"key"}
-                    selectedItem={DealershipSelected}
-                  />
-                  <Dropdown
-                    DropItems="Dealership UserName"
-                    Data={dealershipUserList}
-                    save={"value"}
-                    selectedItem={DealershipUserSelected}
-                  />
-                  <AppTextInput
-                    autoComplete="off"
-                    placeholder="Enter Your Password Here"
-                    onChangeText={(value) =>
-                      setSelectedDealershipUserPassword(value)
-                    }
-                  />
-                  <View style={styles.forgetBtn}>
-                    <IconButton
-                      icon={"account-key-outline"}
-                      onPress={() => navigation.navigate("ForgetPassword")}
-                    >
-                      Forget Password
-                    </IconButton>
-                  </View>
-                  <GradientButton onPress={userLogin}>Sign in</GradientButton>
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
+              Welcome to Suzuki Vehcile Valuation Portal.
+            </AppText>
+          </ImageBackground>
+          <View style={styles.formAndCopyright}>
+            <View style={styles.formContainer}>
+              <AppText
+                fontSize={25}
+                color={colors.purple}
+                borderBottomWidth={2}
+                borderColor={colors.purple}
+                paddingBottom={5}
+                fontFamily={mainStyles.appFontBold}
+              >
+                Sign In
+              </AppText>
+              <View style={styles.formFieldContainer}>
+                <Dropdown
+                  DropItems="Dealership Name"
+                  Data={dealershipList}
+                  Search={true}
+                  save={"key"}
+                  selectedItem={handleDealershipSelection}
+                  Error={""}
+                />
+                <Dropdown
+                  DropItems="Dealership UserName"
+                  Data={dealershipUserList}
+                  save={"value"}
+                  selectedItem={handleDealershipUserSelection}
+                  Error={""}
+                />
+                <AppTextInput
+                  autoComplete="off"
+                  placeholder="Enter Your Password Here"
+                  onChangeText={(value) =>
+                    setSelectedDealershipUserPassword(value)
+                  }
+                  Error={""}
+                />
+                <View style={styles.forgetBtn}>
+                  <IconButton
+                    icon={"account-key-outline"}
+                    onPress={() => navigation.navigate("ForgetPassword")}
                   >
-                    <AppText
-                      width={300}
-                      fontSize={10}
-                      color={"#8b8b8b"}
-                      textAlign={"center"}
-                      lineHeight={14}
-                    >
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry.
-                    </AppText>
-                  </View>
+                    Forget Password
+                  </IconButton>
+                </View>
+                <GradientButton onPress={handleUserLogin}>
+                  Sign in
+                </GradientButton>
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <AppText
+                    width={300}
+                    fontSize={mainStyles.h3FontSize}
+                    color={colors.fontGrey}
+                    textAlign={"center"}
+                    lineHeight={14}
+                  >
+                    Lorem Ipsum is simply dummy text of the printing and
+                    typesetting industry.
+                  </AppText>
                 </View>
               </View>
-              <AppText
-                marginTop={10}
-                marginBottom={20}
-                textAlign={"center"}
-                color={"#6B6B6B"}
-                fontSize={10}
-              >
-                &copy; Powered by Suzuki
-              </AppText>
             </View>
           </View>
         </KeyboardAwareScrollView>
+        <AppText
+          textAlign={"center"}
+          color={colors.fontGrey}
+          fontSize={mainStyles.h3FontSize}
+          marginBottom={20}
+        >
+          &copy; Powered by Suzuki
+        </AppText>
       </ImageBackground>
     </AppScreen>
   );
@@ -212,39 +235,24 @@ export default LogIn;
 const styles = StyleSheet.create({
   fullScreenBackground: {
     flex: 1,
+    gap: 20,
   },
   formAndCopyright: {
     flex: 1,
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
+    gap: 30,
   },
   headerBackground: {
     justifyContent: "center",
-  },
-  headerHeading: {
-    color: "white",
-    fontSize: 33,
-    fontFamily: "suzukiRegular",
-    lineHeight: 45,
-    width: 320,
-    paddingLeft: 20,
-    paddingTop: 70,
-    paddingBottom: 100,
   },
   formContainer: {
     alignItems: "center",
     flex: 1,
     width: "100%",
     paddingHorizontal: 20,
+    gap: 20,
   },
-  pageHeading: {
-    fontSize: 30,
-    color: "#003790",
-    borderBottomWidth: 2,
-    borderColor: "#003790",
-    paddingBottom: 5,
-    fontWeight: "600",
-    marginBottom: 20,
-  },
+
   formFieldContainer: {
     width: "100%",
     gap: 10,

@@ -20,20 +20,20 @@ const Home = ({ navigation }) => {
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  console.log(userData.token);
-
   useEffect(() => {
-    inspectedCarsData();
-  }, []);
+    if (userData && userData.user && userData.user.duserid) {
+      inspectedCarsData();
+    }
+  }, [userData.user.duserid]);
 
   const userLogout = async () => {
     setUserData({ token: "", user: "" });
     await AsyncStorage.removeItem("@auth");
-    alert("Logout Succesfully");
+    alert("Logout Successfully");
   };
 
   const inspectedCarsData = async () => {
-    setRefreshing(true); // Start refreshing
+    setRefreshing(true);
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -43,11 +43,12 @@ const Home = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-      setInspectedCar(response.data);
+      setInspectedCar(response.data.slice(0, 10));
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching inspected car data:", error);
+      alert("Failed to fetch car data.");
     } finally {
-      setRefreshing(false); // Stop refreshing
+      setRefreshing(false);
     }
   };
 
@@ -61,13 +62,13 @@ const Home = ({ navigation }) => {
           <View style={styles.customerDetailsAndLogout}>
             <View style={styles.customerDetails}>
               <AppText color={"white"} fontSize={16}>
-                {userData.user.dname}
+                {userData?.user?.dname}
               </AppText>
               <AppText color={"#cccccc"} fontSize={10}>
-                User ID: {userData.user.duserid}
+                User ID: {userData?.user?.duserid}
               </AppText>
               <AppText color={"#cccccc"} fontSize={10}>
-                Name: {userData.user.userName}
+                Name: {userData?.user?.userName}
               </AppText>
             </View>
             <TouchableOpacity activeOpacity={0.6} onPress={userLogout}>
@@ -143,7 +144,6 @@ const Home = ({ navigation }) => {
           style={{ marginTop: 20, marginBottom: 190 }}
           data={inspectedCar}
           extraData={inspectedCar}
-          initialNumToRender={0}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <InspectionCard
