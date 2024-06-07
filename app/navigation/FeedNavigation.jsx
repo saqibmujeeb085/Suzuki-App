@@ -22,9 +22,7 @@ const FeedNavigation = () => {
   const authenticatedUser = userData?.token;
 
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false, presentation: "card" }}
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {authenticatedUser ? (
         <>
           <Stack.Screen name="Home" component={BottomTabNavigation} />
