@@ -1,19 +1,18 @@
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
 import axios from "axios";
 import AppScreen from "../components/screen/Screen";
 import AppTextInput from "../components/formFields/TextInput";
 import Dropdown from "../components/formFields/Dropdown";
 import IconButton from "../components/buttons/IconButton";
 import GradientButton from "../components/buttons/GradientButton";
-
 import AppText from "../components/text/Text";
 import { AuthContext } from "../context/authContext";
 import { mainStyles } from "../constants/style";
 import { colors } from "../constants/colors";
 import ToastManager, { Toast } from "toastify-react-native";
+import PasswordInput from "../components/formFields/PasswordInput";
 
 const LogIn = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
@@ -25,6 +24,12 @@ const LogIn = ({ navigation }) => {
   const [selectedDealershipUser, setSelectedDealershipUser] = useState("");
   const [selectedDealershipUserPassword, setSelectedDealershipUserPassword] =
     useState("");
+
+  const [errors, setErrors] = useState({
+    dealership: "",
+    user: "",
+    password: "",
+  });
 
   useEffect(() => {
     fetchDealershipNames();
@@ -38,9 +43,12 @@ const LogIn = ({ navigation }) => {
 
   const handleDealershipSelection = (selected) => {
     setSelectedDealership(selected);
+    setErrors((prevErrors) => ({ ...prevErrors, dealership: "" }));
   };
+
   const handleDealershipUserSelection = (selected) => {
     setSelectedDealershipUser(selected);
+    setErrors((prevErrors) => ({ ...prevErrors, user: "" }));
   };
 
   const fetchDealershipNames = async () => {
@@ -93,35 +101,57 @@ const LogIn = ({ navigation }) => {
   };
 
   const handleUserLogin = async () => {
-    if (
-      selectedDealershipUser &&
-      selectedDealershipUserPassword &&
-      selectedDealership
-    ) {
-      let config = {
-        method: "get",
-        maxBodyLength: Infinity,
-        url: `/auth/login.php?userName=${selectedDealershipUser}&password=${selectedDealershipUserPassword}&dId=${selectedDealership}`,
-        headers: {},
-      };
-      try {
-        const response = await axios.request(config);
-        if (response.data.code === 200) {
-          setUserData(response.data);
-          navigation.navigate("Home");
-          alert("Login Successfully");
-        } else {
-          alert(response.data.message);
-        }
-      } catch (error) {
-        alert(error);
-      }
-    } else {
+    let hasErrors = false;
+    const newErrors = {
+      dealership: "",
+      user: "",
+      password: "",
+    };
+
+    if (!selectedDealership) {
+      newErrors.dealership = "Please select a dealership";
+      hasErrors = true;
+    }
+    if (!selectedDealershipUser) {
+      newErrors.user = "Please select a user";
+      hasErrors = true;
+    }
+    if (!selectedDealershipUserPassword) {
+      newErrors.password = "Please enter a password";
+      hasErrors = true;
+    }
+
+    setErrors(newErrors);
+
+    if (hasErrors) {
       Toast.error(
         <AppText fontSize={mainStyles.h3FontSize}>
           Please Select And Fill All The Fields
         </AppText>
       );
+      return;
+    }
+
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `/auth/login.php?userName=${selectedDealershipUser}&password=${selectedDealershipUserPassword}&dId=${selectedDealership}`,
+      headers: {},
+    };
+    try {
+      const response = await axios.request(config);
+      if (response.data.code === 200) {
+        setUserData(response.data);
+        navigation.navigate("Home");
+      } else {
+        Toast.error(
+        <AppText fontSize={mainStyles.h2FontSize}>
+          {response.data.message}
+        </AppText>
+          )
+      }
+    } catch (error) {
+      alert(error);
     }
   };
 
@@ -168,22 +198,23 @@ const LogIn = ({ navigation }) => {
                   Search={true}
                   save={"key"}
                   selectedItem={handleDealershipSelection}
-                  Error={""}
+                  Error={errors.dealership}
                 />
                 <Dropdown
                   DropItems="Dealership UserName"
                   Data={dealershipUserList}
                   save={"value"}
                   selectedItem={handleDealershipUserSelection}
-                  Error={""}
+                  Error={errors.user}
                 />
-                <AppTextInput
+                <PasswordInput
                   autoComplete="off"
                   placeholder="Enter Your Password Here"
-                  onChangeText={(value) =>
-                    setSelectedDealershipUserPassword(value)
-                  }
-                  Error={""}
+                  onChangeText={(value) => {
+                    setSelectedDealershipUserPassword(value);
+                    setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
+                  }}
+                  Error={errors.password}
                 />
                 <View style={styles.forgetBtn}>
                   <IconButton
@@ -196,12 +227,7 @@ const LogIn = ({ navigation }) => {
                 <GradientButton onPress={handleUserLogin}>
                   Sign in
                 </GradientButton>
-                <View
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
                   <AppText
                     width={300}
                     fontSize={mainStyles.h3FontSize}
@@ -209,14 +235,11 @@ const LogIn = ({ navigation }) => {
                     textAlign={"center"}
                     lineHeight={14}
                   >
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry.
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                   </AppText>
                 </View>
               </View>
             </View>
-          </View>
-        </KeyboardAwareScrollView>
         <AppText
           textAlign={"center"}
           color={colors.fontGrey}
@@ -225,6 +248,8 @@ const LogIn = ({ navigation }) => {
         >
           &copy; Powered by Suzuki
         </AppText>
+          </View>
+        </KeyboardAwareScrollView>
       </ImageBackground>
     </AppScreen>
   );
@@ -240,7 +265,7 @@ const styles = StyleSheet.create({
   formAndCopyright: {
     flex: 1,
     justifyContent: "space-between",
-    gap: 30,
+    gap: 20,
   },
   headerBackground: {
     justifyContent: "center",

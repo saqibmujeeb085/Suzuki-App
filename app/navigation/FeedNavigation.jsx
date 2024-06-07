@@ -11,8 +11,14 @@ import InspectionBoard from "../screens/inspectionBoard/InspectionBoard";
 
 const Stack = createStackNavigator();
 const FeedNavigation = () => {
-  const [userData] = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
 
+  if (!authContext) {
+    console.error("AuthContext is not available");
+    return null;
+  }
+
+  const [userData] = authContext;
   const authenticatedUser = userData?.token;
 
   return (

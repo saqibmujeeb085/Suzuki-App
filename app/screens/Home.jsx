@@ -1,24 +1,20 @@
-import {
-  FlatList,
-  Image,
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React, { useContext, useEffect, useState } from "react";
-import AppScreen from "../components/screen/Screen";
-import InspectionCard from "../components/card/InspectionCard";
-import AppText from "../components/text/Text";
-import IconButton from "../components/buttons/IconButton";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AuthContext } from "../context/authContext";
-import axios from "axios";
+import { FlatList, Image, ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import AppScreen from '../components/screen/Screen';
+import InspectionCard from '../components/card/InspectionCard';
+import AppText from '../components/text/Text';
+import IconButton from '../components/buttons/IconButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../context/authContext';
+import axios from 'axios';
+import ToastManager from 'toastify-react-native';
+import SkeletonLoader from '../components/skeletonLoader/SkeletonLoader';
 
 const Home = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     if (userData && userData.user && userData.user.duserid) {
@@ -27,15 +23,15 @@ const Home = ({ navigation }) => {
   }, [userData.user.duserid]);
 
   const userLogout = async () => {
-    setUserData({ token: "", user: "" });
-    await AsyncStorage.removeItem("@auth");
-    alert("Logout Successfully");
+    setUserData({ token: '', user: '' });
+    await AsyncStorage.removeItem('@auth');
+    alert('Logout Successfully');
   };
 
   const inspectedCarsData = async () => {
     setRefreshing(true);
     let config = {
-      method: "get",
+      method: 'get',
       maxBodyLength: Infinity,
       url: `/auth/get_carinfos.php?duserId=${userData.user.duserid}`,
       headers: {},
@@ -44,16 +40,18 @@ const Home = ({ navigation }) => {
     try {
       const response = await axios.request(config);
       setInspectedCar(response.data.slice(0, 10));
+      setLoading(false); 
     } catch (error) {
-      console.error("Error fetching inspected car data:", error);
-      alert("Failed to fetch car data.");
+      console.error('Error fetching inspected car data:', error);
+      Toast.error('Failed to fetch car data. Please Check Your Internet Connection');
+      setLoading(false);
     } finally {
       setRefreshing(false);
     }
   };
 
   return (
-    <AppScreen>
+<AppScreen>
       <ImageBackground
         style={styles.customerSummarycontainerbackgroundImage}
         source={require("../assets/componentsImages/summaryBackground.png")}
@@ -135,6 +133,19 @@ const Home = ({ navigation }) => {
             View All
           </IconButton>
         </View>
+        {loading ? ( 
+        <FlatList
+        data={Array(10).fill(0)} 
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={() => <SkeletonLoader />} 
+        contentContainerStyle={{
+          paddingBottom: 30,
+        }}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        style={{ marginTop: 20, marginBottom: 190 }}
+      />
+      ) : (
         <FlatList
           contentContainerStyle={{
             paddingBottom: 30,
@@ -154,14 +165,18 @@ const Home = ({ navigation }) => {
               date={item?.inspectionDate}
               carImage={item?.carPic}
               rank={item?.rank}
-              onPress={() => navigation.navigate("SingleCar", { id: item?.id })}
+              onPress={() => navigation.navigate('SingleCar', { id: item?.id })}
             />
           )}
           refreshing={refreshing}
           onRefresh={inspectedCarsData}
         />
+      )}
       </View>
     </AppScreen>
+
+
+
   );
 };
 

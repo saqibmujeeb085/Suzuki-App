@@ -13,7 +13,7 @@ const CarDetails = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
   const [carData, setCarData] = useContext(InspecteCarContext);
 
-  console.log(carData);
+  const [allSelected, setAllSelected] = useState(false);
 
   const [manufacturers, setManufacturers] = useState([]);
   const [carModels, setCarModels] = useState([]);
@@ -60,7 +60,6 @@ const CarDetails = ({ navigation }) => {
 
   useEffect(() => {
     fetchManufacturers();
-
     fetchCarColors();
 
     const currentYear = new Date().getFullYear();
@@ -73,7 +72,7 @@ const CarDetails = ({ navigation }) => {
       });
     }
 
-    return setCarYears(yearList);
+    setCarYears(yearList);
   }, []);
 
   useEffect(() => {
@@ -87,6 +86,20 @@ const CarDetails = ({ navigation }) => {
       fetchCarVarient();
     }
   }, [carModel]);
+
+  useEffect(() => {
+    if (
+      manufacturer !== "" &&
+      carModel !== "" &&
+      carYear !== "" &&
+      carColor !== "" &&
+      cplc !== ""
+    ) {
+      setAllSelected(true);
+    } else {
+      setAllSelected(false);
+    }
+  }, [manufacturer, carModel, carYear, carColor, cplc]);
 
   const fetchManufacturers = async () => {
     const config = {
@@ -193,29 +206,18 @@ const CarDetails = ({ navigation }) => {
   };
 
   const addCarDetails = () => {
-    if (
-      manufacturer !== "" &&
-      carModel !== "" &&
-      carYear !== "" &&
-      carColor !== "" &&
-      cplc !== ""
-    ) {
-      setCarData((prevData) => ({
-        ...prevData,
-
-        dealershipId: userData.user.dId,
-        duserId: userData.user.duserid,
-        mfgId: manufacturer,
-        carId: carModel,
-        varientId: carVarient,
-        model: carYear,
-        color: carColor,
-        cplc: cplc,
-      }));
-      navigation.navigate("CarBodyDetails");
-    } else {
-      alert("Please Select and Fill All The Fields");
-    }
+    setCarData((prevData) => ({
+      ...prevData,
+      dealershipId: userData.user.dId,
+      duserId: userData.user.duserid,
+      mfgId: manufacturer,
+      carId: carModel,
+      varientId: carVarient,
+      model: carYear,
+      color: carColor,
+      cplc: cplc,
+    }));
+    navigation.navigate("CarBodyDetails");
   };
 
   return (
@@ -266,7 +268,9 @@ const CarDetails = ({ navigation }) => {
           selectedItem={CplcSelected}
         />
         <View style={styles.formButton}>
-          <GradientButton onPress={addCarDetails}>Next</GradientButton>
+          <GradientButton onPress={addCarDetails} disabled={!allSelected}>
+            Next
+          </GradientButton>
         </View>
       </View>
     </AppScreen>
