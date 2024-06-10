@@ -4,10 +4,14 @@ import { colors } from "../../constants/colors";
 import { mainStyles } from "../../constants/style";
 import AppText from "../text/Text";
 
-const AppTextInput = ({ Error, ...inputType }) => {
+const AppTextInput = ({ Error, inputMode, ...inputType }) => {
   return (
     <View style={styles.textFieldBox}>
-      <TextInput {...inputType} style={styles.inputField} />
+      <TextInput
+        {...inputType}
+        inputMode={inputMode}
+        style={styles.inputField}
+      />
       {Error && (
         <AppText
           fontSize={mainStyles.h2FontSize}

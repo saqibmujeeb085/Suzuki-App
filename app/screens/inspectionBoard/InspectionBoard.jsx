@@ -174,7 +174,7 @@ const InspectionBoard = ({ navigation, route }) => {
               />
             ))}
             <View style={styles.inscpectionButton}>
-              <GradientButton onPress={changeStatus}>
+              <GradientButton onPress={changeStatus} disabled={true}>
                 Submit Inspection Report
               </GradientButton>
             </View>

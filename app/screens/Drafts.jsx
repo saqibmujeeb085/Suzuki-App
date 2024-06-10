@@ -54,8 +54,6 @@ const Drafts = ({ navigation }) => {
     fetchInspectedCars(); // Fetch fresh data
   }, []);
 
-  
-
   return (
     <AppScreen>
       <View style={styles.recentInspectionContainer}>
@@ -65,46 +63,46 @@ const Drafts = ({ navigation }) => {
           </AppText>
         </View>
 
-{loading ? ( 
-        <FlatList
-        data={Array(10).fill(0)} 
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={() => <SkeletonLoader />} 
-        contentContainerStyle={{
-          paddingBottom: 30,
-        }}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        style={{ marginTop: 20, marginBottom: 80 }}
-      />
-      ) : (
-        <FlatList
-          contentContainerStyle={{
-            paddingBottom: 30,
-          }}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 20, marginBottom: 80 }}
-          data={inspectedCar}
-          extraData={inspectedCar}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <DraftInspectionCard
-              carId={item?.id}
-              car={item?.car}
-              customer={item?.customerName}
-              model={item?.model}
-              date={item?.inspectionDate}
-              carImage={item?.carPic}
-              onPress={() =>
-                navigation.navigate("DraftSingleCar", { id: item?.id })
-              }
-            />
-          )}
-          refreshing={refreshing}
-          onRefresh={() => fetchInspectedCars(true)}
-        />
-      )}
+        {loading ? (
+          <FlatList
+            data={Array(10).fill(0)}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={() => <SkeletonLoader />}
+            contentContainerStyle={{
+              paddingBottom: 30,
+            }}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            style={{ marginTop: 20, marginBottom: 30 }}
+          />
+        ) : (
+          <FlatList
+            contentContainerStyle={{
+              paddingBottom: 30,
+            }}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            style={{ marginTop: 20, marginBottom: 30 }}
+            data={inspectedCar}
+            extraData={inspectedCar}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <DraftInspectionCard
+                carId={item?.id}
+                car={item?.car}
+                customer={item?.customerName}
+                model={item?.model}
+                date={item?.inspectionDate}
+                carImage={item?.carPic}
+                onPress={() =>
+                  navigation.navigate("DraftSingleCar", { id: item?.id })
+                }
+              />
+            )}
+            refreshing={refreshing}
+            onRefresh={() => fetchInspectedCars(true)}
+          />
+        )}
       </View>
     </AppScreen>
   );

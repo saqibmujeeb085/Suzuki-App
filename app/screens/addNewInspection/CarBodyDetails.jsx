@@ -21,7 +21,6 @@ const CarBodyDetails = ({ navigation }) => {
 
   const [allSelected, setAllSelected] = useState(false);
 
-
   const [fuelType, setFuelType] = useState("");
   const [transmissionsType, setTransmissionsType] = useState("");
   const [engineCapacity, setEngineCapacity] = useState("");
@@ -79,7 +78,6 @@ const CarBodyDetails = ({ navigation }) => {
     fetchRegistrationCity();
   }, []);
 
-
   useEffect(() => {
     if (
       chasisNo !== "" &&
@@ -96,8 +94,17 @@ const CarBodyDetails = ({ navigation }) => {
     } else {
       setAllSelected(false);
     }
-  }, [chasisNo, engineNo, engineCapacity, transmissionsType, milage, registrationCity, fuelType, registrationNo, owner]);
-  
+  }, [
+    chasisNo,
+    engineNo,
+    engineCapacity,
+    transmissionsType,
+    milage,
+    registrationCity,
+    fuelType,
+    registrationNo,
+    owner,
+  ]);
 
   const fetchFuelTypes = async () => {
     const config = {
@@ -229,67 +236,70 @@ const CarBodyDetails = ({ navigation }) => {
       <KeyboardAwareScrollView>
         <View style={styles.InspectionformContainer}>
           <View style={styles.FormInputFields}>
-          <Dropdown
-            DropItems="Registration City"
-            Data={registrationCities}
-            save={"value"}
-            selectedItem={RegistrationCitySelected}
-            Search={true}
-          />
+            <Dropdown
+              DropItems="Registration City"
+              Data={registrationCities}
+              save={"value"}
+              selectedItem={RegistrationCitySelected}
+              Search={true}
+            />
 
-          <Dropdown
-            DropItems="No Of Owners"
-            Data={ownersOptions}
-            save={"value"}
-            selectedItem={OwnerSelected}
-            Search={true}
-          />
+            <Dropdown
+              DropItems="No Of Owners"
+              Data={ownersOptions}
+              save={"value"}
+              selectedItem={OwnerSelected}
+            />
 
-          <AppTextInput
-            placeholder="Registration No"
-            onChangeText={(value) => setRegistrationNo(value)}
-          />
-
-          {/* <AppTextInput placeholder="Fuel Type" /> */}
-          <Dropdown
-            DropItems="Fuel Type"
-            Data={fuelTypes}
-            save={"value"}
-            selectedItem={FuelTypeSelected}
-          />
-          <View style={styles.inlineFormContainer}>
             <AppTextInput
-              placeholder="Chassis No"
-              onChangeText={(value) => setChasisNo(value)}
+              placeholder="Registration No"
+              onChangeText={(value) => setRegistrationNo(value)}
+              inputMode={"numeric"}
+            />
+
+            <Dropdown
+              DropItems="Fuel Type"
+              Data={fuelTypes}
+              save={"value"}
+              selectedItem={FuelTypeSelected}
+            />
+            <View style={styles.inlineFormContainer}>
+              <AppTextInput
+                placeholder="Chassis No"
+                onChangeText={(value) => setChasisNo(value)}
+                inputMode={"numeric"}
+              />
+              <AppTextInput
+                placeholder="Engine No"
+                onChangeText={(value) => setEngineNo(value)}
+                inputMode={"numeric"}
+              />
+            </View>
+
+            <Dropdown
+              DropItems="Transmission Type"
+              Data={transmissionsTypes}
+              save={"value"}
+              selectedItem={TransmissionsTypeSelected}
             />
             <AppTextInput
-              placeholder="Engine No"
-              onChangeText={(value) => setEngineNo(value)}
+              placeholder="Milage"
+              onChangeText={(value) => setMilage(value)}
+              inputMode={"numeric"}
             />
-          </View>
 
-          {/* <AppTextInput placeholder="Transmission Type" /> */}
-          <Dropdown
-            DropItems="Transmission Type"
-            Data={transmissionsTypes}
-            save={"value"}
-            selectedItem={TransmissionsTypeSelected}
-          />
-          <AppTextInput
-            placeholder="Milage"
-            onChangeText={(value) => setMilage(value)}
-          />
-          {/* <AppTextInput placeholder="Engine Capacity" /> */}
-          <Dropdown
-            DropItems="Engine Capacity"
-            Data={engineCapacities}
-            save={"value"}
-            selectedItem={EngineCapacitySelected}
-          />
+            <Dropdown
+              DropItems="Engine Capacity"
+              Data={engineCapacities}
+              save={"value"}
+              selectedItem={EngineCapacitySelected}
+            />
           </View>
 
           <View style={styles.formButton}>
-            <GradientButton onPress={addCarDetails} disabled={!allSelected} >Next</GradientButton>
+            <GradientButton onPress={addCarDetails} disabled={!allSelected}>
+              Next
+            </GradientButton>
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -301,13 +311,13 @@ export default CarBodyDetails;
 
 const styles = StyleSheet.create({
   InspectionformContainer: {
-  flex: 1,
-  justifyContent: "space-between",
-  alignItems: "stretch",
-  paddingHorizontal: 20,
-  gap: 10,
+    flex: 1,
+    justifyContent: "space-between",
+    alignItems: "stretch",
+    paddingHorizontal: 20,
+    gap: 10,
   },
-  FormInputFields:{
+  FormInputFields: {
     width: "100%",
     gap: 10,
   },
@@ -316,7 +326,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     gap: 10,
     flexWrap: "nowrap",
-    maxWidth: "100%"
+    maxWidth: "100%",
   },
   formButton: {
     marginTop: "auto",

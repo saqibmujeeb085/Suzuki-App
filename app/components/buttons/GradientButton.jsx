@@ -13,12 +13,23 @@ const GradientButton = ({ size = 15, children, onPress, disabled = false }) => {
       disabled={disabled}
     >
       <LinearGradient
-        colors={disabled ? [colors.buttonBgColor, colors.buttonBgColor] : [colors.buttonGradient1, colors.buttonGradient2, colors.buttonGradient3]}
+        colors={
+          disabled
+            ? [colors.buttonBgColor, colors.buttonBgColor]
+            : [
+                colors.buttonGradient1,
+                colors.buttonGradient2,
+                colors.buttonGradient3,
+              ]
+        }
         start={[0, 0]}
         end={[0.6, 1]}
         style={styles.gredientButton}
       >
-        <AppText color={disabled ? colors.buttonFontColor : colors.fontWhite} fontSize={size}>
+        <AppText
+          color={disabled ? colors.buttonFontColor : colors.fontWhite}
+          fontSize={size}
+        >
           {children}
         </AppText>
       </LinearGradient>
@@ -31,16 +42,16 @@ export default GradientButton;
 const styles = StyleSheet.create({
   ButtonContainer: {
     minWidth: "81%",
-    },
-    gredientButton: {
-      shadowColor: "#00000050",
-      elevation: 10,
-      borderWidth: 0,
-      paddingVertical: 20,
-      borderRadius: 5,
-      paddingHorizontal: 20,
-      alignItems: "center",
-      width: "100%",
-      elevation: 2,
+  },
+  gredientButton: {
+    shadowColor: "#000000",
+    elevation: 10,
+    borderWidth: 0,
+    paddingVertical: 20,
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: "100%",
+    elevation: 2,
   },
 });
