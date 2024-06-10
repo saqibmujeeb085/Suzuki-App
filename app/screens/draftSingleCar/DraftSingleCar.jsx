@@ -43,6 +43,7 @@ const DraftSingleCar = ({ route, navigation }) => {
       .request(config)
       .then((response) => {
         setCarInfo(response.data);
+        console.log(response.data)
         setLoading(false);
       })
       .catch((error) => {
@@ -336,10 +337,10 @@ const DraftSingleCar = ({ route, navigation }) => {
               })
             }
           >
-            Save ANd Start Rating
+            Save And Start Rating
           </GradientButton>
           <DeleteButton onPress={handleDelete}>
-            <AntDesign name={"delete"} color={colors.fontRed} size={20} />
+            <AntDesign name={"delete"} color={colors.fontRed} size={20} style={{backgroundColor: "transparent"}} />
           </DeleteButton>
         </View>
       </ScrollView>

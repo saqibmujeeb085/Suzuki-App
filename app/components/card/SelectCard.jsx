@@ -4,11 +4,7 @@ import AppText from '../text/Text';
 import { RadioGroup } from 'react-native-radio-buttons-group';
 
 const SelectCard = ({ indicator, value, onValueChange, num }) => {
-  const [selectedId, setSelectedId] = useState(undefined);
-
-  useEffect(() => {
-    setSelectedId(value ? "1" : "2");
-  }, [value]);
+  const [selectedId, setSelectedId] = useState(null);
 
   const radioButtons = useMemo(
     () => [

@@ -19,6 +19,9 @@ const CarBodyDetails = ({ navigation }) => {
   const [engineCapacities, setEngineCapacities] = useState([]);
   const [registrationCities, setRegistrationCities] = useState([]);
 
+  const [allSelected, setAllSelected] = useState(false);
+
+
   const [fuelType, setFuelType] = useState("");
   const [transmissionsType, setTransmissionsType] = useState("");
   const [engineCapacity, setEngineCapacity] = useState("");
@@ -75,6 +78,26 @@ const CarBodyDetails = ({ navigation }) => {
     fetchEngineCapacity();
     fetchRegistrationCity();
   }, []);
+
+
+  useEffect(() => {
+    if (
+      chasisNo !== "" &&
+      engineNo !== "" &&
+      engineCapacity !== "" &&
+      transmissionsType !== "" &&
+      milage !== "" &&
+      registrationCity !== "" &&
+      fuelType !== "" &&
+      registrationNo !== "" &&
+      owner !== ""
+    ) {
+      setAllSelected(true);
+    } else {
+      setAllSelected(false);
+    }
+  }, [chasisNo, engineNo, engineCapacity, transmissionsType, milage, registrationCity, fuelType, registrationNo, owner]);
+  
 
   const fetchFuelTypes = async () => {
     const config = {
@@ -205,6 +228,7 @@ const CarBodyDetails = ({ navigation }) => {
       </InspectionHeader>
       <KeyboardAwareScrollView>
         <View style={styles.InspectionformContainer}>
+          <View style={styles.FormInputFields}>
           <Dropdown
             DropItems="Registration City"
             Data={registrationCities}
@@ -262,9 +286,10 @@ const CarBodyDetails = ({ navigation }) => {
             save={"value"}
             selectedItem={EngineCapacitySelected}
           />
+          </View>
 
           <View style={styles.formButton}>
-            <GradientButton onPress={addCarDetails}>Next</GradientButton>
+            <GradientButton onPress={addCarDetails} disabled={!allSelected} >Next</GradientButton>
           </View>
         </View>
       </KeyboardAwareScrollView>
@@ -276,14 +301,24 @@ export default CarBodyDetails;
 
 const styles = StyleSheet.create({
   InspectionformContainer: {
+  flex: 1,
+  justifyContent: "space-between",
+  alignItems: "stretch",
+  paddingHorizontal: 20,
+  gap: 10,
+  },
+  FormInputFields:{
+    width: "100%",
     gap: 10,
-    paddingHorizontal: 20,
   },
   inlineFormContainer: {
     flexDirection: "row",
+    alignItems: "stretch",
     gap: 10,
+    flexWrap: "nowrap",
+    maxWidth: "100%"
   },
   formButton: {
-    marginTop: 10,
+    marginTop: "auto",
   },
 });

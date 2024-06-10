@@ -1,17 +1,18 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
-
 import Home from "../screens/Home";
 import Reports from "../screens/Reports";
-import NewInspectionNavigation from "./NewInspectionNavigation";
 import Drafts from "../screens/Drafts";
 import Settings from "../screens/Settings";
 import NewInspectionButton from "./NewInspectionButton";
+import NewInspectionNavigation from "./NewInspectionNavigation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-const BottonTabNavigation = () => {
+const MainTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -65,11 +66,11 @@ const BottonTabNavigation = () => {
       />
       <Tab.Screen
         name="NewInspection"
-        component={NewInspectionNavigation}
+        component={NewInspectionPlaceholder} // Use a placeholder component
         options={({ navigation }) => ({
           tabBarButton: () => (
             <NewInspectionButton
-              onPress={() => navigation.navigate("NewInspection")}
+              onPress={() => navigation.navigate("NewInspectionModal")}
             />
           ),
         })}
@@ -104,4 +105,21 @@ const BottonTabNavigation = () => {
   );
 };
 
-export default BottonTabNavigation;
+const NewInspectionPlaceholder = () => {
+  return null;
+};
+
+const BottomTabNavigation = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MainTabs" component={MainTabs} />
+      <Stack.Screen
+        name="NewInspectionModal"
+        component={NewInspectionNavigation}
+        options={{ presentation: "modal" }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+export default BottomTabNavigation;

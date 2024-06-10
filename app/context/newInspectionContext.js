@@ -6,8 +6,8 @@ const InspecteCarContext = createContext();
 
 //Provider
 const InspecteCarProvider = ({ children }) => {
-  //Global
-  const [carData, setCarData] = useState({
+  // Initial car data
+  const initialCarData = {
     dealershipId: "",
     duserId: "",
     customerID: "",
@@ -30,42 +30,28 @@ const InspecteCarProvider = ({ children }) => {
     color: "",
     carPic: "",
     status: "draft",
-  });
+  };
+
+  //Global
+  const [carData, setCarData] = useState(initialCarData);
+
+  // Reset function
+  const resetCarData = () => {
+    setCarData(initialCarData);
+  };
 
   // Local Storage Initial Data
   useEffect(() => {
     const localStorageData = async () => {
       let data = await AsyncStorage.getItem("@InspectingCarData");
       let InspectingCarData = JSON.parse(data);
-      setCarData({
-        dealershipId: "",
-        duserId: "",
-        customerID: "",
-        registrationNo: "",
-        chasisNo: "",
-        EngineNo: "",
-        inspectionDate: "",
-        mfgId: "",
-        carId: "",
-        varientId: "",
-        engineDisplacement: "",
-        model: "",
-        cplc: "",
-        buyingCode: "",
-        NoOfOwners: "",
-        transmissionType: "",
-        mileage: "",
-        registrationCity: "",
-        FuelType: "",
-        color: "",
-        carPic: "",
-        status: "draft",
-      });
+      setCarData(InspectingCarData || initialCarData);
     };
     localStorageData();
   }, []);
+
   return (
-    <InspecteCarContext.Provider value={[carData, setCarData]}>
+    <InspecteCarContext.Provider value={[carData, setCarData, resetCarData]}>
       {children}
     </InspecteCarContext.Provider>
   );

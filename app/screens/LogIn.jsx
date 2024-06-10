@@ -20,6 +20,9 @@ const LogIn = ({ navigation }) => {
   const [dealershipList, setDealershipList] = useState([]);
   const [dealershipUserList, setDealershipUserList] = useState([]);
 
+  const [allSelected, setAllSelected] = useState(false);
+
+
   const [selectedDealership, setSelectedDealership] = useState("");
   const [selectedDealershipUser, setSelectedDealershipUser] = useState("");
   const [selectedDealershipUserPassword, setSelectedDealershipUserPassword] =
@@ -31,9 +34,29 @@ const LogIn = ({ navigation }) => {
     password: "",
   });
 
+  
+  
+  
+  useEffect(() => {
+    if (
+      selectedDealership !== "" &&
+      selectedDealershipUser !== "" &&
+      selectedDealershipUserPassword !== ""
+    ) {
+      setAllSelected(true);
+    } else {
+      setAllSelected(false);
+    }
+  }, [selectedDealership, selectedDealershipUser, selectedDealershipUserPassword]);
+  
+  
+  
   useEffect(() => {
     fetchDealershipNames();
   }, []);
+
+
+
 
   useEffect(() => {
     if (selectedDealership) {
@@ -108,18 +131,18 @@ const LogIn = ({ navigation }) => {
       password: "",
     };
 
-    if (!selectedDealership) {
-      newErrors.dealership = "Please select a dealership";
-      hasErrors = true;
-    }
-    if (!selectedDealershipUser) {
-      newErrors.user = "Please select a user";
-      hasErrors = true;
-    }
-    if (!selectedDealershipUserPassword) {
-      newErrors.password = "Please enter a password";
-      hasErrors = true;
-    }
+    // if (!selectedDealership) {
+    //   newErrors.dealership = "Please select a dealership";
+    //   hasErrors = true;
+    // }
+    // if (!selectedDealershipUser) {
+    //   newErrors.user = "Please select a user";
+    //   hasErrors = true;
+    // }
+    // if (!selectedDealershipUserPassword) {
+    //   newErrors.password = "Please enter a password";
+    //   hasErrors = true;
+    // }
 
     setErrors(newErrors);
 
@@ -224,7 +247,7 @@ const LogIn = ({ navigation }) => {
                     Forget Password
                   </IconButton>
                 </View>
-                <GradientButton onPress={handleUserLogin}>
+                <GradientButton onPress={handleUserLogin} disabled={!allSelected}>
                   Sign in
                 </GradientButton>
                 <View style={{ justifyContent: "center", alignItems: "center" }}>

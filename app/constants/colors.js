@@ -25,6 +25,6 @@ export const colors = {
   buttonGradient3: "#0050d1",
 
   // Disabled Button
-  buttonColor: "#0050d1",
-  buttonFontColor: "#BBBBBB",
+  buttonBgColor: "#E0E0E0",
+  buttonFontColor: "#A6A6A6",
 };

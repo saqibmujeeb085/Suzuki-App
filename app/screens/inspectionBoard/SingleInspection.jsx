@@ -11,8 +11,7 @@ const SingleInspection = ({ navigation, route }) => {
   const { carid, catid, catName } = route.params || {};
   const [questions, setQuestions] = useState([]);
   const [values, setValues] = useState([]);
-
-  console.log(values);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   // Fetch questions when component mounts
   useEffect(() => {
@@ -46,6 +45,12 @@ const SingleInspection = ({ navigation, route }) => {
       )
     );
   };
+
+  // Check if all values are filled
+  useEffect(() => {
+    const hasEmptyValues = values.some((item) => item.value === "");
+    setIsButtonDisabled(hasEmptyValues);
+  }, [values]);
 
   // Submit data
   const SubmitData = async () => {
@@ -115,7 +120,9 @@ const SingleInspection = ({ navigation, route }) => {
             )
           )}
 
-          <GradientButton onPress={SubmitData}>Submit</GradientButton>
+          <GradientButton onPress={SubmitData} disabled={isButtonDisabled}>
+            Submit
+          </GradientButton>
         </View>
       </ScrollView>
     </AppScreen>

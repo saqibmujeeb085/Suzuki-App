@@ -129,6 +129,7 @@ const Home = ({ navigation }) => {
             icon={"format-list-bulleted"}
             color={"#323232"}
             fontSize={12}
+            onPress={()=>navigation.navigate("Reports")}
           >
             View All
           </IconButton>

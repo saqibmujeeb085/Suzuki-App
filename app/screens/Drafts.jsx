@@ -6,6 +6,7 @@ import axios from "axios";
 import { AuthContext } from "../context/authContext";
 import DraftInspectionCard from "../components/card/DraftInspectionCard";
 import { useFocusEffect } from "@react-navigation/native";
+import SkeletonLoader from "../components/skeletonLoader/SkeletonLoader";
 
 const Drafts = ({ navigation }) => {
   const [userData] = useContext(AuthContext);
@@ -53,10 +54,7 @@ const Drafts = ({ navigation }) => {
     fetchInspectedCars(); // Fetch fresh data
   }, []);
 
-  // Render loading indicator if data is still loading
-  if (loading) {
-    return <AppText>Loading...</AppText>;
-  }
+  
 
   return (
     <AppScreen>
@@ -67,15 +65,28 @@ const Drafts = ({ navigation }) => {
           </AppText>
         </View>
 
+{loading ? ( 
+        <FlatList
+        data={Array(10).fill(0)} 
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={() => <SkeletonLoader />} 
+        contentContainerStyle={{
+          paddingBottom: 30,
+        }}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        style={{ marginTop: 20, marginBottom: 80 }}
+      />
+      ) : (
         <FlatList
           contentContainerStyle={{
             paddingBottom: 30,
           }}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 20, marginBottom: 30 }}
-          extraData={inspectedCar}
+          style={{ marginTop: 20, marginBottom: 80 }}
           data={inspectedCar}
+          extraData={inspectedCar}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <DraftInspectionCard
@@ -91,14 +102,9 @@ const Drafts = ({ navigation }) => {
             />
           )}
           refreshing={refreshing}
-          onRefresh={() => fetchInspectedCars(true)} // Hard refresh on pull-to-refresh
+          onRefresh={() => fetchInspectedCars(true)}
         />
-
-        {/* <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <AppText>No Draft Car Data Found</AppText>
-          </View> */}
+      )}
       </View>
     </AppScreen>
   );

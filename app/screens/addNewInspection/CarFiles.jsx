@@ -9,7 +9,7 @@ import { InspecteCarContext } from "../../context/newInspectionContext";
 import axios from "axios";
 
 const CarFiles = ({ navigation }) => {
-  const [carData, setCarData] = useContext(InspecteCarContext);
+  const [carData, setCarData, resetCarData] = useContext(InspecteCarContext);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImageName, setSelectedImageName] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,10 +37,18 @@ const CarFiles = ({ navigation }) => {
     hours = hours ? hours : 12;
 
     setCurrentDateTime(`${month}/${day}/${year} - ${hours}:${minutes}${ampm}`);
-  };
-
+  }
+  
+  
   const postCarDetails = async (selectedImage, selectedImageName) => {
     currentDateAndTime();
+
+    setCarData((prevData) => ({
+      ...prevData,
+      inspectionDate: currentDateTime
+    }));
+
+    console.log(carData.inspectionDate)
 
     if (selectedImageName !== "") {
       let data = new FormData();
@@ -50,7 +58,7 @@ const CarFiles = ({ navigation }) => {
       data.append("registrationNo", carData.registrationNo);
       data.append("chasisNo", carData.chasisNo);
       data.append("EngineNo", carData.EngineNo);
-      data.append("inspectionDate", currentDateTime);
+      data.append("inspectionDate", carData.inspectionDate);
       data.append("mfgId", carData.mfgId);
       data.append("carId", carData.carId);
       data.append("varientId", carData.varientId);
@@ -83,6 +91,7 @@ const CarFiles = ({ navigation }) => {
         console.log("Response:", response.data);
 
         setLoading(false);
+        resetCarData(); // Reset the data here
         navigation.navigate("InspectionBoard", {
           id: response.data.last_id,
         });
@@ -138,6 +147,7 @@ const CarFiles = ({ navigation }) => {
         console.log("Response:", response.data);
 
         setLoading(false);
+        resetCarData(); // Reset the data here
         navigation.navigate("Draft");
       } catch (error) {
         setLoading(false);

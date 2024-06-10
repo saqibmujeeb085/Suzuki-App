@@ -40,5 +40,6 @@ const styles = StyleSheet.create({
   },
   textFieldBox: {
     gap: 5,
+    minWidth: "48.5%",
   },
 });

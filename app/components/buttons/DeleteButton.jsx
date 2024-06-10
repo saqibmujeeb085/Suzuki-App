@@ -1,9 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import AppText from "../text/Text";
 import { colors } from "../../constants/colors";
 
-const DeleteButton = ({ size = 15, children, onPress, disabled }) => {
+const DeleteButton = ({ children, onPress }) => {
   return (
     <TouchableOpacity
       style={styles.Button}
@@ -24,7 +23,7 @@ export default DeleteButton;
 const styles = StyleSheet.create({
   Button: {
     shadowColor: "#00000050",
-    backgroundColor: "00000000",
+    backgroundColor: "#F1F1F1" ,
     elevation: 10,
     borderWidth: 0,
     paddingVertical: 18,
