@@ -286,5 +286,6 @@ const styles = StyleSheet.create({
   },
   formButton: {
     marginTop: 10,
+    marginBottom: 20
   },
 });

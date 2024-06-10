@@ -7,7 +7,6 @@ import {
   ScrollView,
   Modal,
   Text,
-  AppRegistry,
 } from "react-native";
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -15,7 +14,7 @@ import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../text/Text";
 import { mainStyles } from "../../constants/style";
 
-const AppImagePicker = ({ onImageSelected, onSelectedImageName }) => {
+const AppImagePicker = ({ onImageSelected, onSelectedImageName, onRemoveImage }) => {
   const [images, setImages] = useState([]);
   const [expanded, setExpanded] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -60,8 +59,7 @@ const AppImagePicker = ({ onImageSelected, onSelectedImageName }) => {
 
   const removeImage = (index) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
-    onImageSelected(null);
-    onSelectedImageName("");
+    onRemoveImage(); // Notify parent component that an image has been removed
   };
 
   const toggleExpanded = (index) => {
@@ -75,7 +73,7 @@ const AppImagePicker = ({ onImageSelected, onSelectedImageName }) => {
           <View key={index} style={styles.accordionContainer}>
             <TouchableOpacity onPress={() => toggleExpanded(index)}>
               <View style={styles.accordionHeader}>
-                <AppText fontSize={16} color={"#000"}>
+                <AppText fontSize={12} width={200} color={"#000"} numberOfLines={1} >
                   {image.name}
                 </AppText>
                 <Feather
@@ -128,7 +126,6 @@ const AppImagePicker = ({ onImageSelected, onSelectedImageName }) => {
                 name="close"
                 size={14}
                 color={"#1D1D1D"}
-                onPress={() => setShow(!show)}
               />
             </TouchableOpacity>
             <View style={styles.chooseBox}>
@@ -187,6 +184,8 @@ const styles = StyleSheet.create({
   },
   accordionContent: {
     padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     width: 200,
@@ -195,7 +194,7 @@ const styles = StyleSheet.create({
   removeIconContainer: {
     position: "absolute",
     top: 10,
-    left: 10,
+    right: 10,
   },
   modalContainer: {
     flex: 1,
@@ -208,12 +207,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 20,
     width: 300,
-  },
-
-  cancel: {
-    position: "absolute",
-    top: 0,
-    right: 0,
   },
   chooseBox: {
     flexDirection: "row",

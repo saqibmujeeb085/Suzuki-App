@@ -12,11 +12,13 @@ const SelectCard = ({ indicator, value, onValueChange, num }) => {
         id: "1",
         label: "Yes",
         value: true,
+        color: "#003790" 
       },
       {
         id: "2",
         label: "No",
         value: false,
+        color: "#003790" 
       },
     ],
     []
@@ -44,8 +46,6 @@ const SelectCard = ({ indicator, value, onValueChange, num }) => {
           flexDirection: "row",
           alignItems: "flex-start",
         }}
-        color="red"
-        borderColor="red"
         radioButtons={radioButtons}
         onPress={handleValueChange}
         selectedId={selectedId}

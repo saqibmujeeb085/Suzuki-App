@@ -329,6 +329,7 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
   },
   formButton: {
-    marginTop: "auto",
+    marginTop: 10,
+    marginBottom: 20
   },
 });
