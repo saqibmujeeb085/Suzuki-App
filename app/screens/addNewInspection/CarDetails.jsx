@@ -248,7 +248,7 @@ const CarDetails = ({ navigation }) => {
         />
 
         <Dropdown
-          DropItems="Manufacturer Year"
+          DropItems="Manufacturing Year"
           Data={carYears}
           save={"value"}
           selectedItem={CarYearSelected}
@@ -286,6 +286,6 @@ const styles = StyleSheet.create({
   },
   formButton: {
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
 });

@@ -22,7 +22,6 @@ const LogIn = ({ navigation }) => {
 
   const [allSelected, setAllSelected] = useState(false);
 
-
   const [selectedDealership, setSelectedDealership] = useState("");
   const [selectedDealershipUser, setSelectedDealershipUser] = useState("");
   const [selectedDealershipUserPassword, setSelectedDealershipUserPassword] =
@@ -34,9 +33,6 @@ const LogIn = ({ navigation }) => {
     password: "",
   });
 
-  
-  
-  
   useEffect(() => {
     if (
       selectedDealership !== "" &&
@@ -47,16 +43,15 @@ const LogIn = ({ navigation }) => {
     } else {
       setAllSelected(false);
     }
-  }, [selectedDealership, selectedDealershipUser, selectedDealershipUserPassword]);
-  
-  
-  
+  }, [
+    selectedDealership,
+    selectedDealershipUser,
+    selectedDealershipUserPassword,
+  ]);
+
   useEffect(() => {
     fetchDealershipNames();
   }, []);
-
-
-
 
   useEffect(() => {
     if (selectedDealership) {
@@ -168,10 +163,10 @@ const LogIn = ({ navigation }) => {
         navigation.navigate("Home");
       } else {
         Toast.error(
-        <AppText fontSize={mainStyles.h2FontSize}>
-          {response.data.message}
-        </AppText>
-          )
+          <AppText fontSize={mainStyles.h2FontSize}>
+            {response.data.message}
+          </AppText>
+        );
       }
     } catch (error) {
       alert(error);
@@ -235,7 +230,10 @@ const LogIn = ({ navigation }) => {
                   placeholder="Enter Your Password Here"
                   onChangeText={(value) => {
                     setSelectedDealershipUserPassword(value);
-                    setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
+                    setErrors((prevErrors) => ({
+                      ...prevErrors,
+                      password: "",
+                    }));
                   }}
                   Error={errors.password}
                 />
@@ -247,10 +245,15 @@ const LogIn = ({ navigation }) => {
                     Forget Password
                   </IconButton>
                 </View>
-                <GradientButton onPress={handleUserLogin} disabled={!allSelected}>
+                <GradientButton
+                  onPress={handleUserLogin}
+                  disabled={!allSelected}
+                >
                   Sign in
                 </GradientButton>
-                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
                   <AppText
                     width={300}
                     fontSize={mainStyles.h3FontSize}
@@ -258,19 +261,20 @@ const LogIn = ({ navigation }) => {
                     textAlign={"center"}
                     lineHeight={14}
                   >
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                    Lorem Ipsum is simply dummy text of the printing and
+                    typesetting industry.
                   </AppText>
                 </View>
               </View>
             </View>
-        <AppText
-          textAlign={"center"}
-          color={colors.fontGrey}
-          fontSize={mainStyles.h3FontSize}
-          marginBottom={20}
-        >
-          &copy; Powered by Suzuki
-        </AppText>
+            <AppText
+              textAlign={"center"}
+              color={colors.fontGrey}
+              fontSize={mainStyles.h3FontSize}
+              marginBottom={20}
+            >
+              &copy; Powered by Suzuki
+            </AppText>
           </View>
         </KeyboardAwareScrollView>
       </ImageBackground>

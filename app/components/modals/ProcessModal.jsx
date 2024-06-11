@@ -1,10 +1,4 @@
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { Modal, StyleSheet, View } from "react-native";
 import React from "react";
 import AppText from "../text/Text";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -26,7 +20,6 @@ const ProcessModal = ({
 }) => {
   return (
     <Modal transparent>
-      {/* <TouchableWithoutFeedback onPress={() => setShow(!show)}> */}
       <View style={styles.modalContainer}>
         <View style={styles.modalBox}>
           <View style={styles.closeButton}>
@@ -63,7 +56,6 @@ const ProcessModal = ({
           </View>
         </View>
       </View>
-      {/* </TouchableWithoutFeedback> */}
     </Modal>
   );
 };
