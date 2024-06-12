@@ -15,6 +15,7 @@ import ProcessModal from "../../components/modals/ProcessModal";
 import InspectionBoardCard from "../../components/card/InspectionBoardCard";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
+import InspectionSkeletonPreloader from "../../components/skeletonLoader/InspectionSkeletonPreloader";
 
 const InspectionBoard = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -23,7 +24,7 @@ const InspectionBoard = ({ navigation, route }) => {
   const [checkCategories, setCheckCategories] = useState([]);
   const [show, setShow] = useState(false);
   const [allInspectionsDone, setAllInspectionsDone] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Initialize loading to true
 
   const fetchCategories = async () => {
     try {
@@ -31,6 +32,19 @@ const InspectionBoard = ({ navigation, route }) => {
       setCategoriesList(response.data);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const fetchCheckCategories = async () => {
+    try {
+      const response = await axios.get(
+        `/auth/get_checkInspectionCategories.php?carid=${id}`
+      );
+      setCheckCategories(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false); // Ensure loading is set to false after fetching data
     }
   };
 
@@ -42,17 +56,6 @@ const InspectionBoard = ({ navigation, route }) => {
   const ShowModal = useCallback(() => {
     setShow((prevShow) => !prevShow);
   }, []);
-
-  const fetchCheckCategories = async () => {
-    try {
-      const response = await axios.get(
-        `/auth/get_checkInspectionCategories.php?carid=${id}`
-      );
-      setCheckCategories(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const changeStatus = useCallback(async () => {
     try {
@@ -71,9 +74,10 @@ const InspectionBoard = ({ navigation, route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchCategories(); // Hard refresh when screen is focused
-      fetchCheckCategories();
-    }, [fetchCategories, fetchCheckCategories])
+      setLoading(true); // Set loading to true on screen focus
+      fetchCategories(); // Fetch categories
+      fetchCheckCategories(); // Fetch check categories
+    }, [id]) // Ensure dependencies are set correctly
   );
 
   return (
@@ -180,39 +184,49 @@ const InspectionBoard = ({ navigation, route }) => {
               Discard
             </IconButton>
           </View>
-          <View style={styles.inscpectionCardsBox}>
-            {categoriesList.map((item) => {
-              const checkCategory = checkCategories.find(
-                (cat) => cat.catId === item.id
-              );
-
-              return (
-                <InspectionBoardCard
-                  key={item.id}
-                  name={item.category}
-                  inspectionIsDone={
-                    checkCategory ? checkCategory.inspectionIsDone : false
-                  }
-                  Rating={checkCategory ? checkCategory.Rating : ""}
-                  onPress={() =>
-                    navigation.navigate("SingleInspection", {
-                      carid: id,
-                      catid: item.id,
-                      catName: item.category,
-                    })
-                  }
-                />
-              );
-            })}
-            <View style={styles.inscpectionButton}>
-              <GradientButton
-                onPress={changeStatus}
-                disabled={!allInspectionsDone}
-              >
-                Submit Inspection Report
-              </GradientButton>
+          {loading ? (
+            <View style={styles.inspectionCardsBox}>
+              {Array(10)
+                .fill(0)
+                .map((_, index) => (
+                  <InspectionSkeletonPreloader key={index} />
+                ))}
             </View>
-          </View>
+          ) : (
+            <View style={styles.inspectionCardsBox}>
+              {categoriesList.map((item) => {
+                const checkCategory = checkCategories.find(
+                  (cat) => cat.catId === item.id
+                );
+
+                return (
+                  <InspectionBoardCard
+                    key={item.id}
+                    name={item.category}
+                    inspectionIsDone={
+                      checkCategory ? checkCategory.inspectionIsDone : false
+                    }
+                    Rating={checkCategory ? checkCategory.Rating : ""}
+                    onPress={() =>
+                      navigation.navigate("SingleInspection", {
+                        carid: id,
+                        catid: item.id,
+                        catName: item.category,
+                      })
+                    }
+                  />
+                );
+              })}
+              <View style={styles.inspectionButton}>
+                <GradientButton
+                  onPress={changeStatus}
+                  disabled={!allInspectionsDone}
+                >
+                  Submit Inspection Report
+                </GradientButton>
+              </View>
+            </View>
+          )}
         </View>
       </ScrollView>
     </AppScreen>
@@ -277,11 +291,11 @@ const styles = StyleSheet.create({
   InspectionBoardContainer: {
     marginTop: 20,
   },
-  inscpectionCardsBox: {
+  inspectionCardsBox: {
     paddingHorizontal: 20,
     marginVertical: 15,
   },
-  inscpectionButton: {
+  inspectionButton: {
     marginTop: 10,
   },
 });

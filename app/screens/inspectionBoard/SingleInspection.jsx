@@ -6,6 +6,7 @@ import RangeCard from "../../components/card/RangeCard";
 import SelectCard from "../../components/card/SelectCard";
 import axios from "axios";
 import GradientButton from "../../components/buttons/GradientButton";
+import SingleInspectionSkeletonPreloader from "../../components/skeletonLoader/SingleInspectionSkeletonPreloader";
 
 const SingleInspection = ({ navigation, route }) => {
   const { carid, catid, catName } = route.params || {};
@@ -13,33 +14,38 @@ const SingleInspection = ({ navigation, route }) => {
   const [values, setValues] = useState([]);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
+  const [loading, setLoading] = useState(false)
+
+
   // Fetch questions when component mounts
   useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const response = await axios.get(`/auth/get_questions.php?id=${catid}`);
-        const data = response.data;
-        setQuestions(data);
-        // Initialize the values state with the fetched data
-        const initialValues = data.map((question) => ({
-          carID: carid,
-          catID: catid,
-          IndID: question.id,
-          value: "",
-          image: {
-            uri: null,
-            name: null,
-            type: "image/jpeg",
-          },
-        }));
-        setValues(initialValues);
-      } catch (error) {
-        console.error("Error fetching questions:", error);
-      }
-    };
-
+    setLoading(true)
     fetchQuestions();
   }, [carid, catid]);
+
+  const fetchQuestions = async () => {
+    try {
+      const response = await axios.get(`/auth/get_questions.php?id=${catid}`);
+      const data = response.data;
+      setQuestions(data);
+      // Initialize the values state with the fetched data
+      const initialValues = data.map((question) => ({
+        carID: carid,
+        catID: catid,
+        IndID: question.id,
+        value: "",
+        image: {
+          uri: null,
+          name: null,
+          type: "image/jpeg",
+        },
+      }));
+      setValues(initialValues);
+      setLoading(false)
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
 
   // Handle value changes
   const handleValueChange = (id, newValue) => {
@@ -142,6 +148,15 @@ const SingleInspection = ({ navigation, route }) => {
         {catName}
       </InspectionHeader>
       <ScrollView>
+      {loading ? (
+            <View style={styles.inspectionContainer}>
+              {Array(10)
+                .fill(0)
+                .map((_, index) => (
+                  <SingleInspectionSkeletonPreloader key={index} />
+                ))}
+            </View>
+          ) : (
         <View style={styles.inspectionContainer}>
           {questions.map((question, index) =>
             question.rating === "r" ? (
@@ -179,6 +194,7 @@ const SingleInspection = ({ navigation, route }) => {
             Submit
           </GradientButton>
         </View>
+          )}
       </ScrollView>
     </AppScreen>
   );

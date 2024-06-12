@@ -12,9 +12,10 @@ import AppText from "../../components/text/Text";
 import { mainStyles } from "../../constants/style";
 import InspectionHeader from "../../components/header/InspectionHeader";
 import { colors } from "../../constants/colors";
+import CarInfoSkeletonPreloader from "../../components/skeletonLoader/CarInfoSkeletonPreloader";
 
 const SingleCarInfo = ({ route, navigation }) => {
-  const { id } = route.params || {}; // Add a default empty object to avoid destructuring error
+  const { id } = route.params || {}; 
 
   const [carInfo, setCarInfo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -49,7 +50,7 @@ const SingleCarInfo = ({ route, navigation }) => {
   }, [id]);
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return <CarInfoSkeletonPreloader />
   }
 
   if (error) {

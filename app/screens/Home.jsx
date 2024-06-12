@@ -16,6 +16,10 @@ const Home = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true); 
 
+
+  console.log(inspectedCar)
+
+
   useEffect(() => {
     if (userData && userData.user && userData.user.duserid) {
       inspectedCarsData();
