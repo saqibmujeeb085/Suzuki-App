@@ -3,32 +3,50 @@ import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../text/Text";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { mainStyles } from "../../constants/style";
+import { colors } from "../../constants/colors";
 
-const InspectionBoardCard = ({ name, onPress }) => {
+const InspectionBoardCard = ({ name, onPress, Rating, inspectionIsDone }) => {
   return (
-    <TouchableWithoutFeedback style={{ marginBottom: 10 }} onPress={onPress}>
-      <View style={styles.inscpectionCard}>
+    <TouchableWithoutFeedback
+      style={{ marginBottom: 10 }}
+      onPress={!inspectionIsDone ? onPress : null}
+    >
+      <View
+        style={[
+          styles.inscpectionCard,
+          inspectionIsDone && styles.inspectionNotDoneCard,
+        ]}
+      >
         <View style={styles.inpsectionContent}>
           <MaterialCommunityIcons
             name="car-clutch"
-            color={"#1d1d1d"}
+            color={colors.fontBlack}
             size={20}
           />
           <View style={styles.inpectionContentText}>
-            <AppText color={"#1d1d1d"} fontSize={10}>
+            <AppText color={colors.fontBlack} fontSize={mainStyles.h3FontSize}>
               {name}
             </AppText>
-            <AppText color={"#BBBBBB"} fontSize={8}>
-              Click to Edit
+            <AppText color={colors.fontGrey} fontSize={mainStyles.h4FontSize}>
+              {!inspectionIsDone ? "Click to Edit" : "Rating Is Done"}
             </AppText>
           </View>
         </View>
         <View style={styles.inpsectionRating}>
-          <AppText color={"#BBBBBB"} fontSize={8} textAlign={"right"}>
+          <AppText
+            color={colors.fontGrey}
+            fontSize={mainStyles.h4FontSize}
+            textAlign={"right"}
+          >
             Overall Rating
           </AppText>
-          <AppText color={"#212121"} fontSize={14} textAlign={"right"}>
-            0.0/10
+          <AppText
+            color={colors.fontBlack}
+            fontSize={mainStyles.h2FontSize}
+            textAlign={"right"}
+          >
+            {Rating ? Rating : "NaN"} / 10
           </AppText>
         </View>
       </View>
@@ -43,10 +61,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     padding: 20,
     elevation: 2,
+  },
+  inspectionNotDoneCard: {
+    backgroundColor: colors.ligtGreyBg,
   },
   inpsectionContent: {
     flexDirection: "row",

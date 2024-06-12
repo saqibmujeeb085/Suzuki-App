@@ -14,9 +14,9 @@ import AppText from "../text/Text";
 import { mainStyles } from "../../constants/style";
 
 const InspectionImagePicker = ({
-  onImageSelected,
-  onSelectedImageName,
-  onRemoveImage,
+  onImageSelected = () => {}, // Default prop to an empty function
+  onSelectedImageName = () => {},
+  onRemoveImage = () => {},
 }) => {
   const [images, setImages] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -60,7 +60,8 @@ const InspectionImagePicker = ({
   };
 
   const removeImage = (index) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index)); // Notify parent component that an image has been removed
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    onRemoveImage(index); // Notify parent component that an image has been removed
   };
 
   return (

@@ -26,7 +26,11 @@ const SingleInspection = ({ navigation, route }) => {
           catID: catid,
           IndID: question.id,
           value: "",
-          image: "",
+          image: {
+            uri: null,
+            name: null,
+            type: "image/jpeg",
+          },
         }));
         setValues(initialValues);
       } catch (error) {
@@ -42,6 +46,34 @@ const SingleInspection = ({ navigation, route }) => {
     setValues((prevValues) =>
       prevValues.map((item) =>
         item.IndID === id ? { ...item, value: newValue } : item
+      )
+    );
+  };
+
+  const handleImageSelected = (id, imageUri) => {
+    setValues((prevValues) =>
+      prevValues.map((item) =>
+        item.IndID === id
+          ? { ...item, image: { ...item.image, uri: imageUri } }
+          : item
+      )
+    );
+  };
+
+  const handleImageNameSelected = (id, imageName) => {
+    setValues((prevValues) =>
+      prevValues.map((item) =>
+        item.IndID === id
+          ? { ...item, image: { ...item.image, name: imageName } }
+          : item
+      )
+    );
+  };
+
+  const handleRemoveImage = (id) => {
+    setValues((prevValues) =>
+      prevValues.map((item) =>
+        item.IndID === id ? { ...item, image: { uri: null, name: null } } : item
       )
     );
   };
@@ -63,14 +95,29 @@ const SingleInspection = ({ navigation, route }) => {
       );
     } else {
       try {
+        let formData = new FormData();
+        values.forEach((item, index) => {
+          formData.append(`data[${index}][carID]`, item.carID);
+          formData.append(`data[${index}][catID]`, item.catID);
+          formData.append(`data[${index}][IndID]`, item.IndID);
+          formData.append(`data[${index}][value]`, item.value);
+          if (item.image.uri) {
+            formData.append(`images[${index}]`, {
+              uri: item.image.uri,
+              name: item.image.name,
+              type: item.image.type,
+            });
+          }
+        });
+
         let config = {
           method: "post",
           maxBodyLength: Infinity,
           url: "/auth/add_categoryrating.php",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
-          data: values,
+          data: formData,
         };
 
         axios.request(config).then((response) => {
@@ -106,6 +153,10 @@ const SingleInspection = ({ navigation, route }) => {
                   handleValueChange(question.id, newValue)
                 }
                 num={index}
+                questionId={question.id}
+                onImageSelected={handleImageSelected}
+                onSelectedImageName={handleImageNameSelected}
+                onRemoveImage={handleRemoveImage}
               />
             ) : (
               <SelectCard
@@ -116,6 +167,10 @@ const SingleInspection = ({ navigation, route }) => {
                   handleValueChange(question.id, newValue)
                 }
                 num={index}
+                questionId={question.id}
+                onImageSelected={handleImageSelected}
+                onSelectedImageName={handleImageNameSelected}
+                onRemoveImage={handleRemoveImage}
               />
             )
           )}

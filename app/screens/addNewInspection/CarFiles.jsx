@@ -12,9 +12,8 @@ import AppDocumentPicker from "../../components/imagePicker/DocumentPicker";
 
 const CarFiles = ({ navigation }) => {
   const [carData, setCarData, resetCarData] = useContext(InspecteCarContext);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [documentSelected, setDocumentSelected] = useState(null);
-  const [selectedImageName, setSelectedImageName] = useState(null);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isImageUploaded, setIsImageUploaded] = useState(false); // State to track if an image is uploaded
 
@@ -42,8 +41,8 @@ const CarFiles = ({ navigation }) => {
 
     setCurrentDateTime(`${month}/${day}/${year} - ${hours}:${minutes}${ampm}`);
   };
-  
-  const postCarDetails = async (selectedImage, selectedImageName) => {
+
+  const postCarDetails = async () => {
     currentDateAndTime();
 
     setCarData((prevData) => ({
@@ -53,7 +52,7 @@ const CarFiles = ({ navigation }) => {
 
     console.log(carData.inspectionDate);
 
-    if (selectedImageName !== "") {
+    if (selectedImages.length > 0 || selectedDocuments.length > 0) {
       let data = new FormData();
       data.append("dealershipId", carData.dealershipId);
       data.append("duserId", carData.duserId);
@@ -75,10 +74,19 @@ const CarFiles = ({ navigation }) => {
       data.append("registrationCity", carData.registrationCity);
       data.append("FuelType", carData.FuelType);
       data.append("color", carData.color);
-      data.append("carPic", {
-        uri: selectedImage,
-        name: selectedImageName,
-        type: "image/jpeg",
+      selectedImages.forEach((image, index) => {
+        data.append(`images[${index}]`, {
+          uri: image.uri,
+          name: image.name,
+          type: image.type,
+        });
+      });
+      selectedDocuments.forEach((document, index) => {
+        data.append(`documents[${index}]`, {
+          uri: document.uri,
+          name: document.name,
+          type: document.type,
+        });
       });
       data.append("status", carData.status);
 
@@ -103,13 +111,13 @@ const CarFiles = ({ navigation }) => {
         console.error("Error:", error);
       }
     } else {
-      alert("Please Select Image First");
+      alert("Please Select Image or Document First");
     }
   };
 
-  const postCarDetailsAsDraft = async (selectedImage, selectedImageName) => {
+  const postCarDetailsAsDraft = async () => {
     currentDateAndTime();
-    if (selectedImage !== "") {
+    if (selectedImages.length > 0 || selectedDocuments.length > 0) {
       let data = new FormData();
       data.append("dealershipId", carData.dealershipId);
       data.append("duserId", carData.duserId);
@@ -131,10 +139,19 @@ const CarFiles = ({ navigation }) => {
       data.append("registrationCity", carData.registrationCity);
       data.append("FuelType", carData.FuelType);
       data.append("color", carData.color);
-      data.append("carPic", {
-        uri: selectedImage,
-        name: selectedImageName,
-        type: "image/jpeg",
+      selectedImages.forEach((image, index) => {
+        data.append(`images[${index}]`, {
+          uri: image.uri,
+          name: image.name,
+          type: image.type,
+        });
+      });
+      selectedDocuments.forEach((document, index) => {
+        data.append(`documents[${index}]`, {
+          uri: document.uri,
+          name: document.name,
+          type: document.type,
+        });
       });
       data.append("status", carData.status);
 
@@ -148,7 +165,6 @@ const CarFiles = ({ navigation }) => {
         });
 
         console.log("Response:", response.data);
-
         setLoading(false);
         resetCarData(); // Reset the data here
         navigation.navigate("Draft");
@@ -157,62 +173,78 @@ const CarFiles = ({ navigation }) => {
         console.error("Error:", error);
       }
     } else {
-      alert("Please Select Image First");
+      alert("Please Select Image or Document First");
     }
   };
 
-  const handleImageSelected = (imageUri) => {
-    setSelectedImage(imageUri);
+  const handleImagesSelected = (images) => {
+    setSelectedImages(images);
     setIsImageUploaded(true); // Set the image uploaded state to true
   };
 
-  const handleImageNameSelected = (imageName) => {
-    setSelectedImageName(imageName);
+  const handleDocumentsSelected = (documents) => {
+    setSelectedDocuments(documents);
   };
 
-  const handleRemoveImage = () => {
-    setSelectedImage(null);
-    setSelectedImageName(null);
-    setIsImageUploaded(false); // Set the image uploaded state to false
+  const handleRemoveImage = (removedImage) => {
+    setSelectedImages((prevImages) =>
+      prevImages.filter((image) => image.uri !== removedImage.uri)
+    );
+    if (selectedImages.length === 1) {
+      setIsImageUploaded(false); // Set the image uploaded state to false if no images left
+    }
+  };
+
+  const handleRemoveDocument = (removedDocument) => {
+    setSelectedDocuments((prevDocuments) =>
+      prevDocuments.filter((document) => document.uri !== removedDocument.uri)
+    );
   };
 
   return (
     <AppScreen>
       <ScrollView>
-      {show && (
-        <ProcessModal
-          show={show}
-          setShow={setShow}
-          icon
-          heading={"Customer ID: 0KD560PLF"}
-          text={"You have to complete the inspection in 20 minutes."}
-          pbtn={loading ? "Loading..." : "Start Inspection Now"}
-          disabled={loading}
-          pbtnPress={() => postCarDetails(selectedImage, selectedImageName)}
-          sbtn={"Save for later"}
-          sbtnPress={() =>
-            postCarDetailsAsDraft(selectedImage, selectedImageName)
-          }
-        />
-      )}
-      <InspectionHeader onPress={() => navigation.goBack()}>
-        Uploads
-      </InspectionHeader>
-      <View style={styles.UploadScreenContainer}>
-        <AppText fontSize={14} textAlign={"center"}>Upload Car Images</AppText>
-        <AppImagePicker
-          onImageSelected={handleImageSelected}
-          onSelectedImageName={handleImageNameSelected}
-          onRemoveImage={handleRemoveImage} // Pass the remove image handler
-        />
-        <AppText fontSize={14} textAlign={"center"} marginTop={20} >Upload Car Documents</AppText>
-        <AppDocumentPicker onDocumentsSelected={setDocumentSelected}/>
-        <View style={styles.formButton}>
-          <GradientButton onPress={ShowModal} disabled={!isImageUploaded || loading}>
-            {loading ? "Loading..." : "Start Inspection"}
-          </GradientButton>
+        {show && (
+          <ProcessModal
+            show={show}
+            setShow={setShow}
+            icon
+            heading={"Customer ID: 0KD560PLF"}
+            text={"You have to complete the inspection in 20 minutes."}
+            pbtn={loading ? "Loading..." : "Start Inspection Now"}
+            disabled={loading}
+            pbtnPress={postCarDetails}
+            sbtn={"Save for later"}
+            sbtnPress={postCarDetailsAsDraft}
+          />
+        )}
+        <InspectionHeader onPress={() => navigation.goBack()}>
+          Uploads
+        </InspectionHeader>
+        <View style={styles.UploadScreenContainer}>
+          <AppText fontSize={14} textAlign={"center"}>
+            Upload Car Images
+          </AppText>
+          <AppImagePicker
+            onImagesSelected={handleImagesSelected}
+            onRemoveImage={handleRemoveImage} // Pass the remove image handler
+          />
+          <AppText fontSize={14} textAlign={"center"} marginTop={20}>
+            Upload Car Documents
+          </AppText>
+          <AppDocumentPicker
+            onDocumentsSelected={handleDocumentsSelected}
+            onRemoveDoc={handleRemoveDocument}
+          />
+          <View style={styles.formButton}>
+            <GradientButton
+              onPress={ShowModal}
+              disabled={!isImageUploaded || loading}
+            >
+              Start Inspection
+            </GradientButton>
+          </View>
         </View>
-      </View>
       </ScrollView>
     </AppScreen>
   );

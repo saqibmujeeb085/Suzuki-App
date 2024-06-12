@@ -14,31 +14,45 @@ import GradientButton from "../../components/buttons/GradientButton";
 import ProcessModal from "../../components/modals/ProcessModal";
 import InspectionBoardCard from "../../components/card/InspectionBoardCard";
 import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 const InspectionBoard = ({ navigation, route }) => {
   const { id } = route.params || {};
 
-  console.log(id);
-
   const [categoriesList, setCategoriesList] = useState([]);
+  const [checkCategories, setCheckCategories] = useState([]);
   const [show, setShow] = useState(false);
+  const [allInspectionsDone, setAllInspectionsDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("/auth/get_category.php");
+      setCategoriesList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/auth/get_category.php");
-        setCategoriesList(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+    const allDone = checkCategories.every((cat) => cat.inspectionIsDone);
+    setAllInspectionsDone(allDone);
+  }, [checkCategories]);
 
   const ShowModal = useCallback(() => {
     setShow((prevShow) => !prevShow);
   }, []);
+
+  const fetchCheckCategories = async () => {
+    try {
+      const response = await axios.get(
+        `/auth/get_checkInspectionCategories.php?carid=${id}`
+      );
+      setCheckCategories(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const changeStatus = useCallback(async () => {
     try {
@@ -54,6 +68,13 @@ const InspectionBoard = ({ navigation, route }) => {
   const handleSaveForLater = useCallback(() => {
     navigation.navigate("Draft");
   }, [navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCategories(); // Hard refresh when screen is focused
+      fetchCheckCategories();
+    }, [fetchCategories, fetchCheckCategories])
+  );
 
   return (
     <AppScreen>
@@ -160,21 +181,34 @@ const InspectionBoard = ({ navigation, route }) => {
             </IconButton>
           </View>
           <View style={styles.inscpectionCardsBox}>
-            {categoriesList.map((item) => (
-              <InspectionBoardCard
-                key={item.id}
-                name={item.category}
-                onPress={() =>
-                  navigation.navigate("SingleInspection", {
-                    carid: id,
-                    catid: item.id,
-                    catName: item.category,
-                  })
-                }
-              />
-            ))}
+            {categoriesList.map((item) => {
+              const checkCategory = checkCategories.find(
+                (cat) => cat.catId === item.id
+              );
+
+              return (
+                <InspectionBoardCard
+                  key={item.id}
+                  name={item.category}
+                  inspectionIsDone={
+                    checkCategory ? checkCategory.inspectionIsDone : false
+                  }
+                  Rating={checkCategory ? checkCategory.Rating : ""}
+                  onPress={() =>
+                    navigation.navigate("SingleInspection", {
+                      carid: id,
+                      catid: item.id,
+                      catName: item.category,
+                    })
+                  }
+                />
+              );
+            })}
             <View style={styles.inscpectionButton}>
-              <GradientButton onPress={changeStatus} disabled={true}>
+              <GradientButton
+                onPress={changeStatus}
+                disabled={!allInspectionsDone}
+              >
                 Submit Inspection Report
               </GradientButton>
             </View>
@@ -246,22 +280,6 @@ const styles = StyleSheet.create({
   inscpectionCardsBox: {
     paddingHorizontal: 20,
     marginVertical: 15,
-  },
-  inscpectionCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 5,
-    padding: 20,
-  },
-  inpsectionContent: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-  },
-  inpectionContentText: {
-    gap: 5,
   },
   inscpectionButton: {
     marginTop: 10,

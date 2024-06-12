@@ -5,7 +5,16 @@ import AppText from "../text/Text";
 import circle from "../../assets/componentsImages/circle.png";
 import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
 
-const RangeCard = ({ indicator, value, onValueChange, num }) => {
+const RangeCard = ({
+  indicator,
+  value,
+  onValueChange,
+  num,
+  onImageSelected,
+  onSelectedImageName,
+  onRemoveImage,
+  questionId,
+}) => {
   const [sliderValue, setSliderValue] = useState(value);
 
   useEffect(() => {
@@ -55,7 +64,11 @@ const RangeCard = ({ indicator, value, onValueChange, num }) => {
         </View>
       </View>
       <View>
-        <InspectionImagePicker />
+        <InspectionImagePicker
+          onImageSelected={(uri) => onImageSelected(questionId, uri)}
+          onSelectedImageName={(name) => onSelectedImageName(questionId, name)}
+          onRemoveImage={() => onRemoveImage(questionId)}
+        />
       </View>
     </View>
   );

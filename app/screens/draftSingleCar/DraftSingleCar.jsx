@@ -19,6 +19,8 @@ import { AntDesign } from "@expo/vector-icons";
 const DraftSingleCar = ({ route, navigation }) => {
   const { id } = route.params || {}; // Add a default empty object to avoid destructuring error
 
+  console.log(id);
+
   const [carInfo, setCarInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,7 +45,7 @@ const DraftSingleCar = ({ route, navigation }) => {
       .request(config)
       .then((response) => {
         setCarInfo(response.data);
-        console.log(response.data)
+        console.log(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -340,7 +342,12 @@ const DraftSingleCar = ({ route, navigation }) => {
             Save And Start Rating
           </GradientButton>
           <DeleteButton onPress={handleDelete}>
-            <AntDesign name={"delete"} color={colors.fontRed} size={20} style={{backgroundColor: "transparent"}} />
+            <AntDesign
+              name={"delete"}
+              color={colors.fontRed}
+              size={20}
+              style={{ backgroundColor: "transparent" }}
+            />
           </DeleteButton>
         </View>
       </ScrollView>

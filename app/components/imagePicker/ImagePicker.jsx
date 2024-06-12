@@ -6,7 +6,6 @@ import {
   View,
   ScrollView,
   Modal,
-  Text,
 } from "react-native";
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -14,7 +13,7 @@ import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../text/Text";
 import { mainStyles } from "../../constants/style";
 
-const AppImagePicker = ({ onImageSelected, onSelectedImageName, onRemoveImage }) => {
+const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
   const [images, setImages] = useState([]);
   const [expanded, setExpanded] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -22,15 +21,17 @@ const AppImagePicker = ({ onImageSelected, onSelectedImageName, onRemoveImage })
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsMultipleSelection: true,
       allowsEditing: false,
       quality: 0.5,
     });
 
     if (!result.canceled) {
-      const localUri = result.assets[0].uri;
-      const filename = localUri.split("/").pop();
-
-      addImage(localUri, filename);
+      const selectedImages = result.assets.map((asset) => ({
+        uri: asset.uri,
+        name: asset.uri.split("/").pop(),
+      }));
+      addImages(selectedImages);
     }
     setModalVisible(false);
   };
@@ -46,20 +47,20 @@ const AppImagePicker = ({ onImageSelected, onSelectedImageName, onRemoveImage })
       const localUri = result.assets[0].uri;
       const filename = localUri.split("/").pop();
 
-      addImage(localUri, filename);
+      addImages([{ uri: localUri, name: filename, type: "image/jpeg" }]);
     }
     setModalVisible(false);
   };
 
-  const addImage = (uri, name) => {
-    setImages((prevImages) => [...prevImages, { uri, name }]);
-    onImageSelected(uri);
-    onSelectedImageName(name);
+  const addImages = (newImages) => {
+    setImages((prevImages) => [...prevImages, ...newImages]);
+    onImagesSelected((prevImages) => [...prevImages, ...newImages]);
   };
 
   const removeImage = (index) => {
+    const removedImage = images[index];
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
-    onRemoveImage(); // Notify parent component that an image has been removed
+    onRemoveImage(removedImage);
   };
 
   const toggleExpanded = (index) => {
@@ -73,7 +74,12 @@ const AppImagePicker = ({ onImageSelected, onSelectedImageName, onRemoveImage })
           <View key={index} style={styles.accordionContainer}>
             <TouchableOpacity onPress={() => toggleExpanded(index)}>
               <View style={styles.accordionHeader}>
-                <AppText fontSize={12} width={200} color={"#000"} numberOfLines={1} >
+                <AppText
+                  fontSize={12}
+                  width={200}
+                  color={"#000"}
+                  numberOfLines={1}
+                >
                   {image.name}
                 </AppText>
                 <Feather

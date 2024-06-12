@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import AppText from "../text/Text";
-
 import GradientButton from "../buttons/GradientButton";
 import Dropdown from "../formFields/Dropdown";
 import DateTimePickerModal from "react-native-modal-datetime-picker";

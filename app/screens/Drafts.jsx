@@ -44,15 +44,15 @@ const Drafts = ({ navigation }) => {
   // Using useFocusEffect to fetch data whenever the screen is focused
   useFocusEffect(
     useCallback(() => {
-      fetchInspectedCars(true); // Hard refresh when screen is focused
+      fetchInspectedCars(); // Hard refresh when screen is focused
     }, [fetchInspectedCars])
   );
 
   // Load data from state initially and clear cache
-  useEffect(() => {
-    setLoading(true); // Set loading to true
-    fetchInspectedCars(); // Fetch fresh data
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true); // Set loading to true
+  //   fetchInspectedCars(); // Fetch fresh data
+  // }, []);
 
   return (
     <AppScreen>
