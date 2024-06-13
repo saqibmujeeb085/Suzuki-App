@@ -20,6 +20,8 @@ import InspectionSkeletonPreloader from "../../components/skeletonLoader/Inspect
 const InspectionBoard = ({ navigation, route }) => {
   const { id } = route.params || {};
 
+  console.log(id);
+
   const [categoriesList, setCategoriesList] = useState([]);
   const [checkCategories, setCheckCategories] = useState([]);
   const [show, setShow] = useState(false);
@@ -41,10 +43,9 @@ const InspectionBoard = ({ navigation, route }) => {
         `/auth/get_checkInspectionCategories.php?carid=${id}`
       );
       setCheckCategories(response.data);
+      setLoading(false); // Ensure loading is set to false after fetching data
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false); // Ensure loading is set to false after fetching data
     }
   };
 
@@ -59,7 +60,9 @@ const InspectionBoard = ({ navigation, route }) => {
 
   const changeStatus = useCallback(async () => {
     try {
-      const response = await axios.get(`/auth/update_carstatus.php?id=${id}`);
+      const response = await axios.get(
+        `/auth/update_carstatus.php?carid=${id}`
+      );
       console.log(JSON.stringify(response.data));
       alert("Status Changed Successfully");
       navigation.navigate("Home");

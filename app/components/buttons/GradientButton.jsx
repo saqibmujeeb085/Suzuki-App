@@ -41,17 +41,20 @@ export default GradientButton;
 
 const styles = StyleSheet.create({
   ButtonContainer: {
-    minWidth: "81%",
+    flex: 1,
+    minHeight: 60,
   },
   gredientButton: {
     shadowColor: "#000000",
     elevation: 10,
     borderWidth: 0,
-    paddingVertical: 20,
     borderRadius: 5,
     paddingHorizontal: 20,
     alignItems: "center",
     width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
     elevation: 2,
+    height: 60,
   },
 });

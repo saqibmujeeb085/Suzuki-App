@@ -15,6 +15,8 @@ import { colors } from "../../constants/colors";
 import GradientButton from "../../components/buttons/GradientButton";
 import DeleteButton from "../../components/buttons/DeleteButton";
 import { AntDesign } from "@expo/vector-icons";
+import CarInfoSkeletonPreloader from "../../components/skeletonLoader/CarInfoSkeletonPreloader";
+import CarImagesCarousel from "../../components/carousel/CarImagesCarousel";
 
 const DraftSingleCar = ({ route, navigation }) => {
   const { id } = route.params || {}; // Add a default empty object to avoid destructuring error
@@ -73,7 +75,7 @@ const DraftSingleCar = ({ route, navigation }) => {
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return <CarInfoSkeletonPreloader />;
   }
 
   if (error) {
@@ -90,10 +92,9 @@ const DraftSingleCar = ({ route, navigation }) => {
         Draft Car Details
       </InspectionHeader>
       <ScrollView contentContainerStyle={styles.container}>
-        <Image
-          source={{ uri: `${process.env.IMAGE_URL}/${carInfo.carPic}` }}
-          style={styles.bannerImage}
-        />
+        <View style={styles.ImageContainer}>
+          <CarImagesCarousel images={carInfo?.images} />
+        </View>
         <View style={styles.contentContainer}>
           <View style={styles.infoContainer}>
             <AppText style={{ fontSize: mainStyles.h3FontSize }}>
@@ -393,5 +394,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
     marginTop: 20,
+  },
+  ImageContainer: {
+    flex: 1,
+    height: "100%",
+    minHeight: 400,
   },
 });

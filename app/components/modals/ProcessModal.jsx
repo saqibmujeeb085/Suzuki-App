@@ -4,6 +4,7 @@ import AppText from "../text/Text";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientButton from "../buttons/GradientButton";
 import { TouchableOpacity } from "react-native";
+import { colors } from "../../constants/colors";
 
 const ProcessModal = ({
   heading,
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
   modalBox: {
     width: 280,
     borderRadius: 5,
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     paddingHorizontal: 30,
     paddingVertical: 35,
     gap: 15,
@@ -95,5 +96,6 @@ const styles = StyleSheet.create({
   modalButtons: {
     marginTop: 15,
     gap: 15,
+    height: 80,
   },
 });

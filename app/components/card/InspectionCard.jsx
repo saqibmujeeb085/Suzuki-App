@@ -9,7 +9,7 @@ const InspectionCard = ({
   car,
   model,
   date,
-  customer,
+  varient,
   carImage,
   rank,
   onPress,
@@ -31,13 +31,14 @@ const InspectionCard = ({
                 color={colors.fontBlack}
                 fontSize={mainStyles.h3FontSize}
               >
-                Model: {model}
+                Varient: {varient}
               </AppText>
+
               <AppText
                 color={colors.fontBlack}
                 fontSize={mainStyles.h3FontSize}
               >
-                Customer: {customer}
+                Model: {model}
               </AppText>
             </View>
             <AppText color={colors.fontGrey} fontSize={mainStyles.h4FontSize}>
@@ -83,14 +84,17 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   image: {
-    width: 61,
-    height: 56,
+    width: 60,
+    height: 60,
     resizeMode: "cover",
     borderRadius: 4,
     overflow: "hidden",
   },
   contentContainer: {
+    flex: 1,
     justifyContent: "space-between",
   },
-  clientAndCarDetail: {},
+  clientAndCarDetail: {
+    marginTop: 10,
+  },
 });

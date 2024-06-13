@@ -310,6 +310,7 @@ const styles = StyleSheet.create({
   modalButtons: {
     marginTop: 15,
     gap: 15,
+    height: 50,
   },
   Content: {
     gap: 5,

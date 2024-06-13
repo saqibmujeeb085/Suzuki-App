@@ -11,7 +11,7 @@ import { AuthContext } from "../context/authContext";
 import FilterModal from "../components/modals/FilterModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const Reports = () => {
+const Reports = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
   const [inspectedCar, setInspectedCar] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
@@ -97,11 +97,11 @@ const Reports = () => {
 
   const fetchFilteredData = async () => {
     setLoading(true);
-    const { model, color, startDate, endDate, manufacturer, carModel } =
+    const { carYear, carColor, startDate, endDate, manufacturer, carModel } =
       filters;
     let url = `/auth/get_filters.php?`;
-    if (model) url += `model=${model}&`;
-    if (color) url += `color=${color}&`;
+    if (carYear) url += `model=${carYear}&`;
+    if (carColor) url += `color=${carColor}&`;
     if (startDate)
       url += `start_date=${startDate.toISOString().split("T")[0]}&`;
     if (endDate) url += `end_date=${endDate.toISOString().split("T")[0]}&`;
@@ -133,7 +133,11 @@ const Reports = () => {
     const filterArray = [];
     Object.keys(filters).forEach((key) => {
       if (filters[key]) {
-        filterArray.push({ key, value: filters[key] });
+        let value = filters[key];
+        if (key === "startDate" || key === "endDate") {
+          value = formatDate(value);
+        }
+        filterArray.push({ key, value });
       }
     });
     setSelectedFilters(filterArray);
@@ -147,6 +151,14 @@ const Reports = () => {
       (filter) => filter.key !== key
     );
     setSelectedFilters(newSelectedFilters);
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1; // Months are zero-based
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
   };
 
   const dataToDisplay =
@@ -204,6 +216,10 @@ const Reports = () => {
             showsHorizontalScrollIndicator={false}
             style={{ marginTop: 20, marginBottom: 170 }}
           />
+        ) : dataToDisplay.length === 0 && Object.keys(filters).length > 0 ? (
+          <View style={styles.noDataContainer}>
+            <AppText>No Data Found With This Filter</AppText>
+          </View>
         ) : (
           <FlatList
             contentContainerStyle={{
@@ -211,7 +227,7 @@ const Reports = () => {
             }}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 20, marginBottom: 190 }}
+            style={{ marginTop: 20, marginBottom: 180 }}
             data={dataToDisplay}
             extraData={dataToDisplay}
             keyExtractor={(item) => item.id.toString()}
@@ -222,7 +238,7 @@ const Reports = () => {
                 customer={item?.customerName}
                 model={item?.model}
                 date={item?.inspectionDate}
-                carImage={item?.carPic}
+                carImage={item?.images[0]?.path}
                 rank={item?.rank}
                 onPress={() =>
                   navigation.navigate("SingleCar", { id: item?.id })
@@ -248,14 +264,15 @@ const styles = StyleSheet.create({
   filterChips: {
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: 10,
+    gap: 10,
+    marginHorizontal: 20,
   },
   filterChip: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 5,
-    margin: 5,
+    marginBottom: 10,
     backgroundColor: "#e0e0e0",
     borderRadius: 20,
     gap: 5,
@@ -268,5 +285,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
+  },
+  noDataContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: "50%",
   },
 });

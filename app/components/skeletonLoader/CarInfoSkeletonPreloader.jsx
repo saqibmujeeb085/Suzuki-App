@@ -1,10 +1,16 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
-import { colors } from '../../constants/colors';
+import React, { useEffect } from "react";
+import { View, StyleSheet, Dimensions } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "../../constants/colors";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const CarInfoSkeletonPreloader = () => {
   const translateX = useSharedValue(-width);
@@ -29,7 +35,7 @@ const CarInfoSkeletonPreloader = () => {
   const GradientOverlay = () => (
     <Animated.View style={[styles.gradientContainer, animatedStyle]}>
       <LinearGradient
-        colors={['#e0e0e0', '#f0f0f0', '#e0e0e0']}
+        colors={["#e0e0e0", "#f0f0f0", "#e0e0e0"]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
         style={styles.gradient}
@@ -53,8 +59,8 @@ const CarInfoSkeletonPreloader = () => {
       <View style={styles.contentContainer}>
         {[...Array(15)].map((_, index) => (
           <View key={index} style={styles.infoContainer}>
-            {renderSkeletonLine('40%')}
-            {renderSkeletonLine('50%')}
+            {renderSkeletonLine("40%")}
+            {renderSkeletonLine("50%")}
           </View>
         ))}
       </View>
@@ -67,15 +73,12 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingVertical: 60,
   },
-  ImageContainer: {
-    paddingHorizontal: 16,
-  },
   imageSkeleton: {
-    width: '100%',
+    width: "100%",
     height: 300,
     backgroundColor: colors.fontGrey,
     borderRadius: 5,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginBottom: 20,
   },
   contentContainer: {
@@ -85,15 +88,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.whiteBg,
   },
   infoContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingVertical: 5,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   lineSkeleton: {
     height: 18,
     backgroundColor: colors.fontGrey,
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   gradientContainer: {
     ...StyleSheet.absoluteFillObject,

@@ -1,24 +1,36 @@
-import { FlatList, Image, ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
-import AppScreen from '../components/screen/Screen';
-import InspectionCard from '../components/card/InspectionCard';
-import AppText from '../components/text/Text';
-import IconButton from '../components/buttons/IconButton';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthContext } from '../context/authContext';
-import axios from 'axios';
-import ToastManager from 'toastify-react-native';
-import SkeletonLoader from '../components/skeletonLoader/SkeletonLoader';
+import {
+  FlatList,
+  Image,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import AppScreen from "../components/screen/Screen";
+import InspectionCard from "../components/card/InspectionCard";
+import AppText from "../components/text/Text";
+import IconButton from "../components/buttons/IconButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../context/authContext";
+import axios from "axios";
+import ToastManager from "toastify-react-native";
+import SkeletonLoader from "../components/skeletonLoader/SkeletonLoader";
 
 const Home = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
-
-  console.log(inspectedCar)
-
+  useEffect(() => {
+    inspectedCar.forEach((item) => {
+      if (item.images && item.images.length > 0) {
+        console.log(item.images[0].path);
+      }
+    });
+  }, [inspectedCar]);
 
   useEffect(() => {
     if (userData && userData.user && userData.user.duserid) {
@@ -27,15 +39,15 @@ const Home = ({ navigation }) => {
   }, [userData.user.duserid]);
 
   const userLogout = async () => {
-    setUserData({ token: '', user: '' });
-    await AsyncStorage.removeItem('@auth');
-    alert('Logout Successfully');
+    setUserData({ token: "", user: "" });
+    await AsyncStorage.removeItem("@auth");
+    alert("Logout Successfully");
   };
 
   const inspectedCarsData = async () => {
     setRefreshing(true);
     let config = {
-      method: 'get',
+      method: "get",
       maxBodyLength: Infinity,
       url: `/auth/get_carinfos.php?duserId=${userData.user.duserid}`,
       headers: {},
@@ -44,10 +56,12 @@ const Home = ({ navigation }) => {
     try {
       const response = await axios.request(config);
       setInspectedCar(response.data.slice(0, 10));
-      setLoading(false); 
+      setLoading(false);
     } catch (error) {
-      console.error('Error fetching inspected car data:', error);
-      Toast.error('Failed to fetch car data. Please Check Your Internet Connection');
+      console.error("Error fetching inspected car data:", error);
+      Toast.error(
+        "Failed to fetch car data. Please Check Your Internet Connection"
+      );
       setLoading(false);
     } finally {
       setRefreshing(false);
@@ -55,7 +69,7 @@ const Home = ({ navigation }) => {
   };
 
   return (
-<AppScreen>
+    <AppScreen>
       <ImageBackground
         style={styles.customerSummarycontainerbackgroundImage}
         source={require("../assets/componentsImages/summaryBackground.png")}
@@ -133,55 +147,54 @@ const Home = ({ navigation }) => {
             icon={"format-list-bulleted"}
             color={"#323232"}
             fontSize={12}
-            onPress={()=>navigation.navigate("Reports")}
+            onPress={() => navigation.navigate("Reports")}
           >
             View All
           </IconButton>
         </View>
-        {loading ? ( 
-        <FlatList
-        data={Array(10).fill(0)} 
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={() => <SkeletonLoader />} 
-        contentContainerStyle={{
-          paddingBottom: 30,
-        }}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        style={{ marginTop: 20, marginBottom: 190 }}
-      />
-      ) : (
-        <FlatList
-          contentContainerStyle={{
-            paddingBottom: 30,
-          }}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 20, marginBottom: 190 }}
-          data={inspectedCar}
-          extraData={inspectedCar}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <InspectionCard
-              carId={item?.id}
-              car={item?.car}
-              customer={item?.customerName}
-              model={item?.model}
-              date={item?.inspectionDate}
-              carImage={item?.carPic}
-              rank={item?.rank}
-              onPress={() => navigation.navigate('SingleCar', { id: item?.id })}
-            />
-          )}
-          refreshing={refreshing}
-          onRefresh={inspectedCarsData}
-        />
-      )}
+        {loading ? (
+          <FlatList
+            data={Array(10).fill(0)}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={() => <SkeletonLoader />}
+            contentContainerStyle={{
+              paddingBottom: 30,
+            }}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            style={{ marginTop: 20, marginBottom: 190 }}
+          />
+        ) : (
+          <FlatList
+            contentContainerStyle={{
+              paddingBottom: 30,
+            }}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            style={{ marginTop: 20, marginBottom: 190 }}
+            data={inspectedCar}
+            extraData={inspectedCar}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <InspectionCard
+                carId={item?.id}
+                car={item?.car}
+                varient={item?.varientId}
+                model={item?.model}
+                date={item?.inspectionDate}
+                carImage={item?.images[0]?.path}
+                rank={item?.rank}
+                onPress={() =>
+                  navigation.navigate("SingleCar", { id: item?.id })
+                }
+              />
+            )}
+            refreshing={refreshing}
+            onRefresh={inspectedCarsData}
+          />
+        )}
       </View>
     </AppScreen>
-
-
-
   );
 };
 

@@ -223,7 +223,7 @@ const CarDetails = ({ navigation }) => {
   return (
     <AppScreen>
       <InspectionHeader onPress={() => navigation.goBack()}>
-        Car Details
+        Car Info
       </InspectionHeader>
       <View style={styles.InspectionformContainer}>
         <Dropdown

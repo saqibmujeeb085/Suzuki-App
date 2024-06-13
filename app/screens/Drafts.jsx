@@ -14,6 +14,14 @@ const Drafts = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state
 
+  useEffect(() => {
+    inspectedCar.forEach((item) => {
+      if (item.images && item.images.length > 0) {
+        console.log(item.images[0].path);
+      }
+    });
+  }, [inspectedCar]);
+
   // Function to fetch inspected cars data
   const fetchInspectedCars = useCallback(
     async (hardRefresh = false) => {
@@ -24,12 +32,11 @@ const Drafts = ({ navigation }) => {
       const config = {
         method: "get",
         maxBodyLength: Infinity,
-        url: `auth/get_carinfosdraft.php?duserId=${userData.user.duserid}`, // Ensure the correct URL is used
+        url: `auth/get_carinfosdraft.php?id=${userData.user.duserid}`, // Ensure the correct URL is used
         headers: {},
       };
       try {
         const response = await axios.request(config);
-        console.log(response.data);
         setInspectedCar(response.data);
       } catch (error) {
         console.error(error);
@@ -93,7 +100,7 @@ const Drafts = ({ navigation }) => {
                 customer={item?.customerName}
                 model={item?.model}
                 date={item?.inspectionDate}
-                carImage={item?.carPic}
+                carImage={item?.images[0]?.path}
                 onPress={() =>
                   navigation.navigate("DraftSingleCar", { id: item?.id })
                 }

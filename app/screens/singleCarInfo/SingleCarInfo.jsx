@@ -13,9 +13,13 @@ import { mainStyles } from "../../constants/style";
 import InspectionHeader from "../../components/header/InspectionHeader";
 import { colors } from "../../constants/colors";
 import CarInfoSkeletonPreloader from "../../components/skeletonLoader/CarInfoSkeletonPreloader";
+import CarImagesCarousel from "../../components/carousel/CarImagesCarousel";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const SingleCarInfo = ({ route, navigation }) => {
-  const { id } = route.params || {}; 
+  const { id } = route.params || {};
+
+  console.log(id);
 
   const [carInfo, setCarInfo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +54,7 @@ const SingleCarInfo = ({ route, navigation }) => {
   }, [id]);
 
   if (loading) {
-    return <CarInfoSkeletonPreloader />
+    return <CarInfoSkeletonPreloader />;
   }
 
   if (error) {
@@ -66,13 +70,10 @@ const SingleCarInfo = ({ route, navigation }) => {
       <InspectionHeader onPress={() => navigation.goBack()}>
         Car Details
       </InspectionHeader>
-      <View style={styles.ImageContainer}>
-        <Image
-          source={{ uri: `${process.env.IMAGE_URL}/${carInfo.carPic}` }}
-          style={styles.bannerImage}
-        />
-      </View>
       <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.ImageContainer}>
+          <CarImagesCarousel images={carInfo?.images} />
+        </View>
         <View style={styles.contentContainer}>
           <View style={styles.infoContainer}>
             <AppText style={{ fontSize: mainStyles.h3FontSize }}>
@@ -340,18 +341,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.whiteBg,
   },
   container: {
-    padding: 16,
+    padding: 20,
     paddingTop: 0,
   },
   ImageContainer: {
-    paddingHorizontal: 16,
+    flex: 1,
+    height: "100%",
+    minHeight: 400,
   },
   bannerImage: {
     width: "100%",
     height: 300,
     resizeMode: "cover",
     borderRadius: 5,
-    marginBottom: 20,
   },
   infoContainer: {
     flexDirection: "row",
