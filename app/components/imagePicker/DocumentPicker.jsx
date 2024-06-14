@@ -29,12 +29,11 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
 
     console.log("Document Picker result:", result); // Log the entire result
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const documentAsset = result.assets[0];
+    if (result.type !== "cancel") {
       const newDocument = {
-        uri: documentAsset.uri,
-        name: documentAsset.name,
-        type: documentAsset.mimeType || "application/pdf",
+        uri: result.uri,
+        name: result.name,
+        type: result.mimeType || "application/pdf",
       };
 
       console.log("Picked document:", newDocument); // Debug log
@@ -217,7 +216,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 5,
     padding: 20,
-    width: 300,
+    width: 320,
   },
   chooseBox: {
     flexDirection: "row",

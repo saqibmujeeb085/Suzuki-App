@@ -11,7 +11,7 @@ const DraftInspectionCard = ({
   car,
   model,
   date,
-  customer,
+  varient,
   carImage,
   onPress,
 }) => {
@@ -42,15 +42,20 @@ const DraftInspectionCard = ({
           style={styles.image}
         />
         <View style={styles.contentContainer}>
-          <AppText color={colors.fontBlack} fontSize={mainStyles.h2FontSize}>
+          <AppText
+            color={colors.fontBlack}
+            fontSize={mainStyles.h2FontSize}
+            textTransform={"capitalize"}
+          >
             {car}
           </AppText>
           <View style={styles.clientAndCarDetail}>
-            <AppText color={colors.fontBlack} fontSize={mainStyles.h3FontSize}>
-              Model: {model}
+            <AppText color={colors.fontBlack} fontSize={mainStyles.h4FontSize}>
+              Varient: {varient}
             </AppText>
-            <AppText color={colors.fontBlack} fontSize={mainStyles.h3FontSize}>
-              Customer: {customer}
+
+            <AppText color={colors.fontBlack} fontSize={mainStyles.h4FontSize}>
+              Model: {model}
             </AppText>
           </View>
           <AppText color={colors.fontGrey} fontSize={mainStyles.h4FontSize}>
@@ -94,16 +99,20 @@ const styles = StyleSheet.create({
   inspectionDestailsContainer: {
     flexDirection: "row",
     gap: 14,
+    alignItems: "center",
   },
   image: {
-    width: 61,
-    height: 56,
+    width: 65,
+    height: 65,
     resizeMode: "cover",
     borderRadius: 4,
     overflow: "hidden",
   },
   contentContainer: {
-    justifyContent: "space-between",
+    justifyContent: "center",
+    flexDirection: "column",
+    paddingVertical: 5,
+    gap: 5,
   },
   actionButtons: {
     flexDirection: "row",

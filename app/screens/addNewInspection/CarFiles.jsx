@@ -39,18 +39,18 @@ const CarFiles = ({ navigation }) => {
     hours = hours % 12;
     hours = hours ? hours : 12;
 
-    setCurrentDateTime(`${month}/${day}/${year} - ${hours}:${minutes}${ampm}`);
+    return `${month}/${day}/${year} - ${hours}:${minutes}${ampm}`;
   };
 
   const postCarDetails = async () => {
-    currentDateAndTime();
+    const newDateTime = currentDateAndTime();
 
     setCarData((prevData) => ({
       ...prevData,
-      inspectionDate: currentDateTime,
+      inspectionDate: newDateTime,
     }));
 
-    console.log(carData.inspectionDate);
+    console.log(newDateTime);
 
     if (selectedImages.length > 0 || selectedDocuments.length > 0) {
       let data = new FormData();
@@ -60,7 +60,7 @@ const CarFiles = ({ navigation }) => {
       data.append("registrationNo", carData.registrationNo);
       data.append("chasisNo", carData.chasisNo);
       data.append("EngineNo", carData.EngineNo);
-      data.append("inspectionDate", carData.inspectionDate);
+      data.append("inspectionDate", newDateTime);
       data.append("mfgId", carData.mfgId);
       data.append("carId", carData.carId);
       data.append("varientId", carData.varientId);
@@ -116,7 +116,8 @@ const CarFiles = ({ navigation }) => {
   };
 
   const postCarDetailsAsDraft = async () => {
-    currentDateAndTime();
+    const newDateTime = currentDateAndTime();
+
     if (selectedImages.length > 0 || selectedDocuments.length > 0) {
       let data = new FormData();
       data.append("dealershipId", carData.dealershipId);
@@ -125,7 +126,7 @@ const CarFiles = ({ navigation }) => {
       data.append("registrationNo", carData.registrationNo);
       data.append("chasisNo", carData.chasisNo);
       data.append("EngineNo", carData.EngineNo);
-      data.append("inspectionDate", currentDateTime);
+      data.append("inspectionDate", newDateTime);
       data.append("mfgId", carData.mfgId);
       data.append("carId", carData.carId);
       data.append("varientId", carData.varientId);

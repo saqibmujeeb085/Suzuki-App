@@ -27,4 +27,10 @@ export const colors = {
   // Disabled Button
   buttonBgColor: "#E0E0E0",
   buttonFontColor: "#BBBBBB",
+
+  //Rating Colors
+  green: "#009E10",
+  blue: "#00A0FA",
+  yellow: "#FAB400",
+  red: "#BC0101",
 };

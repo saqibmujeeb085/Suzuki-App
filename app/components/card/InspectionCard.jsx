@@ -14,6 +14,13 @@ const InspectionCard = ({
   rank,
   onPress,
 }) => {
+  const getColorByRank = (rank) => {
+    if (rank <= 5.9) return colors.red;
+    if (rank <= 7.9) return colors.yellow;
+    if (rank <= 8.9) return colors.blue;
+    return colors.green;
+  };
+
   return (
     <View>
       <TouchableOpacity onPress={onPress} style={styles.Container}>
@@ -23,20 +30,24 @@ const InspectionCard = ({
             style={styles.image}
           />
           <View style={styles.contentContainer}>
-            <AppText color={colors.fontBlack} fontSize={mainStyles.h2FontSize}>
+            <AppText
+              color={colors.fontBlack}
+              fontSize={mainStyles.h2FontSize}
+              textTransform={"capitalize"}
+            >
               {car}
             </AppText>
             <View style={styles.clientAndCarDetail}>
               <AppText
                 color={colors.fontBlack}
-                fontSize={mainStyles.h3FontSize}
+                fontSize={mainStyles.h4FontSize}
               >
                 Varient: {varient}
               </AppText>
 
               <AppText
                 color={colors.fontBlack}
-                fontSize={mainStyles.h3FontSize}
+                fontSize={mainStyles.h4FontSize}
               >
                 Model: {model}
               </AppText>
@@ -51,9 +62,9 @@ const InspectionCard = ({
           <AnimatedCircularProgress
             size={55}
             width={7}
-            fill={rank * "10"}
-            tintColor="#009E10"
-            backgroundColor="#F4F4F4"
+            fill={rank * 10} // This should be a number
+            tintColor={getColorByRank(rank)}
+            backgroundColor={colors.ligtGreyBg} // Call the function with rank
             duration={1000}
           >
             {() => <AppText fontSize={16}>{rank}</AppText>}
@@ -82,19 +93,19 @@ const styles = StyleSheet.create({
   inspectionDestailsContainer: {
     flexDirection: "row",
     gap: 14,
+    alignItems: "center",
   },
   image: {
-    width: 60,
-    height: 60,
+    width: 65,
+    height: 65,
     resizeMode: "cover",
     borderRadius: 4,
     overflow: "hidden",
   },
   contentContainer: {
-    flex: 1,
-    justifyContent: "space-between",
-  },
-  clientAndCarDetail: {
-    marginTop: 10,
+    justifyContent: "center",
+    flexDirection: "column",
+    paddingVertical: 5,
+    gap: 5,
   },
 });
