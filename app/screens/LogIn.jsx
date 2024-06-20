@@ -56,8 +56,8 @@ const LogIn = ({ navigation }) => {
   useEffect(() => {
     if (selectedDealership) {
       fetchDealershipUserNames();
-    }else{
-      setDealershipUserList([])
+    } else {
+      setDealershipUserList([]);
     }
   }, [selectedDealership]);
 
@@ -94,7 +94,6 @@ const LogIn = ({ navigation }) => {
   };
 
   const fetchDealershipUserNames = async () => {
-   
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -119,7 +118,6 @@ const LogIn = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching dealership data:", error);
     }
-  
   };
 
   const handleUserLogin = async () => {
@@ -191,9 +189,9 @@ const LogIn = ({ navigation }) => {
           >
             <AppText
               color={colors.fontWhite}
-              fontSize={33}
-              lineHeight={45}
-              width={320}
+              fontSize={38}
+              lineHeight={48}
+              width={340}
               paddingLeft={20}
               paddingTop={70}
               paddingBottom={100}
@@ -263,7 +261,6 @@ const LogIn = ({ navigation }) => {
                     fontSize={mainStyles.h3FontSize}
                     color={colors.fontGrey}
                     textAlign={"center"}
-                    lineHeight={14}
                   >
                     Lorem Ipsum is simply dummy text of the printing and
                     typesetting industry.

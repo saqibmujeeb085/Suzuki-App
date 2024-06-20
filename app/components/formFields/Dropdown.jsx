@@ -18,7 +18,7 @@ const Dropdown = ({
   const [key, setKey] = useState(Date.now()); // Unique key for rerender
 
   const handleClearSelection = () => {
-    setSelected("");  // Clear the selection
+    setSelected(""); // Clear the selection
     selectedItem(""); // Notify parent component
     setKey(Date.now()); // Force rerender by updating key
   };
@@ -27,19 +27,39 @@ const Dropdown = ({
     <View style={styles.dropdownbox}>
       <View style={styles.dropdown}>
         <SelectList
-          key={key} // Use key to force rerender
-          dropdownTextStyles={{ fontSize: mainStyles.h1FontSize, fontFamily: mainStyles.appFontRegular, paddingBottom: 5, color: colors.fontBlack}}
+          key={key}
+          dropdownTextStyles={{
+            fontSize: mainStyles.h2FontSize,
+            fontFamily: mainStyles.appFontRegular,
+            color: colors.fontBlack,
+          }}
+          dropdownItemStyles={{
+            borderColor: colors.ligtGreyBg,
+            borderBottomWidth: 1,
+            marginHorizontal: 20,
+            paddingVertical: 20,
+            paddingHorizontal: 0,
+            marginTop: -8,
+            marginBottom: 8,
+          }}
           dropdownStyles={{
             backgroundColor: colors.whiteBg,
             padding: 0,
-            marginTop: -5,
+            marginTop: 0,
             borderRadius: 0,
             borderBottomRightRadius: 5,
             borderBottomLeftRadius: 5,
             borderWidth: 0,
+            borderTopWidth: 1,
+            borderColor: colors.purple,
+            paddingTop: -10,
+            maxHeight: 250,
+          }}
+          inputStyles={{
+            color: selected ? colors.fontBlack : colors.fontGrey,
+            fontFamily: mainStyles.appFontRegular,
             fontSize: mainStyles.h2FontSize,
           }}
-          inputStyles={{color: colors.fontBlack, fontFamily: mainStyles.appFontRegular}}
           boxStyles={styles.dealersdropdown}
           placeholder={DropItems}
           setSelected={(val) => {
@@ -49,18 +69,18 @@ const Dropdown = ({
           data={Data}
           save={save}
           search={Search}
-          defaultOption={{ key: '', value: DropItems }} // Ensure the placeholder is reset
+          defaultOption={{ key: "", value: DropItems }} // Ensure the placeholder is reset
           value={selected}
         />
-        {selected &&
-        <AntDesign
-          onPress={handleClearSelection}
-          style={styles.clearIcon}
-          name={"close"}
-          color={colors.fontBlack}
-          size={20}
-        />
-        }
+        {selected && (
+          <AntDesign
+            onPress={handleClearSelection}
+            style={styles.clearIcon}
+            name={"close"}
+            color={colors.fontBlack}
+            size={20}
+          />
+        )}
       </View>
       {Error && (
         <AppText
@@ -95,9 +115,9 @@ const styles = StyleSheet.create({
   clearIcon: {
     backgroundColor: colors.whiteBg,
     position: "absolute",
-    padding: 10,
-    right: 10,
-    top: 10,
+    padding: 5,
+    right: 15,
+    top: 15,
   },
 });
 

@@ -11,6 +11,7 @@ const AppTextInput = ({ Error, inputMode, ...inputType }) => {
         {...inputType}
         inputMode={inputMode}
         style={styles.inputField}
+        placeholderTextColor={colors.fontGrey}
       />
       {Error && (
         <AppText

@@ -19,7 +19,7 @@ const PasswordInput = ({ Error, ...inputType }) => {
           {...inputType}
           style={styles.inputField}
           secureTextEntry={!isPasswordVisible}
-          placeholderTextColor={colors.fontBlack}
+          placeholderTextColor={colors.fontGrey}
         />
         <TouchableOpacity
           style={styles.iconContainer}
@@ -52,7 +52,7 @@ export default PasswordInput;
 const styles = StyleSheet.create({
   inputField: {
     fontSize: mainStyles.h3FontSize.fontSize,
-    color: colors.fontGrey,
+    color: colors.fontBlack,
     backgroundColor: colors.whiteBg,
     paddingHorizontal: 20,
     paddingVertical: 15,

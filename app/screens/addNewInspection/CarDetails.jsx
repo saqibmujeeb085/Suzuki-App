@@ -78,16 +78,16 @@ const CarDetails = ({ navigation }) => {
   useEffect(() => {
     if (manufacturer >= 1) {
       fetchCarModel();
-    }else{
-      setCarModels([])
+    } else {
+      setCarModels([]);
     }
   }, [manufacturer]);
 
   useEffect(() => {
     if (carModel >= 1) {
       fetchCarVarient();
-    }else{
-      setCarVarients([])
+    } else {
+      setCarVarients([]);
     }
   }, [carModel]);
 
@@ -226,7 +226,11 @@ const CarDetails = ({ navigation }) => {
 
   return (
     <AppScreen>
-      <InspectionHeader onPress={() => navigation.goBack()}>
+      <InspectionHeader
+        rightText={"Cancel"}
+        // rightOnpress={() => navigation.navigate("Home")}
+        onPress={() => navigation.goBack()}
+      >
         Car Info
       </InspectionHeader>
       <View style={styles.InspectionformContainer}>
@@ -271,11 +275,11 @@ const CarDetails = ({ navigation }) => {
           save={"value"}
           selectedItem={CplcSelected}
         />
-        <View style={styles.formButton}>
-          <GradientButton onPress={addCarDetails} disabled={!allSelected}>
-            Next
-          </GradientButton>
-        </View>
+      </View>
+      <View style={styles.formButton}>
+        <GradientButton onPress={addCarDetails} disabled={!allSelected}>
+          Next
+        </GradientButton>
       </View>
     </AppScreen>
   );
@@ -289,7 +293,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   formButton: {
-    marginTop: 10,
-    marginBottom: 20,
+    position: "absolute",
+    bottom: 0,
+    padding: 20,
+    width: "100%",
   },
 });

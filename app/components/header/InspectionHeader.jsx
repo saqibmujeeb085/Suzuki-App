@@ -1,16 +1,46 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  FontAwesome6,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import AppText from "../text/Text";
 import { mainStyles } from "../../constants/style";
+import { colors } from "../../constants/colors";
 
-const InspectionHeader = ({ onPress, children }) => {
+const InspectionHeader = ({ rightOnpress, rightText, onPress, children }) => {
   return (
     <View style={styles.inspectionHeader}>
-      <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
-        <MaterialCommunityIcons name="arrow-left" size={15} color={"#000000"} />
+      <TouchableOpacity
+        style={styles.left}
+        activeOpacity={0.6}
+        onPress={onPress}
+      >
+        <FontAwesome6
+          name="arrow-left-long"
+          size={20}
+          color={colors.fontBlack}
+        />
       </TouchableOpacity>
-      <AppText fontSize={mainStyles.h2FontSize}>{children}</AppText>
+      <AppText
+        fontSize={mainStyles.pageHeadingFont}
+        fontFamily={mainStyles.appFontBold}
+        color={colors.purple}
+        width="250"
+        textAlign={"center"}
+      >
+        {children}
+      </AppText>
+      <TouchableOpacity
+        style={styles.right}
+        activeOpacity={0.6}
+        onPress={rightOnpress}
+      >
+        <AppText color={colors.fontBlack} fontSize={mainStyles.h3FontSize}>
+          {rightText}
+        </AppText>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -20,8 +50,19 @@ export default InspectionHeader;
 const styles = StyleSheet.create({
   inspectionHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    width: "100%",
+  },
+  left: {
+    position: "absolute",
+    left: 20,
+    top: 30,
+  },
+  right: {
+    position: "absolute",
+    right: 20,
+    top: 30,
   },
 });
