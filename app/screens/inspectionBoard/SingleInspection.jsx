@@ -7,6 +7,8 @@ import SelectCard from "../../components/card/SelectCard";
 import axios from "axios";
 import GradientButton from "../../components/buttons/GradientButton";
 import SingleInspectionSkeletonPreloader from "../../components/skeletonLoader/SingleInspectionSkeletonPreloader";
+import ToastManager from "toastify-react-native";
+import { mainStyles } from "../../constants/style";
 
 const SingleInspection = ({ navigation, route }) => {
   const { carid, catid, catName } = route.params || {};
@@ -14,12 +16,11 @@ const SingleInspection = ({ navigation, route }) => {
   const [values, setValues] = useState([]);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  const [loading, setLoading] = useState(false)
-
+  const [loading, setLoading] = useState(false);
 
   // Fetch questions when component mounts
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     fetchQuestions();
   }, [carid, catid]);
 
@@ -41,7 +42,7 @@ const SingleInspection = ({ navigation, route }) => {
         },
       }));
       setValues(initialValues);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching questions:", error);
     }
@@ -95,9 +96,14 @@ const SingleInspection = ({ navigation, route }) => {
     const hasEmptyValues = values.some((item) => item.value === "");
 
     if (hasEmptyValues) {
-      Alert.alert(
-        "Error",
-        "Please provide a rating for all questions before submitting."
+      // Alert.alert(
+      //   "Error",
+      //   "Please provide a rating for all questions before submitting."
+      // );
+      Toast.error(
+        <AppText fontSize={mainStyles.h3FontSize}>
+          Please provide a rating for all questions before submitting.
+        </AppText>
       );
     } else {
       try {
@@ -129,7 +135,7 @@ const SingleInspection = ({ navigation, route }) => {
         axios.request(config).then((response) => {
           console.log(JSON.stringify(response.data));
 
-          alert(response.data.message);
+          // alert(response.data.message);
 
           if (response.data.status === "success") {
             navigation.goBack();
@@ -137,64 +143,70 @@ const SingleInspection = ({ navigation, route }) => {
         });
       } catch (error) {
         console.error("Error submitting data:", error);
-        Alert.alert("Error", "Something went wrong!");
+        // Alert.alert("Error", "Something went wrong!");
+        Toast.error(
+          <AppText fontSize={mainStyles.h3FontSize}>
+            Something went wrong!
+          </AppText>
+        );
       }
     }
   };
 
   return (
     <AppScreen>
+      <ToastManager />
       <InspectionHeader onPress={() => navigation.goBack()} rightBtn={"Next"}>
         {catName}
       </InspectionHeader>
       <ScrollView>
-      {loading ? (
-            <View style={styles.inspectionContainer}>
-              {Array(10)
-                .fill(0)
-                .map((_, index) => (
-                  <SingleInspectionSkeletonPreloader key={index} />
-                ))}
-            </View>
-          ) : (
-        <View style={styles.inspectionContainer}>
-          {questions.map((question, index) =>
-            question.rating === "r" ? (
-              <RangeCard
-                key={question.id}
-                indicator={question.indicators}
-                value={values.find((val) => val.IndID === question.id)?.value}
-                onValueChange={(newValue) =>
-                  handleValueChange(question.id, newValue)
-                }
-                num={index}
-                questionId={question.id}
-                onImageSelected={handleImageSelected}
-                onSelectedImageName={handleImageNameSelected}
-                onRemoveImage={handleRemoveImage}
-              />
-            ) : (
-              <SelectCard
-                key={question.id}
-                indicator={question.indicators}
-                value={values.find((val) => val.IndID === question.id)?.value}
-                onValueChange={(newValue) =>
-                  handleValueChange(question.id, newValue)
-                }
-                num={index}
-                questionId={question.id}
-                onImageSelected={handleImageSelected}
-                onSelectedImageName={handleImageNameSelected}
-                onRemoveImage={handleRemoveImage}
-              />
-            )
-          )}
+        {loading ? (
+          <View style={styles.inspectionContainer}>
+            {Array(10)
+              .fill(0)
+              .map((_, index) => (
+                <SingleInspectionSkeletonPreloader key={index} />
+              ))}
+          </View>
+        ) : (
+          <View style={styles.inspectionContainer}>
+            {questions.map((question, index) =>
+              question.rating === "r" ? (
+                <RangeCard
+                  key={question.id}
+                  indicator={question.indicators}
+                  value={values.find((val) => val.IndID === question.id)?.value}
+                  onValueChange={(newValue) =>
+                    handleValueChange(question.id, newValue)
+                  }
+                  num={index}
+                  questionId={question.id}
+                  onImageSelected={handleImageSelected}
+                  onSelectedImageName={handleImageNameSelected}
+                  onRemoveImage={handleRemoveImage}
+                />
+              ) : (
+                <SelectCard
+                  key={question.id}
+                  indicator={question.indicators}
+                  value={values.find((val) => val.IndID === question.id)?.value}
+                  onValueChange={(newValue) =>
+                    handleValueChange(question.id, newValue)
+                  }
+                  num={index}
+                  questionId={question.id}
+                  onImageSelected={handleImageSelected}
+                  onSelectedImageName={handleImageNameSelected}
+                  onRemoveImage={handleRemoveImage}
+                />
+              )
+            )}
 
-          <GradientButton onPress={SubmitData} disabled={isButtonDisabled}>
-            Submit
-          </GradientButton>
-        </View>
-          )}
+            <GradientButton onPress={SubmitData} disabled={isButtonDisabled}>
+              Submit
+            </GradientButton>
+          </View>
+        )}
       </ScrollView>
     </AppScreen>
   );

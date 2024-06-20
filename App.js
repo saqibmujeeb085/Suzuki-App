@@ -5,6 +5,7 @@ import { useFonts } from "expo-font";
 import { AuthProvider } from "./app/context/authContext";
 import * as SplashScreen from "expo-splash-screen";
 import { InspecteCarProvider } from "./app/context/newInspectionContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -36,11 +37,13 @@ export default function App() {
 
   return (
     <NavigationContainer onLayout={onLayoutRootView}>
-      <AuthProvider>
-        <InspecteCarProvider>
-          <FeedNavigation />
-        </InspecteCarProvider>
-      </AuthProvider>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <InspecteCarProvider>
+            <FeedNavigation />
+          </InspecteCarProvider>
+        </AuthProvider>
+      </SafeAreaProvider>
     </NavigationContainer>
   );
 }

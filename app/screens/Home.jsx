@@ -43,7 +43,7 @@ const Home = ({ navigation }) => {
   const userLogout = async () => {
     setUserData({ token: "", user: "" });
     await AsyncStorage.removeItem("@auth");
-    alert("Logout Successfully");
+    // alert("Logout Successfully");
   };
 
   const inspectedCarsData = async () => {
@@ -94,7 +94,10 @@ const Home = ({ navigation }) => {
                 <Image
                   source={require("../assets/componentsImages/logout.png")}
                 />
-                <AppText color={colors.fontWhite} fontSize={mainStyles.h4FontSize}>
+                <AppText
+                  color={colors.fontWhite}
+                  fontSize={mainStyles.h4FontSize}
+                >
                   Logout
                 </AppText>
               </View>
@@ -106,7 +109,10 @@ const Home = ({ navigation }) => {
               <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Registrations
               </AppText>
-              <AppText color={colors.fontWhite} fontSize={mainStyles.h1FontSize}>
+              <AppText
+                color={colors.fontWhite}
+                fontSize={mainStyles.h1FontSize}
+              >
                 2,000K
               </AppText>
             </View>
@@ -114,7 +120,10 @@ const Home = ({ navigation }) => {
               <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Purchases
               </AppText>
-              <AppText color={colors.fontWhite} fontSize={mainStyles.h1FontSize}>
+              <AppText
+                color={colors.fontWhite}
+                fontSize={mainStyles.h1FontSize}
+              >
                 1,500
               </AppText>
             </View>
@@ -122,7 +131,10 @@ const Home = ({ navigation }) => {
               <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Sales
               </AppText>
-              <AppText color={colors.fontWhite} fontSize={mainStyles.h1FontSize}>
+              <AppText
+                color={colors.fontWhite}
+                fontSize={mainStyles.h1FontSize}
+              >
                 1,200
               </AppText>
             </View>
@@ -130,7 +142,10 @@ const Home = ({ navigation }) => {
               <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Downloads
               </AppText>
-              <AppText color={colors.fontWhite} fontSize={mainStyles.h1FontSize}>
+              <AppText
+                color={colors.fontWhite}
+                fontSize={mainStyles.h1FontSize}
+              >
                 10,23
               </AppText>
             </View>

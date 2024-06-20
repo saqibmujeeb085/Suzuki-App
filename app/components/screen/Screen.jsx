@@ -1,12 +1,20 @@
 import { SafeAreaView, StyleSheet, Platform, StatusBar } from "react-native";
 import React from "react";
-import Constants from "expo-constants";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AppScreen = ({ backgroundColor = "#F1F1F1", children }) => {
-  const statusBarHeight = Platform.OS === 'android' ? StatusBar.currentHeight : Constants.statusBarHeight;
-
+  const insets = useSafeAreaInsets();
   return (
-    <SafeAreaView style={[styles.screenContainer, { backgroundColor, paddingTop: statusBarHeight }]}>
+    <SafeAreaView
+      style={[
+        styles.screenContainer,
+        {
+          backgroundColor,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       {children}
     </SafeAreaView>
   );

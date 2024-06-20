@@ -30,11 +30,20 @@ const RangeCard = ({
 
   return (
     <View style={styles.inspectionBox}>
-      <AppText fontSize={mainStyles.h2FontSize} color={"#1d1d1d"} lineHeight={18} maxWidth={218}>
+      <AppText
+        fontSize={mainStyles.h2FontSize}
+        color={"#1d1d1d"}
+        lineHeight={18}
+        maxWidth={218}
+      >
         {num + 1}. {indicator}
       </AppText>
       <View style={styles.sliderContainer}>
-        <AppText textAlign={"right"} fontSize={mainStyles.h1FontSize} color={"#212121"}>
+        <AppText
+          textAlign={"right"}
+          fontSize={mainStyles.h1FontSize}
+          color={"#212121"}
+        >
           {sliderValue ? sliderValue : "NaN"} / 10
         </AppText>
         <View style={styles.range}>

@@ -5,30 +5,36 @@ import axios from "axios";
 // Context
 const AuthContext = createContext();
 
-//Provider
+// Provider
 const AuthProvider = ({ children }) => {
-  //Global
+  // Global
   const [userData, setUserData] = useState({
     token: "",
     user: "",
   });
 
-  //Base URL
+  // Base URL
   axios.defaults.baseURL = "https://clients.echodigital.net/inspectionapp/apis";
 
   // Local Storage Initial Data
   useEffect(() => {
     const localStorageData = async () => {
-      let data = await AsyncStorage.getItem("@auth");
-      let loginData = JSON.parse(data);
-      setUserData({
-        ...userData,
-        token: data?.token,
-        user: data?.user,
-      });
+      try {
+        let data = await AsyncStorage.getItem("@auth");
+        if (data) {
+          let loginData = JSON.parse(data);
+          setUserData({
+            token: loginData?.token || "",
+            user: loginData?.user || "",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load data from local storage:", error);
+      }
     };
     localStorageData();
   }, []);
+
   return (
     <AuthContext.Provider value={[userData, setUserData]}>
       {children}
