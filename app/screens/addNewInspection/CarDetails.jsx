@@ -8,6 +8,7 @@ import axios from "axios";
 import Dropdown from "../../components/formFields/Dropdown";
 import { InspecteCarContext } from "../../context/newInspectionContext";
 import { AuthContext } from "../../context/authContext";
+import { colors } from "../../constants/colors";
 
 const CarDetails = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
@@ -297,5 +298,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     padding: 20,
     width: "100%",
+    backgroundColor: colors.ligtGreyBg,
   },
 });

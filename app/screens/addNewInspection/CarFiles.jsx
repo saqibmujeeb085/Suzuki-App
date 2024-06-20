@@ -10,6 +10,7 @@ import axios from "axios";
 import AppText from "../../components/text/Text";
 import AppDocumentPicker from "../../components/imagePicker/DocumentPicker";
 import { mainStyles } from "../../constants/style";
+import { colors } from "../../constants/colors";
 
 const CarFiles = ({ navigation }) => {
   const [carData, setCarData, resetCarData] = useContext(InspecteCarContext);
@@ -205,39 +206,41 @@ const CarFiles = ({ navigation }) => {
 
   return (
     <AppScreen>
-      <ScrollView>
         {show && (
           <ProcessModal
-            show={show}
-            setShow={setShow}
-            icon
-            heading={"Customer ID: 0KD560PLF"}
-            text={"You have to complete the inspection in 20 minutes."}
-            pbtn={loading ? "Loading..." : "Start Inspection Now"}
-            disabled={loading}
-            pbtnPress={postCarDetails}
-            sbtn={"Save for later"}
-            sbtnPress={postCarDetailsAsDraft}
+          show={show}
+          setShow={setShow}
+          icon
+          heading={"Customer ID: 0KD560PLF"}
+          text={"You have to complete the inspection in 20 minutes."}
+          pbtn={loading ? "Loading..." : "Start Inspection Now"}
+          disabled={loading}
+          pbtnPress={postCarDetails}
+          sbtn={"Save for later"}
+          sbtnPress={postCarDetailsAsDraft}
           />
         )}
-        <InspectionHeader onPress={() => navigation.goBack()}>
+        <InspectionHeader rightText={"Cancel"} onPress={() => navigation.goBack()}>
           Uploads
         </InspectionHeader>
+          <ScrollView>
         <View style={styles.UploadScreenContainer}>
-          <AppText fontSize={mainStyles.h1FontSize} textAlign={"center"}>
+          <AppText fontSize={mainStyles.h3FontSize} textAlign={"center"}>
             Upload Car Images
           </AppText>
           <AppImagePicker
             onImagesSelected={handleImagesSelected}
             onRemoveImage={handleRemoveImage} // Pass the remove image handler
           />
-          <AppText fontSize={mainStyles.h1FontSize} textAlign={"center"} marginTop={20}>
+          <AppText fontSize={mainStyles.h3FontSize} textAlign={"center"} marginTop={20}>
             Upload Car Documents
           </AppText>
           <AppDocumentPicker
             onDocumentsSelected={handleDocumentsSelected}
             onRemoveDoc={handleRemoveDocument}
           />
+        </View>
+      </ScrollView>
           <View style={styles.formButton}>
             <GradientButton
               onPress={ShowModal}
@@ -246,8 +249,6 @@ const CarFiles = ({ navigation }) => {
               Start Inspection
             </GradientButton>
           </View>
-        </View>
-      </ScrollView>
     </AppScreen>
   );
 };
@@ -258,12 +259,16 @@ const styles = StyleSheet.create({
   UploadScreenContainer: {
     paddingHorizontal: 20,
     gap: 10,
+    marginBottom: 120,
   },
   addMoreButton: {
     alignItems: "flex-end",
   },
   formButton: {
-    marginTop: 10,
-    marginBottom: 20,
+    position: "absolute",
+    bottom: 0,
+    padding: 20,
+    width: "100%",
+    backgroundColor: colors.ligtGreyBg,
   },
 });

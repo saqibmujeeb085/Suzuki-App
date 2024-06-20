@@ -60,14 +60,14 @@ const InspectionCard = ({
 
         <View style={styles.inspectionRating}>
           <AnimatedCircularProgress
-            size={55}
-            width={7}
+            size={65}
+            width={9}
             fill={rank * 10} // This should be a number
             tintColor={getColorByRank(rank)}
             backgroundColor={colors.ligtGreyBg} // Call the function with rank
             duration={1000}
           >
-            {() => <AppText fontSize={16}>{rank}</AppText>}
+            {() => <AppText fontSize={mainStyles.RatingFont}>{rank}</AppText>}
           </AnimatedCircularProgress>
         </View>
       </TouchableOpacity>
@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 65,
-    height: 65,
+    width: mainStyles.CardImageSize,
+    height: mainStyles.CardImageSize,
     resizeMode: "cover",
     borderRadius: 4,
     overflow: "hidden",

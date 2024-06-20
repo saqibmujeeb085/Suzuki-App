@@ -26,7 +26,7 @@ const GradientButton = ({
         ]}
         start={[0, 0]}
         end={[0.6, 1]}
-        style={[styles.gredientButton, { opacity: !disabled ? 1 : 0.8 }]}
+        style={[styles.gredientButton, { opacity: !disabled ? 1 : 0.7 }]}
       >
         <AppText color={colors.fontWhite} fontSize={size}>
           {children}

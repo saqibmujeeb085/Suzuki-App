@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import AppScreen from "../../components/screen/Screen";
 import GradientButton from "../../components/buttons/GradientButton";
@@ -8,6 +8,7 @@ import Dropdown from "../../components/formFields/Dropdown";
 import axios from "axios";
 import { InspecteCarContext } from "../../context/newInspectionContext";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { colors } from "../../constants/colors";
 
 const CarBodyDetails = ({ navigation }) => {
   const [carData, setCarData] = useContext(InspecteCarContext);
@@ -30,6 +31,8 @@ const CarBodyDetails = ({ navigation }) => {
   const [milage, setMilage] = useState("");
   const [owner, setOwner] = useState("");
   const [registrationNo, setRegistrationNo] = useState("");
+
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   const OwnerSelected = (selected) => {
     setOwner(selected);
@@ -105,6 +108,26 @@ const CarBodyDetails = ({ navigation }) => {
     registrationNo,
     owner,
   ]);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   const fetchFuelTypes = async () => {
     const config = {
@@ -230,7 +253,7 @@ const CarBodyDetails = ({ navigation }) => {
 
   return (
     <AppScreen>
-      <InspectionHeader onPress={() => navigation.goBack()}>
+      <InspectionHeader rightText={"Cancel"} onPress={() => navigation.goBack()}>
         Car Details
       </InspectionHeader>
       <KeyboardAwareScrollView>
@@ -296,13 +319,13 @@ const CarBodyDetails = ({ navigation }) => {
             />
           </View>
 
-          <View style={styles.formButton}>
+        </View>
+      </KeyboardAwareScrollView>
+          <View style={[styles.formButton, {bottom: keyboardVisible ? -100 : 0,}]}>
             <GradientButton onPress={addCarDetails} disabled={!allSelected}>
               Next
             </GradientButton>
           </View>
-        </View>
-      </KeyboardAwareScrollView>
     </AppScreen>
   );
 };
@@ -316,6 +339,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     paddingHorizontal: 20,
     gap: 10,
+    marginBottom: 120,
   },
   FormInputFields: {
     width: "100%",
@@ -329,7 +353,9 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
   },
   formButton: {
-    marginTop: 10,
-    marginBottom: 20
+    position: "absolute",
+    padding: 20,
+    width: "100%",
+    backgroundColor: colors.ligtGreyBg,
   },
 });

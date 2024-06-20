@@ -72,7 +72,7 @@ const DraftInspectionCard = ({
         >
           <MaterialCommunityIcons
             name={"eye-outline"}
-            size={20}
+            size={25}
             color={colors.blueColor}
           />
         </TouchableOpacity>
@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 65,
-    height: 65,
+    width: mainStyles.CardImageSize,
+    height: mainStyles.CardImageSize,
     resizeMode: "cover",
     borderRadius: 4,
     overflow: "hidden",
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderLeftWidth: 1,
     borderLeftColor: colors.ligtGreyBg,
-    height: "100%",
+    height: "80%",
     paddingRight: 10,
     paddingLeft: 25,
   },

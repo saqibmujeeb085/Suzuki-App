@@ -7,8 +7,9 @@ import Drafts from "../screens/Drafts";
 import Settings from "../screens/Settings";
 import NewInspectionButton from "./NewInspectionButton";
 import NewInspectionNavigation from "./NewInspectionNavigation";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import { mainStyles } from "../constants/style";
+import { colors } from "../constants/colors";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -26,15 +27,15 @@ const MainTabs = () => {
           backgroundColor: "#F1F1F1",
         },
         tabBarLabelStyle: {
-          fontSize: mainStyles.h3FontSize,
+          fontSize: mainStyles.h4FontSize,
           top: -6,
         },
         tabBarItemStyle: {
           alignItems: "center",
           gap: 0,
         },
-        tabBarActiveTintColor: "#003790",
-        tabBarInactiveTintColor: "#2E2E2E",
+        tabBarActiveTintColor: colors.purple,
+        tabBarInactiveTintColor: colors.fontBlack,
         tabBarHideOnKeyboard: true,
       }}
     >
@@ -44,8 +45,8 @@ const MainTabs = () => {
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="home-outline"
+            <AntDesign
+              name="home"
               size={size}
               color={color}
             />
@@ -57,8 +58,8 @@ const MainTabs = () => {
         component={Reports}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="clipboard-text-outline"
+            <AntDesign
+              name="profile"
               size={size}
               color={color}
             />
@@ -81,8 +82,8 @@ const MainTabs = () => {
         component={Drafts}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="note-edit-outline"
+            <AntDesign
+              name="form"
               size={size}
               color={color}
             />
@@ -94,8 +95,8 @@ const MainTabs = () => {
         component={Settings}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="cog-outline"
+            <AntDesign
+              name="setting"
               size={size}
               color={color}
             />

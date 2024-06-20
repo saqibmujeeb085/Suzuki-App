@@ -14,10 +14,10 @@ const NewInspectionButton = ({ onPress }) => {
           end={[0.6, 1]}
           style={styles.gredientButton}
         >
-          <AppText color={"white"} fontSize={mainStyles.h2FontSize}>
+          <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
             Start
           </AppText>
-          <AppText color={"white"} fontSize={mainStyles.h2FontSize}>
+          <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
             New
           </AppText>
         </LinearGradient>
@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
   ButtonContainer: {
     borderRadius: 100,
     borderRadius: 40,
-    height: 65,
-    width: 65,
+    height: 70,
+    width: 70,
     overflow: "hidden",
-    bottom: 20,
+    bottom: 30,
     elevation: 10,
   },
   gredientButton: {

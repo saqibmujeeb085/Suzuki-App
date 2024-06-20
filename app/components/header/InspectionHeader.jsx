@@ -17,9 +17,9 @@ const InspectionHeader = ({ rightOnpress, rightText, onPress, children }) => {
         activeOpacity={0.6}
         onPress={onPress}
       >
-        <FontAwesome6
-          name="arrow-left-long"
-          size={20}
+        <AntDesign
+          name="arrowleft"
+          size={24}
           color={colors.fontBlack}
         />
       </TouchableOpacity>
@@ -37,7 +37,7 @@ const InspectionHeader = ({ rightOnpress, rightText, onPress, children }) => {
         activeOpacity={0.6}
         onPress={rightOnpress}
       >
-        <AppText color={colors.fontBlack} fontSize={mainStyles.h3FontSize}>
+        <AppText color={colors.fontBlack} fontSize={mainStyles.h2FontSize}>
           {rightText}
         </AppText>
       </TouchableOpacity>
@@ -52,17 +52,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: 25,
     width: "100%",
   },
   left: {
     position: "absolute",
     left: 20,
-    top: 30,
+    top: 35,
   },
   right: {
     position: "absolute",
     right: 20,
-    top: 30,
+    top: 35,
   },
 });

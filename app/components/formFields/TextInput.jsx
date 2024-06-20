@@ -15,7 +15,7 @@ const AppTextInput = ({ Error, inputMode, ...inputType }) => {
       />
       {Error && (
         <AppText
-          fontSize={mainStyles.h2FontSize}
+          fontSize={mainStyles.h3FontSize}
           color={colors.fontRed}
           marginLeft={10}
           marginRight={10}
