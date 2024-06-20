@@ -8,6 +8,7 @@ import Settings from "../screens/Settings";
 import NewInspectionButton from "./NewInspectionButton";
 import NewInspectionNavigation from "./NewInspectionNavigation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { mainStyles } from "../constants/style";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -25,7 +26,7 @@ const MainTabs = () => {
           backgroundColor: "#F1F1F1",
         },
         tabBarLabelStyle: {
-          fontSize: 8,
+          fontSize: mainStyles.h3FontSize,
           top: -6,
         },
         tabBarItemStyle: {

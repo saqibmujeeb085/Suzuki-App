@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import AppText from "../text/Text";
 import { colors } from "../../constants/colors";
 
-const GradientButton = ({ size = 15, children, onPress, disabled = false }) => {
+const GradientButton = ({ size = 14, children, onPress, disabled = false }) => {
   return (
     <TouchableOpacity
       style={styles.ButtonContainer}

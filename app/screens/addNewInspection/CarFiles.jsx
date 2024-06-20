@@ -9,6 +9,7 @@ import { InspecteCarContext } from "../../context/newInspectionContext";
 import axios from "axios";
 import AppText from "../../components/text/Text";
 import AppDocumentPicker from "../../components/imagePicker/DocumentPicker";
+import { mainStyles } from "../../constants/style";
 
 const CarFiles = ({ navigation }) => {
   const [carData, setCarData, resetCarData] = useContext(InspecteCarContext);
@@ -223,14 +224,14 @@ const CarFiles = ({ navigation }) => {
           Uploads
         </InspectionHeader>
         <View style={styles.UploadScreenContainer}>
-          <AppText fontSize={14} textAlign={"center"}>
+          <AppText fontSize={mainStyles.h1FontSize} textAlign={"center"}>
             Upload Car Images
           </AppText>
           <AppImagePicker
             onImagesSelected={handleImagesSelected}
             onRemoveImage={handleRemoveImage} // Pass the remove image handler
           />
-          <AppText fontSize={14} textAlign={"center"} marginTop={20}>
+          <AppText fontSize={mainStyles.h1FontSize} textAlign={"center"} marginTop={20}>
             Upload Car Documents
           </AppText>
           <AppDocumentPicker

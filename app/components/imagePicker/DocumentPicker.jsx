@@ -11,6 +11,8 @@ import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../text/Text";
+import { colors } from "../../constants/colors";
+import { mainStyles } from "../../constants/style";
 
 const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
   const [documents, setDocuments] = useState([]);
@@ -105,9 +107,9 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
         {documents.map((document, index) => (
           <View key={index} style={styles.documentContainer}>
             <AppText
-              fontSize={12}
+              fontSize={mainStyles.h2FontSize}
               width={200}
-              color={"#000"}
+              color={colors.fontBlack}
               numberOfLines={1}
               ellipsizeMode="tail"
             >
@@ -123,10 +125,10 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
         ))}
         <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
           <View style={styles.uploadButton}>
-            <AppText color={"#BBBBBB"} fontSize={10}>
+            <AppText color={colors.fontGrey} fontSize={mainStyles.h3FontSize}>
               Upload Document only in pdf or word file
             </AppText>
-            <Feather name="upload" size={12} color={"#BBBBBB"} />
+            <Feather name="upload" size={12} color={colors.fontGrey} />
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -152,19 +154,19 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
             <View style={styles.chooseBox}>
               <TouchableOpacity onPress={pickDocument}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="document-outline" size={25} color={"#000"} />
+                  <Ionicons name="document-outline" size={25} color={colors.fontBlack} />
                   <AppText fontSize={16}>Document</AppText>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={pickImage}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="image-outline" size={25} color={"#000"} />
+                  <Ionicons name="image-outline" size={25} color={colors.fontBlack} />
                   <AppText fontSize={16}>Gallery</AppText>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={captureImage}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="camera-outline" size={25} color={"#000"} />
+                  <Ionicons name="camera-outline" size={25} color={colors.fontBlack} />
                   <AppText fontSize={16}>Camera</AppText>
                 </View>
               </TouchableOpacity>
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   documentContainer: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     elevation: 2,
     marginVertical: 5,
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   uploadButton: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     height: 50,
     justifyContent: "space-between",
     alignItems: "center",
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     padding: 20,
     width: 320,

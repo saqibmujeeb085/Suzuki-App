@@ -10,14 +10,19 @@ import axios from "axios";
 import { AuthContext } from "../context/authContext";
 import FilterModal from "../components/modals/FilterModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { mainStyles } from "../constants/style";
 
 const Reports = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
-  const [inspectedCar, setInspectedCar] = useState([]);
+  const [fullData, setFullData] = useState([]);
+  const [displayData, setDisplayData] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
 
   const [show, setShow] = useState(false);
   const [filters, setFilters] = useState({});
@@ -44,13 +49,11 @@ const Reports = ({ navigation }) => {
   useEffect(() => {
     if (Object.keys(filters).length > 0) {
       fetchFilteredData();
-    } else {
-      <AppText>No Data Found</AppText>;
     }
   }, [filters]);
 
   const inspectedCarsData = async () => {
-    setRefreshing(true);
+    setLoading(true);
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -60,7 +63,8 @@ const Reports = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-      setInspectedCar(response.data.slice(0, 20));
+      setFullData(response.data);
+      setDisplayData(response.data.slice(0, itemsPerPage));
       setLoading(false);
     } catch (error) {
       console.error("Error fetching inspected car data:", error);
@@ -84,7 +88,8 @@ const Reports = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-      setSearchResults(response.data);
+      setFullData(response.data);
+      setDisplayData(response.data.slice(0, itemsPerPage));
       setLoading(false);
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -117,7 +122,8 @@ const Reports = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-      setInspectedCar(response.data);
+      setFullData(response.data);
+      setDisplayData(response.data.slice(0, itemsPerPage));
       setLoading(false);
     } catch (error) {
       console.error("Error fetching filtered data:", error);
@@ -141,6 +147,7 @@ const Reports = ({ navigation }) => {
       }
     });
     setSelectedFilters(filterArray);
+    fetchFilteredData();
   };
 
   const clearFilter = (key) => {
@@ -151,6 +158,7 @@ const Reports = ({ navigation }) => {
       (filter) => filter.key !== key
     );
     setSelectedFilters(newSelectedFilters);
+    fetchFilteredData();
   };
 
   const formatDate = (dateString) => {
@@ -161,8 +169,27 @@ const Reports = ({ navigation }) => {
     return `${month}/${day}/${year}`;
   };
 
+  const loadMoreData = () => {
+    setLoadingMore(true);
+    const nextPage = page + 1;
+    const startIndex = nextPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const moreData = fullData.slice(startIndex, endIndex);
+
+    setDisplayData((prev) => [...prev, ...moreData]);
+    setPage(nextPage);
+    setLoadingMore(false);
+  };
+
   const dataToDisplay =
-    searchQuery.trim().length > 0 ? searchResults : inspectedCar;
+    searchQuery.trim().length > 0 ? searchResults : displayData;
+
+  const noDataMessage =
+    dataToDisplay.length === 0
+      ? "No Data Found"
+      : dataToDisplay.message === "No results found With This Filter"
+      ? "No Results Found With This Search"
+      : null;
 
   return (
     <AppScreen>
@@ -170,7 +197,7 @@ const Reports = ({ navigation }) => {
         <FilterModal show={show} setShow={setShow} onFilter={onFilter} />
       )}
       <View style={styles.reportSearchBox}>
-        <AppText textAlign={"center"} fontSize={12} color={"#1d1d1d"}>
+        <AppText textAlign={"center"} fontSize={mainStyles.h2FontSize} color={"#1d1d1d"}>
           Inspection Reports
         </AppText>
         <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
@@ -191,13 +218,13 @@ const Reports = ({ navigation }) => {
 
       <View style={styles.searchDataContainer}>
         <View style={styles.headingAndButton}>
-          <AppText fontSize={12} color={"#323232"}>
+          <AppText fontSize={mainStyles.h2FontSize} color={"#323232"}>
             {searchQuery.trim().length > 0 ? "Search Result" : "All Reports"}
           </AppText>
           <IconButton
             icon={"filter-outline"}
             color={"#323232"}
-            fontSize={12}
+            fontSize={mainStyles.h2FontSize}
             onPress={ShowModal}
           >
             Filter
@@ -216,9 +243,9 @@ const Reports = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
             style={{ marginTop: 20, marginBottom: 170 }}
           />
-        ) : dataToDisplay.length === 0 && Object.keys(filters).length > 0 ? (
+        ) : noDataMessage ? (
           <View style={styles.noDataContainer}>
-            <AppText>No Data Found With This Filter</AppText>
+            <AppText>{noDataMessage}</AppText>
           </View>
         ) : (
           <FlatList
@@ -246,7 +273,13 @@ const Reports = ({ navigation }) => {
               />
             )}
             refreshing={refreshing}
-            onRefresh={inspectedCarsData}
+            onRefresh={() => {
+              setPage(1);
+              setDisplayData(fullData.slice(0, itemsPerPage));
+            }}
+            onEndReached={loadMoreData}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={loadingMore ? <SkeletonLoader /> : null}
           />
         )}
       </View>

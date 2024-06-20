@@ -4,6 +4,8 @@ import Slider from "@react-native-community/slider";
 import AppText from "../text/Text";
 import circle from "../../assets/componentsImages/circle.png";
 import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
+import { mainStyles } from "../../constants/style";
+import { colors } from "../../constants/colors";
 
 const RangeCard = ({
   indicator,
@@ -28,11 +30,11 @@ const RangeCard = ({
 
   return (
     <View style={styles.inspectionBox}>
-      <AppText fontSize={12} color={"#1d1d1d"} lineHeight={18} maxWidth={218}>
+      <AppText fontSize={mainStyles.h2FontSize} color={"#1d1d1d"} lineHeight={18} maxWidth={218}>
         {num + 1}. {indicator}
       </AppText>
       <View style={styles.sliderContainer}>
-        <AppText textAlign={"right"} fontSize={14} color={"#212121"}>
+        <AppText textAlign={"right"} fontSize={mainStyles.h1FontSize} color={"#212121"}>
           {sliderValue ? sliderValue : "NaN"} / 10
         </AppText>
         <View style={styles.range}>
@@ -76,7 +78,7 @@ const RangeCard = ({
 
 const styles = StyleSheet.create({
   inspectionBox: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     minHeight: 10,
     padding: 20,

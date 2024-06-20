@@ -3,6 +3,8 @@ import React, { useMemo, useState } from "react";
 import AppText from "../text/Text";
 import { RadioGroup } from "react-native-radio-buttons-group";
 import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
+import { colors } from "../../constants/colors";
+import { mainStyles } from "../../constants/style";
 
 const SelectCard = ({
   indicator,
@@ -22,13 +24,13 @@ const SelectCard = ({
         id: "1",
         label: "Yes",
         value: true,
-        color: "#003790",
+        color: colors.blue,
       },
       {
         id: "2",
         label: "No",
         value: false,
-        color: "#003790",
+        color: colors.blue,
       },
     ],
     []
@@ -42,7 +44,7 @@ const SelectCard = ({
 
   return (
     <View style={styles.inspectionBox}>
-      <AppText fontSize={12} color={"#1d1d1d"} lineHeight={18} maxWidth={218}>
+      <AppText fontSize={mainStyles.h2FontSize} color={"#1d1d1d"} lineHeight={18} maxWidth={218}>
         {num + 1}. {indicator}
       </AppText>
       <RadioGroup
@@ -70,7 +72,7 @@ export default SelectCard;
 
 const styles = StyleSheet.create({
   inspectionBox: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     minHeight: 10,
     padding: 20,

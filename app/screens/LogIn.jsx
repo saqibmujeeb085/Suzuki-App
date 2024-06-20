@@ -56,6 +56,8 @@ const LogIn = ({ navigation }) => {
   useEffect(() => {
     if (selectedDealership) {
       fetchDealershipUserNames();
+    }else{
+      setDealershipUserList([])
     }
   }, [selectedDealership]);
 
@@ -92,6 +94,7 @@ const LogIn = ({ navigation }) => {
   };
 
   const fetchDealershipUserNames = async () => {
+   
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -116,6 +119,7 @@ const LogIn = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching dealership data:", error);
     }
+  
   };
 
   const handleUserLogin = async () => {

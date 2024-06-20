@@ -17,6 +17,8 @@ import { AuthContext } from "../context/authContext";
 import axios from "axios";
 import ToastManager from "toastify-react-native";
 import SkeletonLoader from "../components/skeletonLoader/SkeletonLoader";
+import { colors } from "../constants/colors";
+import { mainStyles } from "../constants/style";
 
 const Home = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
@@ -77,13 +79,13 @@ const Home = ({ navigation }) => {
         <View style={styles.customerSummarycontainer}>
           <View style={styles.customerDetailsAndLogout}>
             <View style={styles.customerDetails}>
-              <AppText color={"white"} fontSize={16}>
+              <AppText color={colors.fontWhite} fontSize={16}>
                 {userData?.user?.dname}
               </AppText>
-              <AppText color={"#cccccc"} fontSize={10}>
+              <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 User ID: {userData?.user?.duserid}
               </AppText>
-              <AppText color={"#cccccc"} fontSize={10}>
+              <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Name: {userData?.user?.userName}
               </AppText>
             </View>
@@ -92,7 +94,7 @@ const Home = ({ navigation }) => {
                 <Image
                   source={require("../assets/componentsImages/logout.png")}
                 />
-                <AppText color={"white"} fontSize={8}>
+                <AppText color={colors.fontWhite} fontSize={mainStyles.h4FontSize}>
                   Logout
                 </AppText>
               </View>
@@ -101,34 +103,34 @@ const Home = ({ navigation }) => {
           <View style={styles.breakLine} />
           <View style={styles.summaryContainer}>
             <View style={styles.summaryBox}>
-              <AppText color={"#cccccc"} fontSize={10}>
+              <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Registrations
               </AppText>
-              <AppText color={"white"} fontSize={14}>
+              <AppText color={colors.fontWhite} fontSize={mainStyles.h1FontSize}>
                 2,000K
               </AppText>
             </View>
             <View style={styles.summaryBox}>
-              <AppText color={"#cccccc"} fontSize={10}>
+              <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Purchases
               </AppText>
-              <AppText color={"white"} fontSize={14}>
+              <AppText color={colors.fontWhite} fontSize={mainStyles.h1FontSize}>
                 1,500
               </AppText>
             </View>
             <View style={styles.summaryBox}>
-              <AppText color={"#cccccc"} fontSize={10}>
+              <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Sales
               </AppText>
-              <AppText color={"white"} fontSize={14}>
+              <AppText color={colors.fontWhite} fontSize={mainStyles.h1FontSize}>
                 1,200
               </AppText>
             </View>
             <View style={styles.summaryBox}>
-              <AppText color={"#cccccc"} fontSize={10}>
+              <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Downloads
               </AppText>
-              <AppText color={"white"} fontSize={14}>
+              <AppText color={colors.fontWhite} fontSize={mainStyles.h1FontSize}>
                 10,23
               </AppText>
             </View>
@@ -139,14 +141,14 @@ const Home = ({ navigation }) => {
         <View style={styles.headingAndButton}>
           <View style={styles.headingWithIcon}>
             <Image source={require("../assets/componentsImages/recent.png")} />
-            <AppText fontSize={12} color={"#323232"}>
+            <AppText fontSize={mainStyles.h2FontSize} color={"#323232"}>
               Recent Inspections
             </AppText>
           </View>
           <IconButton
             icon={"format-list-bulleted"}
             color={"#323232"}
-            fontSize={12}
+            fontSize={mainStyles.h2FontSize}
             onPress={() => navigation.navigate("Reports")}
           >
             View All
@@ -204,6 +206,7 @@ const styles = StyleSheet.create({
   customerSummarycontainerbackgroundImage: {
     marginLeft: 20,
     marginRight: 20,
+    marginTop: 10,
     borderRadius: 10,
     overflow: "hidden",
   },

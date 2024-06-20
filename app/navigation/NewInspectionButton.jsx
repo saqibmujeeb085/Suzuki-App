@@ -2,6 +2,7 @@ import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import AppText from "../components/text/Text";
+import { mainStyles } from "../constants/style";
 
 const NewInspectionButton = ({ onPress }) => {
   return (
@@ -13,10 +14,10 @@ const NewInspectionButton = ({ onPress }) => {
           end={[0.6, 1]}
           style={styles.gredientButton}
         >
-          <AppText color={"white"} fontSize={12}>
+          <AppText color={"white"} fontSize={mainStyles.h2FontSize}>
             Start
           </AppText>
-          <AppText color={"white"} fontSize={12}>
+          <AppText color={"white"} fontSize={mainStyles.h2FontSize}>
             New
           </AppText>
         </LinearGradient>

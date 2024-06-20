@@ -19,6 +19,7 @@ const PasswordInput = ({ Error, ...inputType }) => {
           {...inputType}
           style={styles.inputField}
           secureTextEntry={!isPasswordVisible}
+          placeholderTextColor={colors.fontBlack}
         />
         <TouchableOpacity
           style={styles.iconContainer}

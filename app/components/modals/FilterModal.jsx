@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Modal, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { Modal, StyleSheet, View, TouchableOpacity } from "react-native";
 import AppText from "../text/Text";
 import GradientButton from "../buttons/GradientButton";
 import Dropdown from "../formFields/Dropdown";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import axios from "axios";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors } from "../../constants/colors";
+import { mainStyles } from "../../constants/style";
 
-const FilterModal = ({ show = false, setShow = () => {}, onFilter }) => {
+const FilterModal = ({ show = false, setShow , onFilter }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [isStartDatePickerVisible, setStartDatePickerVisibility] =
-    useState(false);
+  const [isStartDatePickerVisible, setStartDatePickerVisibility] = useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
 
   const [manufacturers, setManufacturers] = useState([]);
@@ -27,6 +28,7 @@ const FilterModal = ({ show = false, setShow = () => {}, onFilter }) => {
     setStartDate(date);
     setStartDatePickerVisibility(false);
   };
+
   const handleConfirmEndDate = (date) => {
     setEndDate(date);
     setEndDatePickerVisibility(false);
@@ -35,12 +37,15 @@ const FilterModal = ({ show = false, setShow = () => {}, onFilter }) => {
   const CarColorSelected = (selected) => {
     setCarColor(selected);
   };
+
   const ManufacturerSelected = (selected) => {
     setManufacturer(selected);
   };
+
   const CarModelSelected = (selected) => {
     setCarModel(selected);
   };
+
   const CarYearSelected = (selected) => {
     setCarYear(selected);
   };
@@ -181,8 +186,8 @@ const FilterModal = ({ show = false, setShow = () => {}, onFilter }) => {
 
           <View style={styles.FiltersInputs}>
             <View style={styles.Content}>
-              <AppText fontSize={12}>Filters</AppText>
-              <AppText fontSize={10}>Add filters for more accuracy</AppText>
+              <AppText fontSize={mainStyles.h2FontSize}>Filters</AppText>
+              <AppText fontSize={mainStyles.h3FontSize}>Add filters for more accuracy</AppText>
             </View>
             <View style={styles.Inputs}>
               <Dropdown
@@ -214,7 +219,7 @@ const FilterModal = ({ show = false, setShow = () => {}, onFilter }) => {
               />
               <View style={styles.DatePickers}>
                 <View style={styles.datePickerContainer}>
-                  <AppText fontSize={10} marginBottom={5}>
+                  <AppText fontSize={mainStyles.h3FontSize} marginBottom={5}>
                     Start Date
                   </AppText>
                   <TouchableOpacity
@@ -240,7 +245,7 @@ const FilterModal = ({ show = false, setShow = () => {}, onFilter }) => {
                   />
                 </View>
                 <View style={styles.datePickerContainer}>
-                  <AppText fontSize={10} marginBottom={5}>
+                  <AppText fontSize={mainStyles.h3FontSize} marginBottom={5}>
                     End Date
                   </AppText>
                   <TouchableOpacity
@@ -278,7 +283,7 @@ const FilterModal = ({ show = false, setShow = () => {}, onFilter }) => {
   );
 };
 
-export default React.memo(FilterModal);
+export default FilterModal;
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -290,7 +295,7 @@ const styles = StyleSheet.create({
   modalBox: {
     width: 300,
     borderRadius: 5,
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     paddingHorizontal: 20,
     paddingVertical: 35,
     gap: 15,

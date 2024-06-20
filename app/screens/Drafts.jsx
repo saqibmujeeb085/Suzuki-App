@@ -7,26 +7,25 @@ import { AuthContext } from "../context/authContext";
 import DraftInspectionCard from "../components/card/DraftInspectionCard";
 import { useFocusEffect } from "@react-navigation/native";
 import SkeletonLoader from "../components/skeletonLoader/SkeletonLoader";
+import { mainStyles } from "../constants/style";
 
 const Drafts = ({ navigation }) => {
   const [userData] = useContext(AuthContext);
-  const [inspectedCar, setInspectedCar] = useState([]);
+  const [fullData, setFullData] = useState([]);
+  const [displayData, setDisplayData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
 
-  useEffect(() => {
-    inspectedCar.forEach((item) => {
-      if (item.images && item.images.length > 0) {
-        console.log(item.images[0].path);
-      }
-    });
-  }, [inspectedCar]);
 
   // Function to fetch inspected cars data
   const fetchInspectedCars = useCallback(
     async (hardRefresh = false) => {
       if (hardRefresh) {
-        setInspectedCar([]); // Clear the cache for a hard refresh
+        setFullData([]); // Clear the cache for a hard refresh
+        setPage(1); // Reset the page to 1 for a hard refresh
       }
       setRefreshing(true); // Start refreshing
       const config = {
@@ -37,7 +36,8 @@ const Drafts = ({ navigation }) => {
       };
       try {
         const response = await axios.request(config);
-        setInspectedCar(response.data);
+        setFullData(response.data);
+        setDisplayData(response.data.slice(0, itemsPerPage));
       } catch (error) {
         console.error(error);
       } finally {
@@ -55,17 +55,23 @@ const Drafts = ({ navigation }) => {
     }, [fetchInspectedCars])
   );
 
-  // Load data from state initially and clear cache
-  // useEffect(() => {
-  //   setLoading(true); // Set loading to true
-  //   fetchInspectedCars(); // Fetch fresh data
-  // }, []);
+  const loadMoreData = () => {
+    setLoadingMore(true);
+    const nextPage = page + 1;
+    const startIndex = nextPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const moreData = fullData.slice(startIndex, endIndex);
+
+    setDisplayData((prev) => [...prev, ...moreData]);
+    setPage(nextPage);
+    setLoadingMore(false);
+  };
 
   return (
     <AppScreen>
       <View style={styles.recentInspectionContainer}>
         <View style={styles.headingAndButton}>
-          <AppText fontSize={14} color={"#323232"}>
+          <AppText fontSize={mainStyles.h1FontSize} color={"#323232"}>
             Draft Inspections
           </AppText>
         </View>
@@ -90,8 +96,8 @@ const Drafts = ({ navigation }) => {
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             style={{ marginTop: 20, marginBottom: 30 }}
-            data={inspectedCar}
-            extraData={inspectedCar}
+            data={displayData}
+            extraData={displayData}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <DraftInspectionCard
@@ -108,6 +114,9 @@ const Drafts = ({ navigation }) => {
             )}
             refreshing={refreshing}
             onRefresh={() => fetchInspectedCars(true)}
+            onEndReached={loadMoreData}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={loadingMore ? <SkeletonLoader /> : null}
           />
         )}
       </View>

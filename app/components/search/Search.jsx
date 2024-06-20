@@ -1,15 +1,16 @@
 import { StyleSheet, TextInput, View } from "react-native";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors } from "../../constants/colors";
 
 const Search = ({ searchQuery, setSearchQuery }) => {
   return (
     <View style={styles.searchConatiner}>
       <View style={styles.search}>
-        <MaterialCommunityIcons name="magnify" size={20} color={"#BBBBBB"} />
+        <MaterialCommunityIcons name="magnify" size={20} color={colors.fontGrey} />
         <TextInput
           autoComplete="off"
-          placeholderTextColor={"#BBBBBB"}
+          placeholderTextcolor={colors.fontGrey}
           style={styles.searchInput}
           placeholder="Search report Here"
           value={searchQuery}
@@ -25,7 +26,7 @@ export default Search;
 const styles = StyleSheet.create({
   searchConatiner: {
     padding: 20,
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     overflow: "hidden",
     width: "100%",

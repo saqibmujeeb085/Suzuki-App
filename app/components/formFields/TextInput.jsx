@@ -32,7 +32,7 @@ export default AppTextInput;
 const styles = StyleSheet.create({
   inputField: {
     fontSize: mainStyles.h3FontSize.fontSize,
-    color: colors.fontGrey,
+    color: colors.fontBlack,
     backgroundColor: colors.whiteBg,
     paddingHorizontal: 20,
     paddingVertical: 15,
@@ -45,5 +45,6 @@ const styles = StyleSheet.create({
   textFieldBox: {
     gap: 5,
     minWidth: "48.5%",
+    flex: 1,
   },
 });

@@ -12,6 +12,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../text/Text";
 import { mainStyles } from "../../constants/style";
+import { colors } from "../../constants/colors";
 
 const InspectionImagePicker = ({
   onImageSelected = () => {}, // Default prop to an empty function
@@ -71,9 +72,9 @@ const InspectionImagePicker = ({
           <View key={index} style={styles.imageContainer}>
             <Image source={{ uri: image.uri }} style={styles.image} />
             <AppText
-              fontSize={12}
+              fontSize={mainStyles.h2FontSize}
               width={200}
-              color={"#000"}
+              color={colors.fontBlack}
               numberOfLines={1}
               ellipsizeMode="tail"
             >
@@ -90,10 +91,10 @@ const InspectionImagePicker = ({
         {images.length < 1 && (
           <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
             <View style={styles.uploadButton}>
-              <AppText color={"#BBBBBB"} fontSize={10}>
+              <AppText color={colors.fontGrey} fontSize={mainStyles.h3FontSize}>
                 Upload Image (jpeg, png, jpg)
               </AppText>
-              <Feather name="upload" size={12} color={"#BBBBBB"} />
+              <Feather name="upload" size={12} color={colors.fontGrey} />
             </View>
           </TouchableWithoutFeedback>
         )}
@@ -120,13 +121,13 @@ const InspectionImagePicker = ({
             <View style={styles.chooseBox}>
               <TouchableOpacity onPress={pickImage}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="image-outline" size={25} color={"#000"} />
+                  <Ionicons name="image-outline" size={25} color={colors.fontBlack} />
                   <AppText fontSize={mainStyles.h2FontSize}>Gallery</AppText>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={captureImage}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="camera-outline" size={25} color={"#000"} />
+                  <Ionicons name="camera-outline" size={25} color={colors.fontBlack} />
                   <AppText fontSize={mainStyles.h2FontSize}>Camera</AppText>
                 </View>
               </TouchableOpacity>
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   imageContainer: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     elevation: 2,
     marginVertical: 5,
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   uploadButton: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     height: 50,
     justifyContent: "space-between",
     alignItems: "center",
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     padding: 20,
     width: 300,

@@ -78,12 +78,16 @@ const CarDetails = ({ navigation }) => {
   useEffect(() => {
     if (manufacturer >= 1) {
       fetchCarModel();
+    }else{
+      setCarModels([])
     }
   }, [manufacturer]);
 
   useEffect(() => {
     if (carModel >= 1) {
       fetchCarVarient();
+    }else{
+      setCarVarients([])
     }
   }, [carModel]);
 

@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientButton from "../buttons/GradientButton";
 import { TouchableOpacity } from "react-native";
 import { colors } from "../../constants/colors";
+import { mainStyles } from "../../constants/style";
 
 const ProcessModal = ({
   heading,
@@ -41,7 +42,7 @@ const ProcessModal = ({
             >
               {heading}
             </AppText>
-            <AppText fontSize={10} color={"#1D1D1D"} textAlign={"center"}>
+            <AppText fontSize={mainStyles.h3FontSize} color={"#1D1D1D"} textAlign={"center"}>
               {text}
             </AppText>
           </View>
@@ -50,7 +51,7 @@ const ProcessModal = ({
               {pbtn}
             </GradientButton>
             <TouchableOpacity onPress={sbtnPress}>
-              <AppText textAlign={"center"} color={sbtnColor} fontSize={12}>
+              <AppText textAlign={"center"} color={sbtnColor} fontSize={mainStyles.h2FontSize}>
                 {sbtn}
               </AppText>
             </TouchableOpacity>

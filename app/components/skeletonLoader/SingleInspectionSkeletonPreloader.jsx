@@ -76,7 +76,7 @@ const SingleInspectionSkeletonPreloader = () => {
 
 const styles = StyleSheet.create({
   inspectionBox: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     padding: 20,
     gap: 20,

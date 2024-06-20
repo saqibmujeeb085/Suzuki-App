@@ -16,6 +16,8 @@ import InspectionBoardCard from "../../components/card/InspectionBoardCard";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import InspectionSkeletonPreloader from "../../components/skeletonLoader/InspectionSkeletonPreloader";
+import { mainStyles } from "../../constants/style";
+import { colors } from "../../constants/colors";
 
 const InspectionBoard = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -101,7 +103,7 @@ const InspectionBoard = ({ navigation, route }) => {
       )}
 
       <View style={styles.headingContainer}>
-        <AppText fontSize={12}>Inspection Board</AppText>
+        <AppText fontSize={mainStyles.h2FontSize}>Inspection Board</AppText>
       </View>
       <ScrollView>
         <ImageBackground
@@ -111,10 +113,10 @@ const InspectionBoard = ({ navigation, route }) => {
           <View style={styles.customerSummarycontainer}>
             <View style={styles.customerDetailsAndLogout}>
               <View style={styles.customerDetails}>
-                <AppText color={"white"} fontSize={12}>
+                <AppText color={"white"} fontSize={mainStyles.h2FontSize}>
                   Suzuki Mehran
                 </AppText>
-                <AppText color={"#BBBBBB"} fontSize={10}>
+                <AppText color={colors.fontGrey} fontSize={mainStyles.h3FontSize}>
                   Customer: Saad Rehman
                 </AppText>
               </View>
@@ -124,10 +126,10 @@ const InspectionBoard = ({ navigation, route }) => {
                     source={require("../../assets/componentsImages/timer.png")}
                   />
                   <View style={styles.time}>
-                    <AppText color={"white"} fontSize={8}>
+                    <AppText color={"white"} fontSize={mainStyles.h4FontSize}>
                       Time Left
                     </AppText>
-                    <AppText color={"white"} fontSize={12}>
+                    <AppText color={"white"} fontSize={mainStyles.h2FontSize}>
                       19:25
                     </AppText>
                   </View>
@@ -137,34 +139,34 @@ const InspectionBoard = ({ navigation, route }) => {
             <View style={styles.breakLine} />
             <View style={styles.summaryContainer}>
               <View style={styles.summaryBox}>
-                <AppText color={"#cccccc"} fontSize={10}>
+                <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                   Mileage
                 </AppText>
-                <AppText color={"white"} fontSize={10}>
+                <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
                   133319 km
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
-                <AppText color={"#cccccc"} fontSize={10}>
+                <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                   Year
                 </AppText>
-                <AppText color={"white"} fontSize={10}>
+                <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
                   2004
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
-                <AppText color={"#cccccc"} fontSize={10}>
+                <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                   Color
                 </AppText>
-                <AppText color={"white"} fontSize={10}>
+                <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
                   True Blue
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
-                <AppText color={"#cccccc"} fontSize={10}>
+                <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                   Engine
                 </AppText>
-                <AppText color={"white"} fontSize={10}>
+                <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
                   996 cc
                 </AppText>
               </View>
@@ -174,15 +176,15 @@ const InspectionBoard = ({ navigation, route }) => {
         <View style={styles.InspectionBoardContainer}>
           <View style={styles.headingAndButton}>
             <View style={styles.headingWithIcon}>
-              <AppText fontSize={12} color={"#323232"}>
+              <AppText fontSize={mainStyles.h2FontSize} color={"#323232"}>
                 Inspection Details
               </AppText>
             </View>
             <IconButton
               onPress={ShowModal}
               icon={"cancel"}
-              color={"#D70000"}
-              fontSize={12}
+              color={colors.fontRed}
+              fontSize={mainStyles.h2FontSize}
             >
               Discard
             </IconButton>

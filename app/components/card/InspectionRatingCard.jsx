@@ -30,8 +30,8 @@ const InspectionRatingCard = ({ category, indicators }) => {
             {indicators.map((item) => (
               <View key={item?.id} style={styles.infoContainer}>
                 <AppText
-                  minWidth={150}
-                  maxWidth={150}
+                  minWidth={120}
+                  maxWidth={120}
                   fontSize={mainStyles.h3FontSize}
                 >
                   {item?.indicators}
@@ -40,8 +40,8 @@ const InspectionRatingCard = ({ category, indicators }) => {
                 {item.data.map((dataItem) => (
                   <View
                     key={dataItem.insID}
-                    minWidth={150}
-                    maxWidth={150}
+                    minWidth={120}
+                    maxWidth={120}
                     style={styles.dataContainer}
                   >
                     <AppText
@@ -69,7 +69,7 @@ export default InspectionRatingCard;
 
 const styles = StyleSheet.create({
   accordionContainer: {
-    backgroundColor: "white",
+    backgroundColor: colors.whiteBg,
     borderRadius: 5,
     elevation: 2,
   },
