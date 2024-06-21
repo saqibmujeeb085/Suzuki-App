@@ -18,6 +18,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import InspectionSkeletonPreloader from "../../components/skeletonLoader/InspectionSkeletonPreloader";
 import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
+import InspectionHeader from "../../components/header/InspectionHeader";
 
 const InspectionBoard = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -85,6 +86,41 @@ const InspectionBoard = ({ navigation, route }) => {
     }, [id]) // Ensure dependencies are set correctly
   );
 
+  const catIcons = [
+    {
+      id: "1",
+      icon: "steering",
+    },
+    {
+      id: "2",
+      icon: "car",
+    },
+    {
+      id: "3",
+      icon: "car-clutch",
+    },
+    {
+      id: "4",
+      icon: "car-door",
+    },
+    {
+      id: "5",
+      icon: "engine-outline",
+    },
+    {
+      id: "6",
+      icon: "car-brake-worn-linings",
+    },
+    {
+      id: "7",
+      icon: "tools",
+    },
+    {
+      id: "8",
+      icon: "car-side",
+    },
+  ];
+
   return (
     <AppScreen>
       {show && (
@@ -102,10 +138,13 @@ const InspectionBoard = ({ navigation, route }) => {
         />
       )}
 
-      <View style={styles.headingContainer}>
+      {/* <View style={styles.headingContainer}>
         <AppText fontSize={mainStyles.h2FontSize}>Inspection Board</AppText>
-      </View>
-      <ScrollView>
+      </View> */}
+      <InspectionHeader backIcon={false} borderBottom={false}>
+        Inspection Board
+      </InspectionHeader>
+      <ScrollView style={{ marginBottom: 90 }}>
         <ImageBackground
           style={styles.customerSummarycontainerbackgroundImage}
           source={require("../../assets/componentsImages/summaryBackground.png")}
@@ -113,10 +152,16 @@ const InspectionBoard = ({ navigation, route }) => {
           <View style={styles.customerSummarycontainer}>
             <View style={styles.customerDetailsAndLogout}>
               <View style={styles.customerDetails}>
-                <AppText color={"white"} fontSize={mainStyles.h2FontSize}>
+                <AppText
+                  color={colors.fontWhite}
+                  fontSize={mainStyles.h2FontSize}
+                >
                   Suzuki Mehran
                 </AppText>
-                <AppText color={colors.fontGrey} fontSize={mainStyles.h3FontSize}>
+                <AppText
+                  color={colors.fontGrey}
+                  fontSize={mainStyles.h3FontSize}
+                >
                   Customer: Saad Rehman
                 </AppText>
               </View>
@@ -126,10 +171,16 @@ const InspectionBoard = ({ navigation, route }) => {
                     source={require("../../assets/componentsImages/timer.png")}
                   />
                   <View style={styles.time}>
-                    <AppText color={"white"} fontSize={mainStyles.h4FontSize}>
+                    <AppText
+                      color={colors.fontWhite}
+                      fontSize={mainStyles.h4FontSize}
+                    >
                       Time Left
                     </AppText>
-                    <AppText color={"white"} fontSize={mainStyles.h2FontSize}>
+                    <AppText
+                      color={colors.fontWhite}
+                      fontSize={mainStyles.h2FontSize}
+                    >
                       19:25
                     </AppText>
                   </View>
@@ -139,34 +190,58 @@ const InspectionBoard = ({ navigation, route }) => {
             <View style={styles.breakLine} />
             <View style={styles.summaryContainer}>
               <View style={styles.summaryBox}>
-                <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
+                <AppText
+                  color={colors.fontGrey}
+                  fontSize={mainStyles.h3FontSize}
+                >
                   Mileage
                 </AppText>
-                <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
+                <AppText
+                  color={colors.fontWhite}
+                  fontSize={mainStyles.h3FontSize}
+                >
                   133319 km
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
-                <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
+                <AppText
+                  color={colors.fontGrey}
+                  fontSize={mainStyles.h3FontSize}
+                >
                   Year
                 </AppText>
-                <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
+                <AppText
+                  color={colors.fontWhite}
+                  fontSize={mainStyles.h3FontSize}
+                >
                   2004
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
-                <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
+                <AppText
+                  color={colors.fontGrey}
+                  fontSize={mainStyles.h3FontSize}
+                >
                   Color
                 </AppText>
-                <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
+                <AppText
+                  color={colors.fontWhite}
+                  fontSize={mainStyles.h3FontSize}
+                >
                   True Blue
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
-                <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
+                <AppText
+                  color={colors.fontGrey}
+                  fontSize={mainStyles.h3FontSize}
+                >
                   Engine
                 </AppText>
-                <AppText color={"white"} fontSize={mainStyles.h3FontSize}>
+                <AppText
+                  color={colors.fontWhite}
+                  fontSize={mainStyles.h3FontSize}
+                >
                   996 cc
                 </AppText>
               </View>
@@ -182,11 +257,11 @@ const InspectionBoard = ({ navigation, route }) => {
             </View>
             <IconButton
               onPress={ShowModal}
-              icon={"cancel"}
-              color={colors.fontRed}
+              icon={"av-timer"}
+              color={colors.fontBlack}
               fontSize={mainStyles.h2FontSize}
             >
-              Discard
+              Save For Later
             </IconButton>
           </View>
           {loading ? (
@@ -204,6 +279,10 @@ const InspectionBoard = ({ navigation, route }) => {
                   (cat) => cat.catId === item.id
                 );
 
+                console.log(checkCategory);
+
+                const checkIcon = catIcons.find((icon) => icon.id === item.id);
+                console.log(checkIcon);
                 return (
                   <InspectionBoardCard
                     key={item.id}
@@ -212,6 +291,7 @@ const InspectionBoard = ({ navigation, route }) => {
                       checkCategory ? checkCategory.inspectionIsDone : false
                     }
                     Rating={checkCategory ? checkCategory.Rating : ""}
+                    icon={checkIcon?.icon}
                     onPress={() =>
                       navigation.navigate("SingleInspection", {
                         carid: id,
@@ -222,18 +302,15 @@ const InspectionBoard = ({ navigation, route }) => {
                   />
                 );
               })}
-              <View style={styles.inspectionButton}>
-                <GradientButton
-                  onPress={changeStatus}
-                  disabled={!allInspectionsDone}
-                >
-                  Submit Inspection Report
-                </GradientButton>
-              </View>
             </View>
           )}
         </View>
       </ScrollView>
+      <View style={styles.formButton}>
+        <GradientButton onPress={changeStatus} disabled={!allInspectionsDone}>
+          Submit Inspection Report
+        </GradientButton>
+      </View>
     </AppScreen>
   );
 };
@@ -302,5 +379,12 @@ const styles = StyleSheet.create({
   },
   inspectionButton: {
     marginTop: 10,
+  },
+  formButton: {
+    position: "absolute",
+    bottom: 0,
+    padding: 20,
+    width: "100%",
+    backgroundColor: colors.ligtGreyBg,
   },
 });

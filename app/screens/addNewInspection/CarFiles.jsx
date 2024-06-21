@@ -21,6 +21,8 @@ const CarFiles = ({ navigation }) => {
 
   const [currentDateTime, setCurrentDateTime] = useState("");
 
+  // console.log("hello", selectedImages);
+
   const [show, setShow] = useState(false);
   const ShowModal = () => {
     setShow(!show);
@@ -51,8 +53,6 @@ const CarFiles = ({ navigation }) => {
       ...prevData,
       inspectionDate: newDateTime,
     }));
-
-    console.log(newDateTime);
 
     if (selectedImages.length > 0 || selectedDocuments.length > 0) {
       let data = new FormData();
@@ -206,8 +206,8 @@ const CarFiles = ({ navigation }) => {
 
   return (
     <AppScreen>
-        {show && (
-          <ProcessModal
+      {show && (
+        <ProcessModal
           show={show}
           setShow={setShow}
           icon
@@ -218,21 +218,24 @@ const CarFiles = ({ navigation }) => {
           pbtnPress={postCarDetails}
           sbtn={"Save for later"}
           sbtnPress={postCarDetailsAsDraft}
-          />
-        )}
-        <InspectionHeader rightText={"Cancel"} onPress={() => navigation.goBack()}>
-          Uploads
-        </InspectionHeader>
-          <ScrollView>
+        />
+      )}
+      <InspectionHeader
+        rightText={"Cancel"}
+        onPress={() => navigation.goBack()}
+      >
+        Uploads
+      </InspectionHeader>
+      <ScrollView>
         <View style={styles.UploadScreenContainer}>
-          <AppText fontSize={mainStyles.h3FontSize} textAlign={"center"}>
+          {/* <AppText fontSize={mainStyles.h3FontSize} textAlign={"center"}>
             Upload Car Images
-          </AppText>
+          </AppText> */}
           <AppImagePicker
             onImagesSelected={handleImagesSelected}
             onRemoveImage={handleRemoveImage} // Pass the remove image handler
           />
-          <AppText fontSize={mainStyles.h3FontSize} textAlign={"center"} marginTop={20}>
+          <AppText fontSize={mainStyles.h3FontSize} marginTop={20}>
             Upload Car Documents
           </AppText>
           <AppDocumentPicker
@@ -241,14 +244,14 @@ const CarFiles = ({ navigation }) => {
           />
         </View>
       </ScrollView>
-          <View style={styles.formButton}>
-            <GradientButton
-              onPress={ShowModal}
-              disabled={!isImageUploaded || loading}
-            >
-              Start Inspection
-            </GradientButton>
-          </View>
+      <View style={styles.formButton}>
+        <GradientButton
+          onPress={ShowModal}
+          disabled={!isImageUploaded || loading}
+        >
+          Start Inspection
+        </GradientButton>
+      </View>
     </AppScreen>
   );
 };

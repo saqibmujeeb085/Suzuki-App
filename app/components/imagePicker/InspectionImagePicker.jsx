@@ -72,7 +72,7 @@ const InspectionImagePicker = ({
           <View key={index} style={styles.imageContainer}>
             <Image source={{ uri: image.uri }} style={styles.image} />
             <AppText
-              fontSize={mainStyles.h2FontSize}
+              fontSize={mainStyles.h3FontSize}
               width={200}
               color={colors.fontBlack}
               numberOfLines={1}
@@ -94,7 +94,7 @@ const InspectionImagePicker = ({
               <AppText color={colors.fontGrey} fontSize={mainStyles.h3FontSize}>
                 Upload Image (jpeg, png, jpg)
               </AppText>
-              <Feather name="upload" size={12} color={colors.fontGrey} />
+              <Feather name="upload" size={20} color={colors.fontGrey} />
             </View>
           </TouchableWithoutFeedback>
         )}
@@ -121,13 +121,21 @@ const InspectionImagePicker = ({
             <View style={styles.chooseBox}>
               <TouchableOpacity onPress={pickImage}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="image-outline" size={25} color={colors.fontBlack} />
+                  <Ionicons
+                    name="image-outline"
+                    size={25}
+                    color={colors.fontBlack}
+                  />
                   <AppText fontSize={mainStyles.h2FontSize}>Gallery</AppText>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={captureImage}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="camera-outline" size={25} color={colors.fontBlack} />
+                  <Ionicons
+                    name="camera-outline"
+                    size={25}
+                    color={colors.fontBlack}
+                  />
                   <AppText fontSize={mainStyles.h2FontSize}>Camera</AppText>
                 </View>
               </TouchableOpacity>

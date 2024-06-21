@@ -25,11 +25,12 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
       allowsEditing: false,
       quality: 0.5,
     });
-
+    console.log("hihi", result);
     if (!result.canceled) {
       const selectedImages = result.assets.map((asset) => ({
         uri: asset.uri,
         name: asset.uri.split("/").pop(),
+        type: asset.mimeType,
       }));
       addImages(selectedImages);
     }

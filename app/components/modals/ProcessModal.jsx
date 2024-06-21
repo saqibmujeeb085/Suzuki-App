@@ -9,7 +9,7 @@ import { mainStyles } from "../../constants/style";
 
 const ProcessModal = ({
   heading,
-  headingSize = 12,
+  headingSize = mainStyles.h3FontSize,
   text,
   pbtn,
   pbtnPress,
@@ -28,7 +28,7 @@ const ProcessModal = ({
             {icon && (
               <MaterialCommunityIcons
                 name="close"
-                size={14}
+                size={16}
                 color={"#1D1D1D"}
                 onPress={() => setShow(!show)}
               />
@@ -42,16 +42,24 @@ const ProcessModal = ({
             >
               {heading}
             </AppText>
-            <AppText fontSize={mainStyles.h3FontSize} color={"#1D1D1D"} textAlign={"center"}>
+            <AppText
+              fontSize={mainStyles.h3FontSize}
+              color={"#1D1D1D"}
+              textAlign={"center"}
+            >
               {text}
             </AppText>
           </View>
           <View style={styles.modalButtons}>
-            <GradientButton size={10} onPress={pbtnPress}>
+            <GradientButton size={mainStyles.h3FontSize} onPress={pbtnPress}>
               {pbtn}
             </GradientButton>
             <TouchableOpacity onPress={sbtnPress}>
-              <AppText textAlign={"center"} color={sbtnColor} fontSize={mainStyles.h2FontSize}>
+              <AppText
+                textAlign={"center"}
+                color={sbtnColor}
+                fontSize={mainStyles.h2FontSize}
+              >
                 {sbtn}
               </AppText>
             </TouchableOpacity>
@@ -72,7 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#00000060",
   },
   modalBox: {
-    width: 280,
+    width: 300,
     borderRadius: 5,
     backgroundColor: colors.whiteBg,
     paddingHorizontal: 30,

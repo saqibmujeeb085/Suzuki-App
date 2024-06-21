@@ -9,7 +9,7 @@ const IconButton = ({ icon, onPress, color = colors.fontBlack, children }) => {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.6}>
       <View style={styles.iconButtonContainer}>
-        {icon && <MaterialCommunityIcons name={icon} size={16} color={color} />}
+        {icon && <MaterialCommunityIcons name={icon} size={20} color={color} />}
 
         <AppText color={color} fontSize={mainStyles.h3FontSize}>
           {children}
@@ -26,6 +26,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 6,
+    gap: 0,
   },
 });

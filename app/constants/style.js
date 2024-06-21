@@ -2,7 +2,7 @@ export const mainStyles = {
   appFontRegular: "suzukiRegular",
   appFontBold: "suzukiBold",
   ratingFontSize: 20,
-  pageHeadingFont: 30,
+  pageHeadingFont: 24,
   CardImageSize: 80,
   RatingFont: 25,
   h1FontSize: 21,

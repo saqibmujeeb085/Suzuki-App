@@ -9,11 +9,13 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo-google-fonts/poppins": "^0.2.3",
     "@expo/config-plugins": "~8.0.0",
     "@expo/metro-config": "~0.18.1",
     "@expo/prebuild-config": "~7.0.0",
     "@expo/vector-icons": "^14.0.0",
     "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-community/datetimepicker": "8.0.1",
     "@react-native-community/slider": "4.5.2",
     "@react-navigation/bottom-tabs": "^6.5.16",
     "@react-navigation/native": "^6.1.14",
@@ -43,8 +45,7 @@
     "react-native-screens": "3.31.1",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-svg": "15.2.0",
-    "toastify-react-native": "^5.0.0",
-    "@react-native-community/datetimepicker": "8.0.1"
+    "toastify-react-native": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

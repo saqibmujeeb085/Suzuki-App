@@ -6,6 +6,13 @@ import { AuthProvider } from "./app/context/authContext";
 import * as SplashScreen from "expo-splash-screen";
 import { InspecteCarProvider } from "./app/context/newInspectionContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  useFonts as useGoogleFonts,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+} from "@expo-google-fonts/poppins";
+import { Text } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -13,6 +20,9 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     suzukiRegular: require("./app/assets/fonts/Suzuki-Regular.ttf"),
     suzukiBold: require("./app/assets/fonts/Suzuki-Bold.ttf"),
+    poppins_regular: Poppins_400Regular,
+    poppins_medium: Poppins_500Medium,
+    poppins_semiBold: Poppins_600SemiBold,
   });
 
   const onLayoutRootView = useCallback(async () => {

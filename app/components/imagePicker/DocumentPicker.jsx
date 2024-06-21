@@ -97,9 +97,7 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
       onDocumentsSelected(updatedDocs);
       return updatedDocs;
     });
-  };
-
-  console.log("Documents to render:", documents); // Log documents before rendering
+  }; // Log documents before rendering
 
   return (
     <ScrollView>
@@ -125,10 +123,10 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
         ))}
         <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
           <View style={styles.uploadButton}>
-            <AppText color={colors.fontGrey} fontSize={mainStyles.h3FontSize}>
-              Upload Document only in pdf or word file
+            <AppText color={colors.fontGrey} fontSize={mainStyles.h4FontSize}>
+              Upload Your Documents
             </AppText>
-            <Feather name="upload" size={12} color={colors.fontGrey} />
+            <Feather name="upload" size={20} color={colors.fontGrey} />
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -154,19 +152,31 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
             <View style={styles.chooseBox}>
               <TouchableOpacity onPress={pickDocument}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="document-outline" size={25} color={colors.fontBlack} />
+                  <Ionicons
+                    name="document-outline"
+                    size={25}
+                    color={colors.fontBlack}
+                  />
                   <AppText fontSize={16}>Document</AppText>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={pickImage}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="image-outline" size={25} color={colors.fontBlack} />
+                  <Ionicons
+                    name="image-outline"
+                    size={25}
+                    color={colors.fontBlack}
+                  />
                   <AppText fontSize={16}>Gallery</AppText>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity onPress={captureImage}>
                 <View style={styles.modalButton}>
-                  <Ionicons name="camera-outline" size={25} color={colors.fontBlack} />
+                  <Ionicons
+                    name="camera-outline"
+                    size={25}
+                    color={colors.fontBlack}
+                  />
                   <AppText fontSize={16}>Camera</AppText>
                 </View>
               </TouchableOpacity>

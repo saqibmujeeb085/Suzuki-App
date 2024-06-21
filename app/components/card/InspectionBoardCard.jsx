@@ -6,7 +6,14 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
 
-const InspectionBoardCard = ({ name, onPress, Rating, inspectionIsDone }) => {
+const InspectionBoardCard = ({
+  icon,
+  name,
+  onPress,
+  Rating,
+  inspectionIsDone,
+}) => {
+  console.log(icon);
   return (
     <TouchableWithoutFeedback
       style={{ marginBottom: 10 }}
@@ -20,12 +27,17 @@ const InspectionBoardCard = ({ name, onPress, Rating, inspectionIsDone }) => {
       >
         <View style={styles.inpsectionContent}>
           <MaterialCommunityIcons
-            name="car-clutch"
+            name={icon}
             color={colors.fontBlack}
-            size={20}
+            size={30}
           />
           <View style={styles.inpectionContentText}>
-            <AppText color={colors.fontBlack} fontSize={mainStyles.h3FontSize}>
+            <AppText
+              color={colors.fontBlack}
+              fontFamily={mainStyles.appFontBold}
+              fontSize={mainStyles.h3FontSize}
+              maxWidth={200}
+            >
               {name}
             </AppText>
             <AppText color={colors.fontGrey} fontSize={mainStyles.h4FontSize}>
@@ -36,14 +48,14 @@ const InspectionBoardCard = ({ name, onPress, Rating, inspectionIsDone }) => {
         <View style={styles.inpsectionRating}>
           <AppText
             color={colors.fontGrey}
-            fontSize={mainStyles.h4FontSize}
+            fontSize={mainStyles.h3FontSize}
             textAlign={"right"}
           >
             Overall Rating
           </AppText>
           <AppText
             color={colors.fontBlack}
-            fontSize={mainStyles.h2FontSize}
+            fontSize={mainStyles.h3FontSize}
             textAlign={"right"}
           >
             {Rating ? Rating : "NaN"} / 10
@@ -71,7 +83,7 @@ const styles = StyleSheet.create({
   },
   inpsectionContent: {
     flexDirection: "row",
-    gap: 10,
+    gap: 15,
     alignItems: "center",
   },
   inpectionContentText: {

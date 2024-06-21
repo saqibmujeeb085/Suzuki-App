@@ -38,7 +38,10 @@
         {
           "fonts": [
             "./app/assets/fonts/Suzuki-Bold.ttf",
-            "./app/assets/fonts/Suzuki-Regular.ttf"
+            "./app/assets/fonts/Suzuki-Regular.ttf",
+            "node_modules/@expo-google-fonts/poppins/Poppins_400Regular.ttf",
+            "node_modules/@expo-google-fonts/poppins/Poppins_500Medium.ttf",
+            "node_modules/@expo-google-fonts/poppins/Poppins_600SemiBold.ttf"
           ]
         }
       ],

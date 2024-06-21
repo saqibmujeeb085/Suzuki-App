@@ -9,6 +9,7 @@ import GradientButton from "../../components/buttons/GradientButton";
 import SingleInspectionSkeletonPreloader from "../../components/skeletonLoader/SingleInspectionSkeletonPreloader";
 import ToastManager from "toastify-react-native";
 import { mainStyles } from "../../constants/style";
+import { colors } from "../../constants/colors";
 
 const SingleInspection = ({ navigation, route }) => {
   const { carid, catid, catName } = route.params || {};
@@ -152,14 +153,14 @@ const SingleInspection = ({ navigation, route }) => {
       }
     }
   };
-
+  console.log(catName);
   return (
     <AppScreen>
       <ToastManager />
       <InspectionHeader onPress={() => navigation.goBack()} rightBtn={"Next"}>
         {catName}
       </InspectionHeader>
-      <ScrollView>
+      <ScrollView style={{ marginBottom: 90 }}>
         {loading ? (
           <View style={styles.inspectionContainer}>
             {Array(10)
@@ -201,13 +202,14 @@ const SingleInspection = ({ navigation, route }) => {
                 />
               )
             )}
-
-            <GradientButton onPress={SubmitData} disabled={isButtonDisabled}>
-              Submit
-            </GradientButton>
           </View>
         )}
       </ScrollView>
+      <View style={styles.formButton}>
+        <GradientButton onPress={SubmitData} disabled={isButtonDisabled}>
+          Submit
+        </GradientButton>
+      </View>
     </AppScreen>
   );
 };
@@ -219,5 +221,12 @@ const styles = StyleSheet.create({
     gap: 20,
     paddingHorizontal: 20,
     marginBottom: 30,
+  },
+  formButton: {
+    position: "absolute",
+    bottom: 0,
+    padding: 20,
+    width: "100%",
+    backgroundColor: colors.ligtGreyBg,
   },
 });

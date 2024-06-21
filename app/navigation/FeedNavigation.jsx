@@ -19,7 +19,9 @@ const FeedNavigation = () => {
   }
 
   const [userData] = authContext;
-  const authenticatedUser = userData?.token;
+  const authenticatedUser = userData?.token !== "";
+
+  console.log(authenticatedUser);
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

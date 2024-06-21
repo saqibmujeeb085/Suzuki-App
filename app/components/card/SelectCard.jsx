@@ -44,7 +44,11 @@ const SelectCard = ({
 
   return (
     <View style={styles.inspectionBox}>
-      <AppText fontSize={mainStyles.h2FontSize} color={"#1d1d1d"} lineHeight={18} maxWidth={218}>
+      <AppText
+        fontSize={mainStyles.h1FontSize}
+        color={colors.fontBlack}
+        fontFamily={mainStyles.appFontBold}
+      >
         {num + 1}. {indicator}
       </AppText>
       <RadioGroup
