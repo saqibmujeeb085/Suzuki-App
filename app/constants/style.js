@@ -4,7 +4,7 @@ export const mainStyles = {
   ratingFontSize: 20,
   pageHeadingFont: 24,
   CardImageSize: 80,
-  RatingFont: 25,
+  RatingFont: 22,
   h1FontSize: 21,
   h2FontSize: 16,
   h3FontSize: 14,

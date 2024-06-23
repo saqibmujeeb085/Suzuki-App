@@ -6,17 +6,26 @@ import {
   View,
   ScrollView,
   Modal,
+  FlatList,
+  Dimensions,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../text/Text";
 import { mainStyles } from "../../constants/style";
+import { colors } from "../../constants/colors";
+
+const { width } = Dimensions.get("window");
+
+const imageWidth = width - 20;
 
 const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
   const [images, setImages] = useState([]);
   const [expanded, setExpanded] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef(null);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -25,7 +34,6 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
       allowsEditing: false,
       quality: 0.5,
     });
-    console.log("hihi", result);
     if (!result.canceled) {
       const selectedImages = result.assets.map((asset) => ({
         uri: asset.uri,
@@ -60,61 +68,99 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
 
   const removeImage = (index) => {
     const removedImage = images[index];
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    const newImages = images.filter((_, i) => i !== index);
+    setImages(newImages);
     onRemoveImage(removedImage);
+
+    // Adjust the current index and scroll if needed
+    if (currentIndex >= newImages.length) {
+      setCurrentIndex(newImages.length - 1);
+      if (newImages.length > 0) {
+        flatListRef.current.scrollToIndex({
+          index: newImages.length - 1,
+          animated: true,
+        });
+      }
+    }
   };
 
-  const toggleExpanded = (index) => {
-    setExpanded(expanded === index ? null : index);
+  const onThumbnailPress = (index) => {
+    setCurrentIndex(index);
+    flatListRef.current.scrollToIndex({ index, animated: true });
   };
+
+  const onViewRef = useRef((viewableItems) => {
+    if (viewableItems.viewableItems.length > 0) {
+      setCurrentIndex(viewableItems.viewableItems[0].index);
+    }
+  });
+
+  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
 
   return (
     <ScrollView>
       <View style={styles.pickerContainer}>
-        {images.map((image, index) => (
-          <View key={index} style={styles.accordionContainer}>
-            <TouchableOpacity onPress={() => toggleExpanded(index)}>
-              <View style={styles.accordionHeader}>
-                <AppText
-                  fontSize={12}
-                  width={200}
-                  color={"#000"}
-                  numberOfLines={1}
-                >
-                  {image.name}
-                </AppText>
-                <Feather
-                  name={expanded === index ? "chevron-up" : "chevron-down"}
-                  size={24}
-                  color="black"
-                />
-              </View>
-            </TouchableOpacity>
-            {expanded === index && (
-              <View style={styles.accordionContent}>
-                <Image source={{ uri: image.uri }} style={styles.image} />
-                <TouchableOpacity
-                  style={styles.removeIconContainer}
-                  onPress={() => removeImage(index)}
-                >
-                  <Feather name="x-circle" size={24} color="red" />
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        ))}
-        {images.length < 5 && (
+        {images.length === 0 ? (
           <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
-            <View style={styles.pickerImageContainer}>
-              <View style={styles.pickerIconContainer}>
-                <Ionicons name="image-outline" size={50} color={"#C9C9C9"} />
-                <AppText fontSize={12} color={"#525252"}>
-                  Add Photos
-                </AppText>
-              </View>
+          <View style={styles.pickerImageContainer}>
+            <View style={styles.pickerIconContainer}>
+              <Ionicons name="image-outline" size={50} color={"#C9C9C9"} />
+              <AppText fontSize={12} color={"#525252"}>
+                Add Photos
+              </AppText>
             </View>
-          </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+        ) : (
+          <View style={styles.CarouselImages}>
+            <FlatList
+              ref={flatListRef}
+              data={images}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item, index }) => (
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={{ uri: item.uri }}
+                    style={styles.carouselImage}
+                  />
+                  <TouchableOpacity
+                    style={styles.removeIconContainer}
+                    onPress={() => removeImage(index)}
+                  >
+                    <Feather name="x-circle" size={24} color="red" />
+                  </TouchableOpacity>
+                </View>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              onViewableItemsChanged={onViewRef.current}
+              viewabilityConfig={viewConfigRef.current}
+            />
+          </View>
         )}
+
+        <ScrollView horizontal contentContainerStyle={styles.thumbnailContainer}>
+          {images.map((image, index) => (
+            <TouchableOpacity key={index} onPress={() => onThumbnailPress(index)}>
+              <Image
+                source={{ uri: image.uri }}
+                style={[
+                  styles.thumbnail,
+                  index === currentIndex && styles.activeThumbnail,
+                ]}
+              />
+            </TouchableOpacity>
+          ))}
+          {images.length >= 1 && images.length < 5 && (
+  <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+    <View style={styles.AddButton}>
+      <MaterialCommunityIcons name="plus" size={20} color={colors.fontBlack} />
+    </View>
+  </TouchableWithoutFeedback>
+)}
+
+        </ScrollView>
       </View>
 
       <Modal
@@ -162,6 +208,51 @@ const styles = StyleSheet.create({
   pickerContainer: {
     gap: 10,
   },
+  imageContainer: {
+    width: imageWidth,
+    height: 300,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  carouselImage: {
+    width: imageWidth - 20,
+    height: 300,
+    resizeMode: "cover",
+  },
+  thumbnailContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  CarouselImages: {
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  thumbnail: {
+    width: 60,
+    height: 60,
+    marginHorizontal: 5,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: colors.fontGrey,
+  },
+  AddButton: {
+    width: 60,
+    height: 60,
+    marginHorizontal: 5,
+    borderRadius: 5,
+    backgroundColor: colors.whiteBg,
+    elevation: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activeThumbnail: {
+    borderColor: colors.purple,
+  },
   pickerImageContainer: {
     backgroundColor: "white",
     height: 200,
@@ -175,28 +266,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
   },
-  accordionContainer: {
-    backgroundColor: "white",
-    borderRadius: 5,
-    elevation: 2,
-    marginVertical: 5,
-  },
-  accordionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  accordionContent: {
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  image: {
-    width: 200,
-    height: 200,
+  imageContainer: {
+    marginRight: 10,
+    position: "relative",
   },
   removeIconContainer: {
     position: "absolute",

@@ -16,27 +16,28 @@ const InspectionBoardCard = ({
   console.log(icon);
   return (
     <TouchableWithoutFeedback
-      style={{ marginBottom: 10 }}
-      onPress={!inspectionIsDone ? onPress : null}
+    style={{ marginBottom: 10 }}
+    onPress={!inspectionIsDone ? onPress : null}
     >
       <View
         style={[
           styles.inscpectionCard,
           inspectionIsDone && styles.inspectionNotDoneCard,
         ]}
-      >
+        >
         <View style={styles.inpsectionContent}>
           <MaterialCommunityIcons
             name={icon}
             color={colors.fontBlack}
             size={30}
-          />
+            />
           <View style={styles.inpectionContentText}>
             <AppText
               color={colors.fontBlack}
               fontFamily={mainStyles.appFontBold}
               fontSize={mainStyles.h3FontSize}
-              maxWidth={200}
+              maxWidth={170}
+              
             >
               {name}
             </AppText>
@@ -50,7 +51,7 @@ const InspectionBoardCard = ({
             color={colors.fontGrey}
             fontSize={mainStyles.h3FontSize}
             textAlign={"right"}
-          >
+            >
             Overall Rating
           </AppText>
           <AppText
