@@ -46,14 +46,14 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onLayout={onLayoutRootView}>
-      <SafeAreaProvider>
-        <AuthProvider>
+    <AuthProvider>
+      <NavigationContainer onLayout={onLayoutRootView}>
+        <SafeAreaProvider>
           <InspecteCarProvider>
             <FeedNavigation />
           </InspecteCarProvider>
-        </AuthProvider>
-      </SafeAreaProvider>
-    </NavigationContainer>
+        </SafeAreaProvider>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }

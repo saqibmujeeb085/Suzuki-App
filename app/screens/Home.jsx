@@ -26,6 +26,8 @@ const Home = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  console.log(userData);
+
   useEffect(() => {
     inspectedCar.forEach((item) => {
       if (item.images && item.images.length > 0) {

@@ -33,7 +33,7 @@ const AuthProvider = ({ children }) => {
       }
     };
     localStorageData();
-  }, []);
+  }, [userData]);
 
   return (
     <AuthContext.Provider value={[userData, setUserData]}>

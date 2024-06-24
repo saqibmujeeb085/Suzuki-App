@@ -17,6 +17,8 @@ import PasswordInput from "../components/formFields/PasswordInput";
 const LogIn = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
 
+  console.log(userData);
+
   const [dealershipList, setDealershipList] = useState([]);
   const [dealershipUserList, setDealershipUserList] = useState([]);
 
@@ -127,19 +129,6 @@ const LogIn = ({ navigation }) => {
       user: "",
       password: "",
     };
-
-    // if (!selectedDealership) {
-    //   newErrors.dealership = "Please select a dealership";
-    //   hasErrors = true;
-    // }
-    // if (!selectedDealershipUser) {
-    //   newErrors.user = "Please select a user";
-    //   hasErrors = true;
-    // }
-    // if (!selectedDealershipUserPassword) {
-    //   newErrors.password = "Please enter a password";
-    //   hasErrors = true;
-    // }
 
     setErrors(newErrors);
 
