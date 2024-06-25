@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Modal, StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native";
 import AppText from "../text/Text";
 import GradientButton from "../buttons/GradientButton";
 import Dropdown from "../formFields/Dropdown";
@@ -9,10 +15,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "../../constants/colors";
 import { mainStyles } from "../../constants/style";
 
-const FilterModal = ({ show = false, setShow , onFilter }) => {
+const FilterModal = ({ show = false, setShow, onFilter }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [isStartDatePickerVisible, setStartDatePickerVisibility] = useState(false);
+  const [isStartDatePickerVisible, setStartDatePickerVisibility] =
+    useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
 
   const [manufacturers, setManufacturers] = useState([]);
@@ -173,112 +180,119 @@ const FilterModal = ({ show = false, setShow , onFilter }) => {
 
   return (
     <Modal transparent visible={show}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalBox}>
-          <View style={styles.closeButton}>
-            <MaterialCommunityIcons
-              name="close"
-              size={14}
-              color={"#1D1D1D"}
-              onPress={() => setShow(!show)}
-            />
-          </View>
-
-          <View style={styles.FiltersInputs}>
-            <View style={styles.Content}>
-              <AppText fontSize={mainStyles.h2FontSize}>Filters</AppText>
-              <AppText fontSize={mainStyles.h3FontSize}>Add filters for more accuracy</AppText>
+      <TouchableWithoutFeedback
+        onPress={() => setShow(!show)}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalBox}>
+            <View style={styles.closeButton}>
+              <MaterialCommunityIcons
+                name="close"
+                size={20}
+                color={colors.fontWhite}
+                onPress={() => setShow(!show)}
+              />
             </View>
-            <View style={styles.Inputs}>
-              <Dropdown
-                DropItems="Manufacturer"
-                Data={manufacturers}
-                save={"value"}
-                selectedItem={ManufacturerSelected}
-              />
-              {manufacturer && (
+
+            <View style={styles.FiltersInputs}>
+              <View style={styles.Content}>
+                <AppText fontSize={mainStyles.h2FontSize}>Filters</AppText>
+                <AppText fontSize={mainStyles.h3FontSize}>
+                  Add filters for more accuracy
+                </AppText>
+              </View>
+              <View style={styles.Inputs}>
                 <Dropdown
-                  DropItems="Model"
-                  Data={carModels}
+                  DropItems="Manufacturer"
+                  Data={manufacturers}
                   save={"value"}
-                  selectedItem={CarModelSelected}
+                  selectedItem={ManufacturerSelected}
                 />
-              )}
-              <Dropdown
-                DropItems="Manufacturing Year"
-                Data={carYears}
-                save={"value"}
-                selectedItem={CarYearSelected}
-                Search={true}
-              />
-              <Dropdown
-                DropItems="Color"
-                Data={carColors}
-                save={"value"}
-                selectedItem={CarColorSelected}
-              />
-              <View style={styles.DatePickers}>
-                <View style={styles.datePickerContainer}>
-                  <AppText fontSize={mainStyles.h3FontSize} marginBottom={5}>
-                    Start Date
-                  </AppText>
-                  <TouchableOpacity
-                    onPress={() => setStartDatePickerVisibility(true)}
-                  >
-                    <AppText
-                      borderColor={"#CCCCCC"}
-                      borderWidth={1}
-                      borderRadius={5}
-                      padding={10}
-                      textAlign={"center"}
-                    >
-                      {startDate
-                        ? startDate.toLocaleDateString()
-                        : "--/--/----"}
-                    </AppText>
-                  </TouchableOpacity>
-                  <DateTimePickerModal
-                    isVisible={isStartDatePickerVisible}
-                    mode="date"
-                    onConfirm={handleConfirmStartDate}
-                    onCancel={() => setStartDatePickerVisibility(false)}
+                {manufacturer && (
+                  <Dropdown
+                    DropItems="Model"
+                    Data={carModels}
+                    save={"value"}
+                    selectedItem={CarModelSelected}
                   />
-                </View>
-                <View style={styles.datePickerContainer}>
-                  <AppText fontSize={mainStyles.h3FontSize} marginBottom={5}>
-                    End Date
-                  </AppText>
-                  <TouchableOpacity
-                    onPress={() => setEndDatePickerVisibility(true)}
-                  >
-                    <AppText
-                      borderColor={"#CCCCCC"}
-                      borderWidth={1}
-                      borderRadius={5}
-                      padding={10}
-                      textAlign={"center"}
-                    >
-                      {endDate ? endDate.toLocaleDateString() : "--/--/----"}
+                )}
+                <Dropdown
+                  DropItems="Manufacturing Year"
+                  Data={carYears}
+                  save={"value"}
+                  selectedItem={CarYearSelected}
+                  Search={true}
+                />
+                <Dropdown
+                  DropItems="Color"
+                  Data={carColors}
+                  save={"value"}
+                  selectedItem={CarColorSelected}
+                />
+                <View style={styles.DatePickers}>
+                  <View style={styles.datePickerContainer}>
+                    <AppText fontSize={mainStyles.h3FontSize} marginBottom={5}>
+                      Start Date
                     </AppText>
-                  </TouchableOpacity>
-                  <DateTimePickerModal
-                    isVisible={isEndDatePickerVisible}
-                    mode="date"
-                    onConfirm={handleConfirmEndDate}
-                    onCancel={() => setEndDatePickerVisibility(false)}
-                  />
+                    <TouchableOpacity
+                      onPress={() => setStartDatePickerVisibility(true)}
+                    >
+                      <AppText
+                        borderColor={"#CCCCCC"}
+                        borderWidth={1}
+                        borderRadius={5}
+                        padding={10}
+                        textAlign={"center"}
+                      >
+                        {startDate
+                          ? startDate.toLocaleDateString()
+                          : "--/--/----"}
+                      </AppText>
+                    </TouchableOpacity>
+                    <DateTimePickerModal
+                      isVisible={isStartDatePickerVisible}
+                      mode="date"
+                      onConfirm={handleConfirmStartDate}
+                      onCancel={() => setStartDatePickerVisibility(false)}
+                    />
+                  </View>
+                  <View style={styles.datePickerContainer}>
+                    <AppText fontSize={mainStyles.h3FontSize} marginBottom={5}>
+                      End Date
+                    </AppText>
+                    <TouchableOpacity
+                      onPress={() => setEndDatePickerVisibility(true)}
+                    >
+                      <AppText
+                        borderColor={"#CCCCCC"}
+                        borderWidth={1}
+                        borderRadius={5}
+                        padding={10}
+                        textAlign={"center"}
+                      >
+                        {endDate ? endDate.toLocaleDateString() : "--/--/----"}
+                      </AppText>
+                    </TouchableOpacity>
+                    <DateTimePickerModal
+                      isVisible={isEndDatePickerVisible}
+                      mode="date"
+                      onConfirm={handleConfirmEndDate}
+                      onCancel={() => setEndDatePickerVisibility(false)}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
 
-          <View style={styles.modalButtons}>
-            <GradientButton size={10} onPress={handleSearch}>
-              Search
-            </GradientButton>
+            <View style={styles.modalButtons}>
+              <GradientButton size={10} onPress={handleSearch}>
+                Search
+              </GradientButton>
+            </View>
           </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };
@@ -303,12 +317,12 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: -10,
-    right: -10,
-    borderRadius: 40,
-    height: 25,
-    width: 25,
-    backgroundColor: "#BBBBBB",
+    top: -12,
+    right: -12,
+    borderRadius: 100,
+    height: 30,
+    width: 30,
+    backgroundColor: colors.red,
     justifyContent: "center",
     alignItems: "center",
   },

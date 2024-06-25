@@ -235,7 +235,7 @@ const Reports = ({ navigation }) => {
               <InspectionCard
                 carId={item?.id}
                 car={item?.car}
-                customer={item?.customerName}
+                varient={item?.varientId}
                 model={item?.model}
                 date={item?.inspectionDate}
                 carImage={item?.images[0]?.path}

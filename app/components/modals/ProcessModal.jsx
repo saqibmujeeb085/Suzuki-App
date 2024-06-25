@@ -28,8 +28,8 @@ const ProcessModal = ({
             {icon && (
               <MaterialCommunityIcons
                 name="close"
-                size={16}
-                color={"#1D1D1D"}
+                size={20}
+                color={colors.fontWhite}
                 onPress={() => setShow(!show)}
               />
             )}
@@ -37,14 +37,14 @@ const ProcessModal = ({
           <View style={styles.modalContent}>
             <AppText
               fontSize={headingSize}
-              color={"#1D1D1D"}
+              color={colors.fontBlack}
               textAlign={"center"}
             >
               {heading}
             </AppText>
             <AppText
               fontSize={mainStyles.h3FontSize}
-              color={"#1D1D1D"}
+              color={colors.fontBlack}
               textAlign={"center"}
             >
               {text}
@@ -90,12 +90,12 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: -10,
-    right: -10,
+    top: -12,
+    right: -12,
     borderRadius: 40,
-    height: 25,
-    width: 25,
-    backgroundColor: "#BBBBBB",
+    height: 30,
+    width: 30,
+    backgroundColor: colors.red,
     justifyContent: "center",
     alignItems: "center",
   },

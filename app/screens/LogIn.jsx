@@ -151,7 +151,6 @@ const LogIn = ({ navigation }) => {
       const response = await axios.request(config);
       if (response.data.code === 200) {
         setUserData(response.data);
-        navigation.navigate("Home");
       } else {
         Toast.error(
           <AppText fontSize={mainStyles.h2FontSize}>

@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   StyleSheet,
   TouchableWithoutFeedback,
@@ -6,7 +7,6 @@ import {
   ScrollView,
   Modal,
 } from "react-native";
-import React, { useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -20,26 +20,23 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
 
   const pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({
-      type: [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ],
+      type: ["application/pdf"],
       copyToCacheDirectory: true,
-      multiple: false,
+      multiple: true,
     });
 
     console.log("Document Picker result:", result); // Log the entire result
 
     if (result.type !== "cancel") {
-      const newDocument = {
-        uri: result.uri,
-        name: result.name,
-        type: result.mimeType || "application/pdf",
-      };
+      console.log("hello world", result);
+      const selectedDocument = result.assets.map((asset) => ({
+        uri: asset.uri,
+        name: asset.uri.split("/").pop(),
+        type: "application/pdf",
+      }));
 
-      console.log("Picked document:", newDocument); // Debug log
-      addDocument(newDocument);
+      console.log("Picked document:", selectedDocument); // Debug log
+      selectedDocument.forEach((doc) => addDocument(doc));
     }
     setModalVisible(false);
   };
@@ -47,18 +44,18 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsMultipleSelection: true,
       allowsEditing: false,
       quality: 0.5,
     });
-
     if (!result.canceled) {
       const selectedImages = result.assets.map((asset) => ({
         uri: asset.uri,
         name: asset.uri.split("/").pop(),
-        type: asset.type || "image/jpeg",
+        type: "image/jpeg",
       }));
-      console.log("Picked image:", selectedImages[0]); // Debug log
-      addDocument(selectedImages[0]);
+      console.log("Picked images:", selectedImages); // Debug log
+      selectedImages.forEach((image) => addDocument(image));
     }
     setModalVisible(false);
   };
@@ -85,7 +82,10 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
     setDocuments((prevDocs) => {
       const updatedDocs = [...prevDocs, newDoc];
       console.log("Documents after adding:", updatedDocs); // Debug log
-      onDocumentsSelected(updatedDocs);
+      // Update the parent component's state after the rendering phase
+      setTimeout(() => {
+        onDocumentsSelected(updatedDocs);
+      }, 0);
       return updatedDocs;
     });
   };
@@ -94,11 +94,14 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
     setDocuments((prevDocs) => {
       const updatedDocs = prevDocs.filter((_, i) => i !== index);
       console.log("Documents after removing:", updatedDocs); // Debug log
-      onDocumentsSelected(updatedDocs);
+      // Update the parent component's state after the rendering phase
+      setTimeout(() => {
+        onDocumentsSelected(updatedDocs);
+      }, 0);
       return updatedDocs;
     });
-  }; // Log documents before rendering
-
+  };
+  console.log(documents);
   return (
     <ScrollView>
       <View style={styles.pickerContainer}>
@@ -137,52 +140,57 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <MaterialCommunityIcons
-                name="close"
-                size={14}
-                color={"#1D1D1D"}
-              />
-            </TouchableOpacity>
-            <View style={styles.chooseBox}>
-              <TouchableOpacity onPress={pickDocument}>
-                <View style={styles.modalButton}>
-                  <Ionicons
-                    name="document-outline"
-                    size={25}
-                    color={colors.fontBlack}
-                  />
-                  <AppText fontSize={16}>Document</AppText>
-                </View>
+        <TouchableWithoutFeedback
+          style={{ flex: 1 }}
+          onPress={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <MaterialCommunityIcons
+                  name="close"
+                  size={20}
+                  color={colors.fontWhite}
+                />
               </TouchableOpacity>
-              <TouchableOpacity onPress={pickImage}>
-                <View style={styles.modalButton}>
-                  <Ionicons
-                    name="image-outline"
-                    size={25}
-                    color={colors.fontBlack}
-                  />
-                  <AppText fontSize={16}>Gallery</AppText>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={captureImage}>
-                <View style={styles.modalButton}>
-                  <Ionicons
-                    name="camera-outline"
-                    size={25}
-                    color={colors.fontBlack}
-                  />
-                  <AppText fontSize={16}>Camera</AppText>
-                </View>
-              </TouchableOpacity>
+              <View style={styles.chooseBox}>
+                <TouchableOpacity onPress={pickDocument}>
+                  <View style={styles.modalButton}>
+                    <Ionicons
+                      name="document-outline"
+                      size={25}
+                      color={colors.fontBlack}
+                    />
+                    <AppText fontSize={16}>Document</AppText>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={pickImage}>
+                  <View style={styles.modalButton}>
+                    <Ionicons
+                      name="image-outline"
+                      size={25}
+                      color={colors.fontBlack}
+                    />
+                    <AppText fontSize={16}>Gallery</AppText>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={captureImage}>
+                  <View style={styles.modalButton}>
+                    <Ionicons
+                      name="camera-outline"
+                      size={25}
+                      color={colors.fontBlack}
+                    />
+                    <AppText fontSize={16}>Camera</AppText>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </ScrollView>
   );
@@ -245,12 +253,12 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: -10,
-    right: -10,
+    top: -12,
+    right: -12,
     borderRadius: 40,
-    height: 25,
-    width: 25,
-    backgroundColor: "#BBBBBB",
+    height: 30,
+    width: 30,
+    backgroundColor: colors.red,
     justifyContent: "center",
     alignItems: "center",
   },

@@ -16,9 +16,9 @@ const AuthProvider = ({ children }) => {
   // Base URL
   axios.defaults.baseURL = "https://clients.echodigital.net/inspectionapp/apis";
 
-  // Local Storage Initial Data
+  // Load data from AsyncStorage when the component mounts
   useEffect(() => {
-    const localStorageData = async () => {
+    const loadLocalStorageData = async () => {
       try {
         let data = await AsyncStorage.getItem("@auth");
         if (data) {
@@ -27,12 +27,28 @@ const AuthProvider = ({ children }) => {
             token: loginData?.token || "",
             user: loginData?.user || "",
           });
+          console.log("Data loaded from AsyncStorage:", loginData);
+        } else {
+          console.log("No data found in AsyncStorage for @auth");
         }
       } catch (error) {
         console.error("Failed to load data from local storage:", error);
       }
     };
-    localStorageData();
+    loadLocalStorageData();
+  }, []);
+
+  // Save data to AsyncStorage when userData changes
+  useEffect(() => {
+    const saveToLocalStorage = async () => {
+      try {
+        await AsyncStorage.setItem("@auth", JSON.stringify(userData));
+        console.log("Data saved to AsyncStorage:", userData);
+      } catch (error) {
+        console.error("Failed to save data to local storage:", error);
+      }
+    };
+    saveToLocalStorage();
   }, [userData]);
 
   return (

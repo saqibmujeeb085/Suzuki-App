@@ -22,7 +22,6 @@ const imageWidth = width - 20;
 
 const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
   const [images, setImages] = useState([]);
-  const [expanded, setExpanded] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
@@ -31,6 +30,7 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsMultipleSelection: true,
+      selectionLimit: 5,
       allowsEditing: false,
       quality: 0.5,
     });
@@ -102,15 +102,15 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
       <View style={styles.pickerContainer}>
         {images.length === 0 ? (
           <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
-          <View style={styles.pickerImageContainer}>
-            <View style={styles.pickerIconContainer}>
-              <Ionicons name="image-outline" size={50} color={"#C9C9C9"} />
-              <AppText fontSize={12} color={"#525252"}>
-                Add Photos
-              </AppText>
+            <View style={styles.pickerImageContainer}>
+              <View style={styles.pickerIconContainer}>
+                <Ionicons name="image-outline" size={50} color={"#C9C9C9"} />
+                <AppText fontSize={12} color={"#525252"}>
+                  Add Photos
+                </AppText>
+              </View>
             </View>
-          </View>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
         ) : (
           <View style={styles.CarouselImages}>
             <FlatList
@@ -140,9 +140,15 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
           </View>
         )}
 
-        <ScrollView horizontal contentContainerStyle={styles.thumbnailContainer}>
+        <ScrollView
+          horizontal
+          contentContainerStyle={styles.thumbnailContainer}
+        >
           {images.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => onThumbnailPress(index)}>
+            <TouchableOpacity
+              key={index}
+              onPress={() => onThumbnailPress(index)}
+            >
               <Image
                 source={{ uri: image.uri }}
                 style={[
@@ -153,13 +159,16 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
             </TouchableOpacity>
           ))}
           {images.length >= 1 && images.length < 5 && (
-  <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
-    <View style={styles.AddButton}>
-      <MaterialCommunityIcons name="plus" size={20} color={colors.fontBlack} />
-    </View>
-  </TouchableWithoutFeedback>
-)}
-
+            <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+              <View style={styles.AddButton}>
+                <MaterialCommunityIcons
+                  name="plus"
+                  size={20}
+                  color={colors.fontBlack}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          )}
         </ScrollView>
       </View>
 
@@ -169,34 +178,39 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <MaterialCommunityIcons
-                name="close"
-                size={14}
-                color={"#1D1D1D"}
-              />
-            </TouchableOpacity>
-            <View style={styles.chooseBox}>
-              <TouchableOpacity onPress={pickImage}>
-                <View style={styles.modalButton}>
-                  <Ionicons name="image-outline" size={25} color={"#000"} />
-                  <AppText fontSize={mainStyles.h2FontSize}>Gallery</AppText>
-                </View>
+        <TouchableWithoutFeedback
+          style={{ flex: 1 }}
+          onPress={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <MaterialCommunityIcons
+                  name="close"
+                  size={20}
+                  color={colors.fontWhite}
+                />
               </TouchableOpacity>
-              <TouchableOpacity onPress={captureImage}>
-                <View style={styles.modalButton}>
-                  <Ionicons name="camera-outline" size={25} color={"#000"} />
-                  <AppText fontSize={mainStyles.h2FontSize}>Camera</AppText>
-                </View>
-              </TouchableOpacity>
+              <View style={styles.chooseBox}>
+                <TouchableOpacity onPress={pickImage}>
+                  <View style={styles.modalButton}>
+                    <Ionicons name="image-outline" size={25} color={"#000"} />
+                    <AppText fontSize={mainStyles.h2FontSize}>Gallery</AppText>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={captureImage}>
+                  <View style={styles.modalButton}>
+                    <Ionicons name="camera-outline" size={25} color={"#000"} />
+                    <AppText fontSize={mainStyles.h2FontSize}>Camera</AppText>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </ScrollView>
   );
@@ -302,12 +316,12 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: -10,
-    right: -10,
+    top: -12,
+    right: -12,
     borderRadius: 40,
-    height: 25,
-    width: 25,
-    backgroundColor: "#BBBBBB",
+    height: 30,
+    width: 30,
+    backgroundColor: colors.red,
     justifyContent: "center",
     alignItems: "center",
   },
