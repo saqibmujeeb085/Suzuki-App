@@ -30,6 +30,34 @@ const InspectionBoard = ({ navigation, route }) => {
   const [show, setShow] = useState(false);
   const [allInspectionsDone, setAllInspectionsDone] = useState(false);
   const [loading, setLoading] = useState(true); // Initialize loading to true
+  const [carInfo, setCarInfo] = useState(null);
+
+  useEffect(() => {
+    if (!id) {
+      setError(new Error("No ID provided"));
+      setLoading(false);
+      return;
+    }
+
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `/auth/get_singledraftcarinfos.php?id=${id}`,
+      headers: {},
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        setCarInfo(response.data);
+        console.log(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [id]);
 
   const fetchCategories = async () => {
     try {
@@ -155,14 +183,15 @@ const InspectionBoard = ({ navigation, route }) => {
                 <AppText
                   color={colors.fontWhite}
                   fontSize={mainStyles.h2FontSize}
+                  textTransform={"capitalize"}
                 >
-                  Suzuki Mehran
+                  {carInfo?.mfgId} {carInfo?.car}
                 </AppText>
                 <AppText
                   color={colors.fontGrey}
                   fontSize={mainStyles.h3FontSize}
                 >
-                  Customer: Saad Rehman
+                  Varient: {carInfo?.varientId}
                 </AppText>
               </View>
               <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
@@ -200,7 +229,7 @@ const InspectionBoard = ({ navigation, route }) => {
                   color={colors.fontWhite}
                   fontSize={mainStyles.h3FontSize}
                 >
-                  133319 km
+                  {carInfo?.mileage} km
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
@@ -214,7 +243,7 @@ const InspectionBoard = ({ navigation, route }) => {
                   color={colors.fontWhite}
                   fontSize={mainStyles.h3FontSize}
                 >
-                  2004
+                  {carInfo?.model}
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
@@ -228,7 +257,7 @@ const InspectionBoard = ({ navigation, route }) => {
                   color={colors.fontWhite}
                   fontSize={mainStyles.h3FontSize}
                 >
-                  True Blue
+                  {carInfo?.color}
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
@@ -242,7 +271,7 @@ const InspectionBoard = ({ navigation, route }) => {
                   color={colors.fontWhite}
                   fontSize={mainStyles.h3FontSize}
                 >
-                  996 cc
+                  {carInfo?.hi}1600 cc
                 </AppText>
               </View>
             </View>
