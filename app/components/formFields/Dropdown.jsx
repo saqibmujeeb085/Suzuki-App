@@ -9,6 +9,7 @@ import { AntDesign } from "@expo/vector-icons";
 const Dropdown = ({
   DropItems,
   Data,
+  mainData,
   Error,
   save,
   selectedItem,
@@ -66,7 +67,7 @@ const Dropdown = ({
             setSelected(val);
             selectedItem(val);
           }}
-          data={Data}
+          data={mainData ? Data[mainData] : Data}
           save={save}
           search={Search}
           defaultOption={{ key: "", value: DropItems }} // Ensure the placeholder is reset
