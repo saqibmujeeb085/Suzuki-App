@@ -3,7 +3,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import axios from "axios";
 import AppScreen from "../components/screen/Screen";
-import AppTextInput from "../components/formFields/TextInput";
 import Dropdown from "../components/formFields/Dropdown";
 import IconButton from "../components/buttons/IconButton";
 import GradientButton from "../components/buttons/GradientButton";
@@ -54,6 +53,12 @@ const LogIn = ({ navigation }) => {
     fetchDealershipNames();
     fetchDealershipUserNames();
   }, []);
+
+  useEffect(() => {
+    if (selectedDealership == "") {
+      setSelectedDealershipUser("");
+    }
+  }, [setSelectedDealership]);
 
   const handleDealershipSelection = (selected) => {
     setSelectedDealership(selected);
@@ -121,8 +126,6 @@ const LogIn = ({ navigation }) => {
       setDealershipUserList(transformedList);
     }
   }, [dealershipUserRawList, selectedDealership]);
-
-  console.log(dealershipUserList);
 
   const handleUserLogin = async () => {
     let hasErrors = false;
