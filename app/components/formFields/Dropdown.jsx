@@ -13,6 +13,7 @@ const Dropdown = ({
   save,
   selectedItem,
   Search = false,
+  onChange,
 }) => {
   const [selected, setSelected] = useState("");
   const [key, setKey] = useState(Date.now()); // Unique key for rerender
@@ -27,6 +28,7 @@ const Dropdown = ({
     <View style={styles.dropdownbox}>
       <View style={styles.dropdown}>
         <SelectList
+          onChange={onChange}
           key={key}
           dropdownTextStyles={{
             fontSize: mainStyles.h2FontSize,

@@ -9,18 +9,17 @@ import Dropdown from "../../components/formFields/Dropdown";
 import { InspecteCarContext } from "../../context/newInspectionContext";
 import { AuthContext } from "../../context/authContext";
 import { colors } from "../../constants/colors";
+import { FormDataContext } from "../../context/formDataContext";
 
 const CarDetails = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
+
+  const [manufacturersData, modelsData, varientsData, yearsData, colorsData] =
+    useContext(FormDataContext);
+
   const [carData, setCarData] = useContext(InspecteCarContext);
 
   const [allSelected, setAllSelected] = useState(false);
-
-  const [manufacturers, setManufacturers] = useState([]);
-  const [carModels, setCarModels] = useState([]);
-  const [carVarients, setCarVarients] = useState([]);
-  const [carYears, setCarYears] = useState([]);
-  const [carColors, setCarColors] = useState([]);
 
   const [manufacturer, setManufacturer] = useState("");
   const [carModel, setCarModel] = useState("");
@@ -59,38 +58,13 @@ const CarDetails = ({ navigation }) => {
     },
   ];
 
-  useEffect(() => {
-    fetchManufacturers();
-    fetchCarColors();
-
-    const currentYear = new Date().getFullYear();
-    const yearList = [];
-
-    for (let year = currentYear, id = 1; year >= 1950; year--, id++) {
-      yearList.push({
-        key: id.toString(),
-        value: year.toString(),
-      });
-    }
-
-    setCarYears(yearList);
-  }, []);
-
-  useEffect(() => {
-    if (manufacturer >= 1) {
-      fetchCarModel();
-    } else {
-      setCarModels([]);
-    }
-  }, [manufacturer]);
-
-  useEffect(() => {
-    if (carModel >= 1) {
-      fetchCarVarient();
-    } else {
-      setCarVarients([]);
-    }
-  }, [carModel]);
+  // useEffect(() => {
+  //   fetchManufacturers();
+  //   fetchCarModel();
+  //   fetchCarVarient();
+  //   fetchCarYears();
+  //   fetchCarColors();
+  // }, []);
 
   useEffect(() => {
     if (
@@ -106,109 +80,132 @@ const CarDetails = ({ navigation }) => {
     }
   }, [manufacturer, carModel, carYear, carColor, cplc]);
 
-  const fetchManufacturers = async () => {
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "/auth/get_carmanufacturer.php",
-      headers: {},
-    };
+  // const fetchManufacturers = async () => {
+  //   const config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_carmanufacturer.php",
+  //     headers: {},
+  //   };
 
-    try {
-      const response = await axios.request(config);
+  //   try {
+  //     const response = await axios.request(config);
 
-      const ManufacturerNames = response.data;
-      setManufacturers(
-        ManufacturerNames.map((object) => ({
-          key: object.id,
-          value: object.name,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching manufacturers:", error);
-    }
-  };
+  //     const ManufacturerNames = response.data;
+  //     setManufacturersData(
+  //       ManufacturerNames.map((object) => ({
+  //         key: object.id,
+  //         value: object.name,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching manufacturers:", error);
+  //   }
+  // };
 
-  const fetchCarModel = () => {
-    let config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `/auth/get_carlist.php?manufacturerID=${manufacturer}`,
-      headers: {},
-    };
+  // const fetchCarModel = () => {
+  //   let config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_carlistnew.php",
+  //     headers: {},
+  //   };
 
-    axios
-      .request(config)
-      .then((response) => {
-        const ModelNames = response.data;
+  //   axios
+  //     .request(config)
+  //     .then((response) => {
+  //       const ModelNames = response.data;
 
-        if (Array.isArray(ModelNames)) {
-          setCarModels(
-            ModelNames.map((object) => ({
-              key: object.Id,
-              value: object.Car,
-            }))
-          );
-        } else {
-          console.error("Unexpected API response format:", ModelNames);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  //       const transformedList = ModelNames.reduce((acc, Model) => {
+  //         acc[Model.manufacturerID] = Model.carlistData.map((car) => ({
+  //           key: car.carID,
+  //           value: car.carName,
+  //         }));
+  //         return acc;
+  //       }, {});
+  //       setModelsData(transformedList);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
 
-  const fetchCarVarient = () => {
-    let config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `/auth/get_cartype.php?carID=${carModel}`,
-      headers: {},
-    };
+  // const fetchCarVarient = () => {
+  //   let config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_cartypenew.php",
+  //     headers: {},
+  //   };
 
-    axios
-      .request(config)
-      .then((response) => {
-        const VarientNames = response.data;
+  //   axios
+  //     .request(config)
+  //     .then((response) => {
+  //       const VarientNames = response.data;
 
-        if (Array.isArray(VarientNames)) {
-          setCarVarients(
-            VarientNames.map((object) => ({
-              key: object.id,
-              value: object.CarType,
-            }))
-          );
-        } else {
-          console.error("Unexpected API response format:", VarientNames);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  //       const transformedList = VarientNames.reduce((acc, varient) => {
+  //         acc[varient.carID] = varient.cartypeData.map((v) => ({
+  //           key: v.typeID,
+  //           value: v.TypeName,
+  //         }));
+  //         return acc;
+  //       }, {});
+  //       setVarientsData(transformedList);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
 
-  const fetchCarColors = async () => {
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "/auth/get_color.php",
-      headers: {},
-    };
+  // const fetchCarYears = () => {
+  //   let config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_caryears.php",
+  //     headers: {},
+  //   };
 
-    try {
-      const response = await axios.request(config);
+  //   axios
+  //     .request(config)
+  //     .then((response) => {
+  //       const years = response.data;
 
-      const CarColors = response.data;
-      setCarColors(
-        CarColors.map((object) => ({
-          key: object.id,
-          value: object.color,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching manufacturers:", error);
-    }
-  };
+  //       const transformedList = years.reduce((acc, year) => {
+  //         acc[year.carID] = year.carYearData.map((y) => ({
+  //           key: y.YearId,
+  //           value: y.Year,
+  //         }));
+  //         return acc;
+  //       }, {});
+  //       setYearsData(transformedList);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+
+  // const fetchCarColors = async () => {
+  //   const config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_color.php",
+  //     headers: {},
+  //   };
+
+  //   try {
+  //     const response = await axios.request(config);
+
+  //     const CarColors = response.data;
+  //     setColorsData(
+  //       CarColors.map((object) => ({
+  //         key: object.id,
+  //         value: object.color,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching manufacturers:", error);
+  //   }
+  // };
 
   const addCarDetails = () => {
     setCarData((prevData) => ({
@@ -237,36 +234,35 @@ const CarDetails = ({ navigation }) => {
       <View style={styles.InspectionformContainer}>
         <Dropdown
           DropItems="Manufacturer"
-          Data={manufacturers}
+          Data={manufacturersData}
           save={"key"}
           selectedItem={ManufacturerSelected}
         />
 
         <Dropdown
           DropItems="Model"
-          Data={carModels}
+          Data={modelsData[manufacturer] || []}
           save={"key"}
           selectedItem={CarModelSelected}
         />
 
         <Dropdown
           DropItems="Car Varient"
-          Data={carVarients}
+          Data={varientsData[carModel] || []}
           save={"key"}
           selectedItem={CarVarientSelected}
         />
 
         <Dropdown
           DropItems="Manufacturing Year"
-          Data={carYears}
+          Data={yearsData[carModel] || []}
           save={"value"}
           selectedItem={CarYearSelected}
-          Search={true}
         />
 
         <Dropdown
           DropItems="Color"
-          Data={carColors}
+          Data={colorsData}
           save={"value"}
           selectedItem={CarColorSelected}
         />

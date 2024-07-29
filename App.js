@@ -12,7 +12,8 @@ import {
   Poppins_500Medium,
   Poppins_600SemiBold,
 } from "@expo-google-fonts/poppins";
-import { Text } from "react-native";
+import { LoginDataProvider } from "./app/context/loginDataContext";
+import { FormDataProvider } from "./app/context/formDataContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,13 +48,17 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <NavigationContainer onLayout={onLayoutRootView}>
-        <SafeAreaProvider>
-          <InspecteCarProvider>
-            <FeedNavigation />
-          </InspecteCarProvider>
-        </SafeAreaProvider>
-      </NavigationContainer>
+      <LoginDataProvider>
+        <FormDataProvider>
+          <NavigationContainer onLayout={onLayoutRootView}>
+            <SafeAreaProvider>
+              <InspecteCarProvider>
+                <FeedNavigation />
+              </InspecteCarProvider>
+            </SafeAreaProvider>
+          </NavigationContainer>
+        </FormDataProvider>
+      </LoginDataProvider>
     </AuthProvider>
   );
 }

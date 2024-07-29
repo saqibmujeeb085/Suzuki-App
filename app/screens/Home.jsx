@@ -2,6 +2,7 @@ import {
   FlatList,
   Image,
   ImageBackground,
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -19,22 +20,49 @@ import ToastManager from "toastify-react-native";
 import SkeletonLoader from "../components/skeletonLoader/SkeletonLoader";
 import { colors } from "../constants/colors";
 import { mainStyles } from "../constants/style";
+import { FormDataContext } from "../context/formDataContext";
 
 const Home = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
+  const [
+    setManufacturersData,
+    setModelsData,
+    setVarientsData,
+    setYearsData,
+    setColorsData,
+    setFuelData,
+    setTransmissionData,
+    setCapacityData,
+    setCitiesData,
+  ] = useContext(FormDataContext);
+
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [floading, setFLoading] = useState(true);
   const [loading, setLoading] = useState(true);
 
-  console.log(userData);
-
+  // for form data
   useEffect(() => {
-    inspectedCar.forEach((item) => {
-      if (item.images && item.images.length > 0) {
-        console.log(item.images[0].path);
-      }
-    });
-  }, [inspectedCar]);
+    fetchManufacturers();
+    fetchCarModel();
+    fetchCarVarient();
+    fetchCarYears();
+    fetchCarColors();
+    fetchFuelTypes();
+    fetchTransmissionsTypes();
+    fetchEngineCapacity();
+    fetchRegistrationCity();
+    setFLoading(false);
+  }, []);
+
+  // for cars
+  // useEffect(() => {
+  //   inspectedCar.forEach((item) => {
+  //     if (item.images && item.images.length > 0) {
+  //       console.log(item.images[0].path);
+  //     }
+  //   });
+  // }, [inspectedCar]);
 
   useEffect(() => {
     if (userData && userData.user && userData.user.duserid) {
@@ -42,12 +70,235 @@ const Home = ({ navigation }) => {
     }
   }, [userData.user.duserid]);
 
+  // for logout
   const userLogout = async () => {
     setUserData({ token: "", user: "" });
     await AsyncStorage.removeItem("@auth");
     // alert("Logout Successfully");
   };
 
+  // for form data
+
+  const fetchManufacturers = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_carmanufacturer.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+
+      const ManufacturerNames = response.data;
+      setManufacturersData(
+        ManufacturerNames.map((object) => ({
+          key: object.id,
+          value: object.name,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching manufacturers:", error);
+    }
+  };
+
+  const fetchCarModel = () => {
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_carlistnew.php",
+      headers: {},
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        const ModelNames = response.data;
+
+        const transformedList = ModelNames.reduce((acc, Model) => {
+          acc[Model.manufacturerID] = Model.carlistData.map((car) => ({
+            key: car.carID,
+            value: car.carName,
+          }));
+          return acc;
+        }, {});
+        setModelsData(transformedList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const fetchCarVarient = () => {
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_cartypenew.php",
+      headers: {},
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        const VarientNames = response.data;
+
+        const transformedList = VarientNames.reduce((acc, varient) => {
+          acc[varient.carID] = varient.cartypeData.map((v) => ({
+            key: v.typeID,
+            value: v.TypeName,
+          }));
+          return acc;
+        }, {});
+        setVarientsData(transformedList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const fetchCarYears = () => {
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_caryears.php",
+      headers: {},
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        const years = response.data;
+
+        const transformedList = years.reduce((acc, year) => {
+          acc[year.carID] = year.carYearData.map((y) => ({
+            key: y.YearId,
+            value: y.Year,
+          }));
+          return acc;
+        }, {});
+        setYearsData(transformedList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const fetchCarColors = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_color.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+
+      const CarColors = response.data;
+      setColorsData(
+        CarColors.map((object) => ({
+          key: object.id,
+          value: object.color,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching manufacturers:", error);
+    }
+  };
+
+  const fetchFuelTypes = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_fuelType.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+
+      const FuelTypes = response.data;
+      setFuelData(
+        FuelTypes.map((object) => ({
+          key: object.did,
+          value: object.type,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching FuelTypes:", error);
+    }
+  };
+
+  const fetchTransmissionsTypes = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_cartrans.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+
+      const TransmissionsTypes = response.data;
+      setTransmissionData(
+        TransmissionsTypes.map((object) => ({
+          key: object.did,
+          value: object.type,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching FuelTypes:", error);
+    }
+  };
+
+  const fetchEngineCapacity = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_engdis.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+
+      const EngineCapacity = response.data;
+      setCapacityData(
+        EngineCapacity.map((object) => ({
+          key: object.id,
+          value: object.displacement,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching FuelTypes:", error);
+    }
+  };
+
+  const fetchRegistrationCity = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_cities.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+
+      const RegistrationCity = response.data;
+      setCitiesData(
+        RegistrationCity.map((object) => ({
+          key: object.id,
+          value: object.city,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching FuelTypes:", error);
+    }
+  };
+
+  // for car data
   const inspectedCarsData = async () => {
     setRefreshing(true);
     let config = {
@@ -71,6 +322,14 @@ const Home = ({ navigation }) => {
       setRefreshing(false);
     }
   };
+
+  if (floading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <AppScreen>

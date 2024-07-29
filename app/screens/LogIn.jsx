@@ -1,7 +1,12 @@
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import {
+  ActivityIndicator,
+  ImageBackground,
+  StyleSheet,
+  View,
+} from "react-native";
 import axios from "axios";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AppScreen from "../components/screen/Screen";
 import Dropdown from "../components/formFields/Dropdown";
 import IconButton from "../components/buttons/IconButton";
@@ -12,16 +17,23 @@ import { mainStyles } from "../constants/style";
 import { colors } from "../constants/colors";
 import ToastManager, { Toast } from "toastify-react-native";
 import PasswordInput from "../components/formFields/PasswordInput";
+import { LoginDataContext } from "../context/loginDataContext";
 
 const LogIn = ({ navigation }) => {
-  const [userData, setUserData] = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
 
-  const [dealershipList, setDealershipList] = useState([]);
-  const [dealershipUserList, setDealershipUserList] = useState([]);
+  const [userData, setUserData] = useContext(AuthContext);
+  const [
+    loginDealershipData,
+    setLoginDealershipData,
+    loginDealershipUserData,
+    setLoginDealershipUserData,
+  ] = useContext(LoginDataContext);
+
   const [dealershipUserRawList, setDealershipUserRawList] = useState([]);
 
+  // Your state and handlers
   const [allSelected, setAllSelected] = useState(false);
-
   const [selectedDealership, setSelectedDealership] = useState("");
   const [selectedDealershipUser, setSelectedDealershipUser] = useState("");
   const [selectedDealershipUserPassword, setSelectedDealershipUserPassword] =
@@ -33,11 +45,19 @@ const LogIn = ({ navigation }) => {
     password: "",
   });
 
+  // LoginData Preload
+
+  useEffect(() => {
+    fetchDealershipNames();
+    fetchDealershipUserNames();
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
     if (
-      selectedDealership !== "" &&
-      selectedDealershipUser !== "" &&
-      selectedDealershipUserPassword !== ""
+      selectedDealership &&
+      selectedDealershipUser &&
+      selectedDealershipUserPassword
     ) {
       setAllSelected(true);
     } else {
@@ -49,26 +69,7 @@ const LogIn = ({ navigation }) => {
     selectedDealershipUserPassword,
   ]);
 
-  useEffect(() => {
-    fetchDealershipNames();
-    fetchDealershipUserNames();
-  }, []);
-
-  useEffect(() => {
-    if (selectedDealership == "") {
-      setSelectedDealershipUser("");
-    }
-  }, [setSelectedDealership]);
-
-  const handleDealershipSelection = (selected) => {
-    setSelectedDealership(selected);
-    setErrors((prevErrors) => ({ ...prevErrors, dealership: "" }));
-  };
-
-  const handleDealershipUserSelection = (selected) => {
-    setSelectedDealershipUser(selected);
-    setErrors((prevErrors) => ({ ...prevErrors, user: "" }));
-  };
+  // Loading Data
 
   const fetchDealershipNames = async () => {
     let config = {
@@ -81,7 +82,7 @@ const LogIn = ({ navigation }) => {
     try {
       const response = await axios.request(config);
       let dealerships = response.data;
-      setDealershipList(
+      setLoginDealershipData(
         dealerships.map((object) => ({
           key: object.did,
           value: object.dname,
@@ -104,53 +105,48 @@ const LogIn = ({ navigation }) => {
       const response = await axios.request(config);
       const dealershipsUsers = response.data;
 
+      // Update the raw list state
       setDealershipUserRawList(dealershipsUsers);
+
+      // Transform the raw list to the required format
+      const transformedList = dealershipsUsers.reduce((acc, dealership) => {
+        acc[dealership.dealershipID] = dealership.userData.map((user) => ({
+          key: user.dealerUserID,
+          value: user.DealershipUserName,
+        }));
+        return acc;
+      }, {});
+
+      setLoginDealershipUserData(transformedList);
     } catch (error) {
       console.error("Error fetching dealership user data:", error);
     }
   };
 
-  useEffect(() => {
-    if (dealershipUserRawList.length > 0) {
-      const transformedList = dealershipUserRawList.reduce(
-        (acc, dealership) => {
-          acc[dealership.dealershipID] = dealership.userData.map((user) => ({
-            key: user.dealerUserID,
-            value: user.DealershipUserName,
-          }));
-          return acc;
-        },
-        {}
-      );
+  // Handle dealership selection
+  const handleDealershipSelection = (selected) => {
+    setSelectedDealership(selected);
+    setErrors((prevErrors) => ({ ...prevErrors, dealership: "" }));
+  };
 
-      setDealershipUserList(transformedList);
-    }
-  }, [dealershipUserRawList, selectedDealership]);
+  // Handle dealership user selection
+  const handleDealershipUserSelection = (selected) => {
+    setSelectedDealershipUser(selected);
+    setErrors((prevErrors) => ({ ...prevErrors, user: "" }));
+  };
 
+  // Handle user login
   const handleUserLogin = async () => {
-    let hasErrors = false;
     const newErrors = {
-      dealership: "",
-      user: "",
-      password: "",
+      dealership: !selectedDealership ? "Please select a dealership" : "",
+      user: !selectedDealershipUser ? "Please select a user" : "",
+      password: !selectedDealershipUserPassword
+        ? "Please enter a password"
+        : "",
     };
-
-    if (!selectedDealership) {
-      newErrors.dealership = "Please select a dealership";
-      hasErrors = true;
-    }
-    if (!selectedDealershipUser) {
-      newErrors.user = "Please select a user";
-      hasErrors = true;
-    }
-    if (!selectedDealershipUserPassword) {
-      newErrors.password = "Please enter a password";
-      hasErrors = true;
-    }
-
     setErrors(newErrors);
 
-    if (hasErrors) {
+    if (Object.values(newErrors).some((error) => error)) {
       Toast.error(
         <AppText fontSize={mainStyles.h3FontSize}>
           Please select and fill all the fields
@@ -159,14 +155,11 @@ const LogIn = ({ navigation }) => {
       return;
     }
 
-    let config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `/auth/login.php?userName=${selectedDealershipUser}&password=${selectedDealershipUserPassword}&dId=${selectedDealership}`,
-      headers: {},
-    };
     try {
-      const response = await axios.request(config);
+      const response = await axios.get(
+        `/auth/login.php?userName=${selectedDealershipUser}&password=${selectedDealershipUserPassword}&dId=${selectedDealership}`
+      );
+
       if (response.data.code === 200) {
         setUserData(response.data);
         Toast.success("Login successful!");
@@ -182,6 +175,14 @@ const LogIn = ({ navigation }) => {
       Toast.error("Login failed. Please try again.");
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <AppScreen>
@@ -222,7 +223,7 @@ const LogIn = ({ navigation }) => {
               <View style={styles.formFieldContainer}>
                 <Dropdown
                   DropItems="Dealership Name"
-                  Data={dealershipList}
+                  Data={loginDealershipData}
                   Search={true}
                   save={"key"}
                   selectedItem={handleDealershipSelection}
@@ -230,7 +231,7 @@ const LogIn = ({ navigation }) => {
                 />
                 <Dropdown
                   DropItems="Dealership UserName"
-                  Data={dealershipUserList[selectedDealership] || []}
+                  Data={loginDealershipUserData[selectedDealership] || []}
                   save={"value"}
                   selectedItem={handleDealershipUserSelection}
                   Error={errors.user}
@@ -294,6 +295,11 @@ const LogIn = ({ navigation }) => {
 export default LogIn;
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   fullScreenBackground: {
     flex: 1,
     gap: 20,
@@ -313,7 +319,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 20,
   },
-
   formFieldContainer: {
     width: "100%",
     gap: 10,

@@ -9,16 +9,13 @@ import axios from "axios";
 import { InspecteCarContext } from "../../context/newInspectionContext";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { colors } from "../../constants/colors";
+import { FormDataContext } from "../../context/formDataContext";
 
 const CarBodyDetails = ({ navigation }) => {
   const [carData, setCarData] = useContext(InspecteCarContext);
 
-  console.log(carData);
-
-  const [fuelTypes, setFuelTypes] = useState([]);
-  const [transmissionsTypes, setTransmissionsTypes] = useState([]);
-  const [engineCapacities, setEngineCapacities] = useState([]);
-  const [registrationCities, setRegistrationCities] = useState([]);
+  const [fuelData, transmissionData, capacityData, citiesData] =
+    useContext(FormDataContext);
 
   const [allSelected, setAllSelected] = useState(false);
 
@@ -74,12 +71,12 @@ const CarBodyDetails = ({ navigation }) => {
     setRegistrationCity(selected);
   };
 
-  useEffect(() => {
-    fetchFuelTypes();
-    fetchTransmissionsTypes();
-    fetchEngineCapacity();
-    fetchRegistrationCity();
-  }, []);
+  // useEffect(() => {
+  //   fetchFuelTypes();
+  //   fetchTransmissionsTypes();
+  //   fetchEngineCapacity();
+  //   fetchRegistrationCity();
+  // }, []);
 
   useEffect(() => {
     if (
@@ -111,13 +108,13 @@ const CarBodyDetails = ({ navigation }) => {
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
+      "keyboardDidShow",
       () => {
         setKeyboardVisible(true);
       }
     );
     const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
+      "keyboardDidHide",
       () => {
         setKeyboardVisible(false);
       }
@@ -129,97 +126,97 @@ const CarBodyDetails = ({ navigation }) => {
     };
   }, []);
 
-  const fetchFuelTypes = async () => {
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "/auth/get_fuelType.php",
-      headers: {},
-    };
+  // const fetchFuelTypes = async () => {
+  //   const config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_fuelType.php",
+  //     headers: {},
+  //   };
 
-    try {
-      const response = await axios.request(config);
-      console.log(response.data);
-      const FuelTypes = response.data;
-      setFuelTypes(
-        FuelTypes.map((object) => ({
-          key: object.did,
-          value: object.type,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching FuelTypes:", error);
-    }
-  };
+  //   try {
+  //     const response = await axios.request(config);
 
-  const fetchTransmissionsTypes = async () => {
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "/auth/get_cartrans.php",
-      headers: {},
-    };
+  //     const FuelTypes = response.data;
+  //     setFuelData(
+  //       FuelTypes.map((object) => ({
+  //         key: object.did,
+  //         value: object.type,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching FuelTypes:", error);
+  //   }
+  // };
 
-    try {
-      const response = await axios.request(config);
-      console.log(response.data);
-      const TransmissionsTypes = response.data;
-      setTransmissionsTypes(
-        TransmissionsTypes.map((object) => ({
-          key: object.did,
-          value: object.type,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching FuelTypes:", error);
-    }
-  };
+  // const fetchTransmissionsTypes = async () => {
+  //   const config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_cartrans.php",
+  //     headers: {},
+  //   };
 
-  const fetchEngineCapacity = async () => {
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "/auth/get_engdis.php",
-      headers: {},
-    };
+  //   try {
+  //     const response = await axios.request(config);
 
-    try {
-      const response = await axios.request(config);
-      console.log(response.data);
-      const EngineCapacity = response.data;
-      setEngineCapacities(
-        EngineCapacity.map((object) => ({
-          key: object.id,
-          value: object.displacement,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching FuelTypes:", error);
-    }
-  };
+  //     const TransmissionsTypes = response.data;
+  //     setTransmissionData(
+  //       TransmissionsTypes.map((object) => ({
+  //         key: object.did,
+  //         value: object.type,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching FuelTypes:", error);
+  //   }
+  // };
 
-  const fetchRegistrationCity = async () => {
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "/auth/get_cities.php",
-      headers: {},
-    };
+  // const fetchEngineCapacity = async () => {
+  //   const config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_engdis.php",
+  //     headers: {},
+  //   };
 
-    try {
-      const response = await axios.request(config);
-      console.log(response.data);
-      const RegistrationCity = response.data;
-      setRegistrationCities(
-        RegistrationCity.map((object) => ({
-          key: object.id,
-          value: object.city,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching FuelTypes:", error);
-    }
-  };
+  //   try {
+  //     const response = await axios.request(config);
+
+  //     const EngineCapacity = response.data;
+  //     setCapacityData(
+  //       EngineCapacity.map((object) => ({
+  //         key: object.id,
+  //         value: object.displacement,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching FuelTypes:", error);
+  //   }
+  // };
+
+  // const fetchRegistrationCity = async () => {
+  //   const config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_cities.php",
+  //     headers: {},
+  //   };
+
+  //   try {
+  //     const response = await axios.request(config);
+
+  //     const RegistrationCity = response.data;
+  //     setCitiesData(
+  //       RegistrationCity.map((object) => ({
+  //         key: object.id,
+  //         value: object.city,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error("Error fetching FuelTypes:", error);
+  //   }
+  // };
 
   const addCarDetails = () => {
     if (
@@ -253,7 +250,10 @@ const CarBodyDetails = ({ navigation }) => {
 
   return (
     <AppScreen>
-      <InspectionHeader rightText={"Cancel"} onPress={() => navigation.goBack()}>
+      <InspectionHeader
+        rightText={"Cancel"}
+        onPress={() => navigation.goBack()}
+      >
         Car Details
       </InspectionHeader>
       <KeyboardAwareScrollView>
@@ -261,7 +261,7 @@ const CarBodyDetails = ({ navigation }) => {
           <View style={styles.FormInputFields}>
             <Dropdown
               DropItems="Registration City"
-              Data={registrationCities}
+              Data={citiesData}
               save={"value"}
               selectedItem={RegistrationCitySelected}
               Search={true}
@@ -282,7 +282,7 @@ const CarBodyDetails = ({ navigation }) => {
 
             <Dropdown
               DropItems="Fuel Type"
-              Data={fuelTypes}
+              Data={fuelData}
               save={"value"}
               selectedItem={FuelTypeSelected}
             />
@@ -301,7 +301,7 @@ const CarBodyDetails = ({ navigation }) => {
 
             <Dropdown
               DropItems="Transmission Type"
-              Data={transmissionsTypes}
+              Data={transmissionData}
               save={"value"}
               selectedItem={TransmissionsTypeSelected}
             />
@@ -313,19 +313,18 @@ const CarBodyDetails = ({ navigation }) => {
 
             <Dropdown
               DropItems="Engine Capacity"
-              Data={engineCapacities}
+              Data={capacityData}
               save={"value"}
               selectedItem={EngineCapacitySelected}
             />
           </View>
-
         </View>
       </KeyboardAwareScrollView>
-          <View style={[styles.formButton, {bottom: keyboardVisible ? -100 : 0,}]}>
-            <GradientButton onPress={addCarDetails} disabled={!allSelected}>
-              Next
-            </GradientButton>
-          </View>
+      <View style={[styles.formButton, { bottom: keyboardVisible ? -100 : 0 }]}>
+        <GradientButton onPress={addCarDetails} disabled={!allSelected}>
+          Next
+        </GradientButton>
+      </View>
     </AppScreen>
   );
 };
