@@ -6,66 +6,51 @@ const FormDataContext = createContext();
 
 // Provider
 const FormDataProvider = ({ children }) => {
-  // Initial car data
-  const initialManufacturerData = {};
-  const initialModelsData = {};
-  const initialVarientsData = {};
-  const initialYearsData = {};
-  const initialColorsData = {};
-  const initialFuelData = {};
-  const initialTransmissionsData = {};
-  const initialCapacityData = {};
-  const initialCitiesData = {};
-
-  // Global
-  const [manufacturersData, setManufacturersData] = useState(
-    initialManufacturerData
-  );
-  const [modelsData, setModelsData] = useState(initialModelsData);
-  const [varientsData, setVarientsData] = useState(initialVarientsData);
-  const [yearsData, setYearsData] = useState(initialYearsData);
-  const [colorsData, setColorsData] = useState(initialColorsData);
-  const [fuelData, setFuelData] = useState(initialFuelData);
-  const [transmissionData, setTransmissionData] = useState(
-    initialTransmissionsData
-  );
-  const [capacityData, setCapacityData] = useState(initialCapacityData);
-  const [citiesData, setCitiesData] = useState(initialCitiesData);
+  // Global state
+  const [manufacturersData, setManufacturersData] = useState([]);
+  const [modelsData, setModelsData] = useState([]);
+  const [varientsData, setVarientsData] = useState([]);
+  const [yearsData, setYearsData] = useState([]);
+  const [colorsData, setColorsData] = useState([]);
+  const [fuelsData, setFuelsData] = useState([]);
+  const [transmissionsData, setTransmissionsData] = useState([]);
+  const [capacitiesData, setCapacitiesData] = useState([]);
+  const [citiesData, setCitiesData] = useState([]);
 
   // Local Storage Initial Data
   useEffect(() => {
     const localStorageData = async () => {
-      let manufacturer = await AsyncStorage.getItem("@formDataManufacturers");
-      let models = await AsyncStorage.getItem("@formDatacarModels");
-      let varients = await AsyncStorage.getItem("@formDatacarVarients");
-      let years = await AsyncStorage.getItem("@formDatacarYears");
-      let colors = await AsyncStorage.getItem("@formDatacarColors");
-      let fuel = await AsyncStorage.getItem("@formDatafuelTypes");
-      let transmissions = await AsyncStorage.getItem(
-        "@formDatatransmissionsTypes"
+      const manufacturer = await AsyncStorage.getItem("@formDataManufacturers");
+      const models = await AsyncStorage.getItem("@formDataModels");
+      const varients = await AsyncStorage.getItem("@formDataVarients");
+      const years = await AsyncStorage.getItem("@formDataYears");
+      const colors = await AsyncStorage.getItem("@formDataColors");
+      const fuel = await AsyncStorage.getItem("@formDataFuel");
+      const transmissions = await AsyncStorage.getItem(
+        "@formDataTransmissions"
       );
-      let capacity = await AsyncStorage.getItem("@formDataengineCapacities");
-      let cities = await AsyncStorage.getItem("@formDataregistrationCities");
+      const capacity = await AsyncStorage.getItem("@formDataCapacity");
+      const cities = await AsyncStorage.getItem("@formDataCities");
 
-      let manufacturerData = JSON.parse(manufacturer);
-      let modelsData = JSON.parse(models);
-      let varientsData = JSON.parse(varients);
-      let yearsData = JSON.parse(years);
-      let colorsData = JSON.parse(colors);
-      let fuelData = JSON.parse(fuel);
-      let transmissionsData = JSON.parse(transmissions);
-      let capacityData = JSON.parse(capacity);
-      let citiesData = JSON.parse(cities);
+      const manufacturerData = JSON.parse(manufacturer);
+      const modelData = JSON.parse(models);
+      const varientData = JSON.parse(varients);
+      const yearData = JSON.parse(years);
+      const colorData = JSON.parse(colors);
+      const fuelData = JSON.parse(fuel);
+      const transmissionData = JSON.parse(transmissions);
+      const capacityData = JSON.parse(capacity);
+      const cityData = JSON.parse(cities);
 
-      setManufacturersData(manufacturerData || initialManufacturerData);
-      setModelsData(modelsData || initialModelsData);
-      setVarientsData(varientsData || initialVarientsData);
-      setYearsData(yearsData || initialYearsData);
-      setColorsData(colorsData || initialColorsData);
-      setFuelData(fuelData || initialFuelData);
-      setTransmissionData(transmissionsData || initialTransmissionsData);
-      setCapacityData(capacityData || initialCapacityData);
-      setCitiesData(citiesData || initialCitiesData);
+      setManufacturersData(manufacturerData || manufacturersData);
+      setModelsData(modelData || modelsData);
+      setVarientsData(varientData || varientsData);
+      setYearsData(yearData || yearsData);
+      setColorsData(colorData || colorsData);
+      setFuelsData(fuelData || fuelsData);
+      setTransmissionsData(transmissionData || transmissionsData);
+      setCapacitiesData(capacityData || capacitiesData);
+      setCitiesData(cityData || citiesData);
     };
     localStorageData();
   }, []);
@@ -83,12 +68,12 @@ const FormDataProvider = ({ children }) => {
         setYearsData,
         colorsData,
         setColorsData,
-        fuelData,
-        setFuelData,
-        transmissionData,
-        setTransmissionData,
-        capacityData,
-        setCapacityData,
+        fuelsData,
+        setFuelsData,
+        transmissionsData,
+        setTransmissionsData,
+        capacitiesData,
+        setCapacitiesData,
         citiesData,
         setCitiesData,
       ]}

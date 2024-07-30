@@ -14,8 +14,28 @@ import { FormDataContext } from "../../context/formDataContext";
 const CarBodyDetails = ({ navigation }) => {
   const [carData, setCarData] = useContext(InspecteCarContext);
 
-  const [fuelData, transmissionData, capacityData, citiesData] =
-    useContext(FormDataContext);
+  const [
+    manufacturersData,
+    setManufacturersData,
+    modelsData,
+    setModelsData,
+    varientsData,
+    setVarientsData,
+    yearsData,
+    setYearsData,
+    colorsData,
+    setColorsData,
+    fuelsData,
+    setFuelsData,
+    transmissionsData,
+    setTransmissionsData,
+    capacitiesData,
+    setCapacitiesData,
+    citiesData,
+    setCitiesData,
+  ] = useContext(FormDataContext);
+
+  console.log(fuelsData);
 
   const [allSelected, setAllSelected] = useState(false);
 
@@ -282,7 +302,7 @@ const CarBodyDetails = ({ navigation }) => {
 
             <Dropdown
               DropItems="Fuel Type"
-              Data={fuelData}
+              Data={fuelsData}
               save={"value"}
               selectedItem={FuelTypeSelected}
             />
@@ -301,7 +321,7 @@ const CarBodyDetails = ({ navigation }) => {
 
             <Dropdown
               DropItems="Transmission Type"
-              Data={transmissionData}
+              Data={transmissionsData}
               save={"value"}
               selectedItem={TransmissionsTypeSelected}
             />
@@ -313,7 +333,7 @@ const CarBodyDetails = ({ navigation }) => {
 
             <Dropdown
               DropItems="Engine Capacity"
-              Data={capacityData}
+              Data={capacitiesData}
               save={"value"}
               selectedItem={EngineCapacitySelected}
             />

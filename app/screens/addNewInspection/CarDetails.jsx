@@ -14,8 +14,26 @@ import { FormDataContext } from "../../context/formDataContext";
 const CarDetails = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
 
-  const [manufacturersData, modelsData, varientsData, yearsData, colorsData] =
-    useContext(FormDataContext);
+  const [
+    manufacturersData,
+    setManufacturersData,
+    modelsData,
+    setModelsData,
+    varientsData,
+    setVarientsData,
+    yearsData,
+    setYearsData,
+    colorsData,
+    setColorsData,
+    fuelsData,
+    setFuelsData,
+    transmissionsData,
+    setTransmissionsData,
+    capacitiesData,
+    setCapacitiesData,
+    citiesData,
+    setCitiesData,
+  ] = useContext(FormDataContext);
 
   const [carData, setCarData] = useContext(InspecteCarContext);
 

@@ -3,7 +3,6 @@ import {
   Image,
   ImageBackground,
   ActivityIndicator,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -25,44 +24,54 @@ import { FormDataContext } from "../context/formDataContext";
 const Home = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
   const [
+    manufacturersData,
     setManufacturersData,
+    modelsData,
     setModelsData,
+    varientsData,
     setVarientsData,
+    yearsData,
     setYearsData,
+    colorsData,
     setColorsData,
-    setFuelData,
-    setTransmissionData,
-    setCapacityData,
+    fuelsData,
+    setFuelsData,
+    transmissionsData,
+    setTransmissionsData,
+    capacitiesData,
+    setCapacitiesData,
+    citiesData,
     setCitiesData,
   ] = useContext(FormDataContext);
 
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [floading, setFLoading] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
 
   // for form data
   useEffect(() => {
-    fetchManufacturers();
-    fetchCarModel();
-    fetchCarVarient();
-    fetchCarYears();
-    fetchCarColors();
-    fetchFuelTypes();
-    fetchTransmissionsTypes();
-    fetchEngineCapacity();
-    fetchRegistrationCity();
-    setFLoading(false);
-  }, []);
+    const fetchData = async () => {
+      try {
+        await Promise.all([
+          fetchManufacturers(),
+          fetchCarModel(),
+          fetchCarVarient(),
+          fetchCarYears(),
+          fetchCarColors(),
+          fetchFuelTypes(),
+          fetchTransmissionsTypes(),
+          fetchEngineCapacity(),
+          fetchRegistrationCity(),
+        ]);
+        setDataLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  // for cars
-  // useEffect(() => {
-  //   inspectedCar.forEach((item) => {
-  //     if (item.images && item.images.length > 0) {
-  //       console.log(item.images[0].path);
-  //     }
-  //   });
-  // }, [inspectedCar]);
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (userData && userData.user && userData.user.duserid) {
@@ -74,11 +83,9 @@ const Home = ({ navigation }) => {
   const userLogout = async () => {
     setUserData({ token: "", user: "" });
     await AsyncStorage.removeItem("@auth");
-    // alert("Logout Successfully");
   };
 
   // for form data
-
   const fetchManufacturers = async () => {
     const config = {
       method: "get",
@@ -89,7 +96,6 @@ const Home = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-
       const ManufacturerNames = response.data;
       setManufacturersData(
         ManufacturerNames.map((object) => ({
@@ -102,85 +108,79 @@ const Home = ({ navigation }) => {
     }
   };
 
-  const fetchCarModel = () => {
-    let config = {
+  const fetchCarModel = async () => {
+    const config = {
       method: "get",
       maxBodyLength: Infinity,
       url: "/auth/get_carlistnew.php",
       headers: {},
     };
 
-    axios
-      .request(config)
-      .then((response) => {
-        const ModelNames = response.data;
+    try {
+      const response = await axios.request(config);
+      const ModelNames = response.data;
 
-        const transformedList = ModelNames.reduce((acc, Model) => {
-          acc[Model.manufacturerID] = Model.carlistData.map((car) => ({
-            key: car.carID,
-            value: car.carName,
-          }));
-          return acc;
-        }, {});
-        setModelsData(transformedList);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      const transformedList = ModelNames.reduce((acc, Model) => {
+        acc[Model.manufacturerID] = Model.carlistData.map((car) => ({
+          key: car.carID,
+          value: car.carName,
+        }));
+        return acc;
+      }, {});
+      setModelsData(transformedList);
+    } catch (error) {
+      console.error("Error fetching car models:", error);
+    }
   };
 
-  const fetchCarVarient = () => {
-    let config = {
+  const fetchCarVarient = async () => {
+    const config = {
       method: "get",
       maxBodyLength: Infinity,
       url: "/auth/get_cartypenew.php",
       headers: {},
     };
 
-    axios
-      .request(config)
-      .then((response) => {
-        const VarientNames = response.data;
+    try {
+      const response = await axios.request(config);
+      const VarientNames = response.data;
 
-        const transformedList = VarientNames.reduce((acc, varient) => {
-          acc[varient.carID] = varient.cartypeData.map((v) => ({
-            key: v.typeID,
-            value: v.TypeName,
-          }));
-          return acc;
-        }, {});
-        setVarientsData(transformedList);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      const transformedList = VarientNames.reduce((acc, varient) => {
+        acc[varient.carID] = varient.cartypeData.map((v) => ({
+          key: v.typeID,
+          value: v.TypeName,
+        }));
+        return acc;
+      }, {});
+      setVarientsData(transformedList);
+    } catch (error) {
+      console.error("Error fetching car variants:", error);
+    }
   };
 
-  const fetchCarYears = () => {
-    let config = {
+  const fetchCarYears = async () => {
+    const config = {
       method: "get",
       maxBodyLength: Infinity,
       url: "/auth/get_caryears.php",
       headers: {},
     };
 
-    axios
-      .request(config)
-      .then((response) => {
-        const years = response.data;
+    try {
+      const response = await axios.request(config);
+      const years = response.data;
 
-        const transformedList = years.reduce((acc, year) => {
-          acc[year.carID] = year.carYearData.map((y) => ({
-            key: y.YearId,
-            value: y.Year,
-          }));
-          return acc;
-        }, {});
-        setYearsData(transformedList);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      const transformedList = years.reduce((acc, year) => {
+        acc[year.carID] = year.carYearData.map((y) => ({
+          key: y.YearId,
+          value: y.Year,
+        }));
+        return acc;
+      }, {});
+      setYearsData(transformedList);
+    } catch (error) {
+      console.error("Error fetching car years:", error);
+    }
   };
 
   const fetchCarColors = async () => {
@@ -193,7 +193,6 @@ const Home = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-
       const CarColors = response.data;
       setColorsData(
         CarColors.map((object) => ({
@@ -202,7 +201,7 @@ const Home = ({ navigation }) => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching manufacturers:", error);
+      console.error("Error fetching car colors:", error);
     }
   };
 
@@ -216,16 +215,15 @@ const Home = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-
       const FuelTypes = response.data;
-      setFuelData(
+      setFuelsData(
         FuelTypes.map((object) => ({
           key: object.did,
           value: object.type,
         }))
       );
     } catch (error) {
-      console.error("Error fetching FuelTypes:", error);
+      console.error("Error fetching fuel types:", error);
     }
   };
 
@@ -239,16 +237,15 @@ const Home = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-
       const TransmissionsTypes = response.data;
-      setTransmissionData(
+      setTransmissionsData(
         TransmissionsTypes.map((object) => ({
           key: object.did,
           value: object.type,
         }))
       );
     } catch (error) {
-      console.error("Error fetching FuelTypes:", error);
+      console.error("Error fetching transmission types:", error);
     }
   };
 
@@ -262,16 +259,15 @@ const Home = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-
       const EngineCapacity = response.data;
-      setCapacityData(
+      setCapacitiesData(
         EngineCapacity.map((object) => ({
           key: object.id,
           value: object.displacement,
         }))
       );
     } catch (error) {
-      console.error("Error fetching FuelTypes:", error);
+      console.error("Error fetching engine capacities:", error);
     }
   };
 
@@ -285,7 +281,6 @@ const Home = ({ navigation }) => {
 
     try {
       const response = await axios.request(config);
-
       const RegistrationCity = response.data;
       setCitiesData(
         RegistrationCity.map((object) => ({
@@ -294,14 +289,14 @@ const Home = ({ navigation }) => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching FuelTypes:", error);
+      console.error("Error fetching registration cities:", error);
     }
   };
 
   // for car data
   const inspectedCarsData = async () => {
     setRefreshing(true);
-    let config = {
+    const config = {
       method: "get",
       maxBodyLength: Infinity,
       url: `/auth/get_carinfos.php?duserId=${userData.user.duserid}`,
@@ -314,7 +309,7 @@ const Home = ({ navigation }) => {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching inspected car data:", error);
-      Toast.error(
+      ToastManager.error(
         "Failed to fetch car data. Please Check Your Internet Connection"
       );
       setLoading(false);
@@ -323,7 +318,7 @@ const Home = ({ navigation }) => {
     }
   };
 
-  if (floading) {
+  if (dataLoading) {
     return (
       <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -476,9 +471,12 @@ const Home = ({ navigation }) => {
   );
 };
 
-export default Home;
-
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   customerSummarycontainerbackgroundImage: {
     marginLeft: 20,
     marginRight: 20,
@@ -531,4 +529,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  // other styles...
 });
+
+export default Home;

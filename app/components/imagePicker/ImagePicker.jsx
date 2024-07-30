@@ -34,6 +34,7 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
       allowsEditing: false,
       quality: 0.5,
     });
+
     if (!result.canceled) {
       const selectedImages = result.assets.map((asset) => ({
         uri: asset.uri,
@@ -51,7 +52,7 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
       allowsEditing: false,
       quality: 0.5,
     });
-
+    console.log(result);
     if (!result.canceled) {
       const localUri = result.assets[0].uri;
       const filename = localUri.split("/").pop();
