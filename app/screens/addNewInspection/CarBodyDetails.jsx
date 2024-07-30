@@ -297,7 +297,6 @@ const CarBodyDetails = ({ navigation }) => {
             <AppTextInput
               placeholder="Registration No"
               onChangeText={(value) => setRegistrationNo(value)}
-              inputMode={"numeric"}
             />
 
             <Dropdown

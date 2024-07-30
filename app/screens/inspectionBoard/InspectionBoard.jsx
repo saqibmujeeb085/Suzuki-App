@@ -251,13 +251,13 @@ const InspectionBoard = ({ navigation, route }) => {
                   color={colors.fontGrey}
                   fontSize={mainStyles.h3FontSize}
                 >
-                  Color
+                  Registration No
                 </AppText>
                 <AppText
                   color={colors.fontWhite}
                   fontSize={mainStyles.h3FontSize}
                 >
-                  {carInfo?.color}
+                  {carInfo?.registrationNo}
                 </AppText>
               </View>
               <View style={styles.summaryBox}>
@@ -271,7 +271,7 @@ const InspectionBoard = ({ navigation, route }) => {
                   color={colors.fontWhite}
                   fontSize={mainStyles.h3FontSize}
                 >
-                  {carInfo?.hi}1600 cc
+                  {carInfo?.engineDisplacement}
                 </AppText>
               </View>
             </View>

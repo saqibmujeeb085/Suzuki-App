@@ -205,7 +205,7 @@ const LogIn = ({ navigation }) => {
               paddingTop={70}
               paddingBottom={100}
             >
-              Welcome to Suzuki Vehicle Valuation Portal.
+              Welcome to Suzuki Vehilce Evaluation Portal.
             </AppText>
           </ImageBackground>
           <View style={styles.formAndCopyright}>
@@ -248,14 +248,14 @@ const LogIn = ({ navigation }) => {
                   }}
                   Error={errors.password}
                 />
-                <View style={styles.forgetBtn}>
+                {/* <View style={styles.forgetBtn}>
                   <IconButton
                     icon={"account-key-outline"}
                     onPress={() => navigation.navigate("ForgetPassword")}
                   >
                     Forget Password
                   </IconButton>
-                </View>
+                </View> */}
                 <GradientButton
                   onPress={handleUserLogin}
                   disabled={!allSelected}

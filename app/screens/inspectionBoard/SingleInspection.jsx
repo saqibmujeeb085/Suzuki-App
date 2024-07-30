@@ -19,6 +19,9 @@ const SingleInspection = ({ navigation, route }) => {
 
   const [loading, setLoading] = useState(false);
 
+  console.log("values", values);
+  console.log("questions", questions);
+
   // Fetch questions when component mounts
   useEffect(() => {
     setLoading(true);

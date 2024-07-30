@@ -74,6 +74,7 @@ const CarFiles = ({ navigation }) => {
       data.append("transmissionType", carData.transmissionType);
       data.append("mileage", carData.mileage);
       data.append("registrationCity", carData.registrationCity);
+      data.append("engineCapacity", carData.engineCapacity);
       data.append("FuelType", carData.FuelType);
       data.append("color", carData.color);
       selectedImages.forEach((image, index) => {
@@ -140,6 +141,7 @@ const CarFiles = ({ navigation }) => {
       data.append("transmissionType", carData.transmissionType);
       data.append("mileage", carData.mileage);
       data.append("registrationCity", carData.registrationCity);
+      data.append("engineCapacity", carData.engineCapacity);
       data.append("FuelType", carData.FuelType);
       data.append("color", carData.color);
       selectedImages.forEach((image, index) => {
