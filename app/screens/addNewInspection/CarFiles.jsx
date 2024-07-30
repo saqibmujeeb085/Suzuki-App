@@ -1,29 +1,55 @@
 import { ScrollView, StyleSheet, View } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import AppScreen from "../../components/screen/Screen";
 import InspectionHeader from "../../components/header/InspectionHeader";
 import AppImagePicker from "../../components/imagePicker/ImagePicker";
 import GradientButton from "../../components/buttons/GradientButton";
 import ProcessModal from "../../components/modals/ProcessModal";
 import { InspecteCarContext } from "../../context/newInspectionContext";
-import axios from "axios";
 import AppText from "../../components/text/Text";
 import AppDocumentPicker from "../../components/imagePicker/DocumentPicker";
 import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CarFiles = ({ navigation }) => {
   const [carData, setCarData, resetCarData] = useContext(InspecteCarContext);
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isImageUploaded, setIsImageUploaded] = useState(false); // State to track if an image is uploaded
-
-  const [currentDateTime, setCurrentDateTime] = useState("");
-
-  // console.log("hello", selectedImages);
+  const [isImageUploaded, setIsImageUploaded] = useState(false);
 
   const [show, setShow] = useState(false);
+  const [tempIDCounter, setTempIDCounter] = useState(0);
+
+
+  useEffect(() => {
+    // Load tempIDCounter from AsyncStorage on component mount
+    const loadTempIDCounter = async () => {
+      try {
+        const counter = await AsyncStorage.getItem('@tempIDCounter');
+        if (counter !== null) {
+          setTempIDCounter(parseInt(counter, 10));
+        }
+      } catch (error) {
+        console.error('Failed to load tempIDCounter:', error);
+      }
+    };
+    loadTempIDCounter();
+  }, []);
+
+  const incrementTempIDCounter = async () => {
+    try {
+      const newCounter = tempIDCounter + 1;
+      await AsyncStorage.setItem('@tempIDCounter', newCounter.toString());
+      setTempIDCounter(newCounter);
+      return newCounter;
+    } catch (error) {
+      console.error('Failed to increment tempIDCounter:', error);
+      return null;
+    }
+  };
+
   const ShowModal = () => {
     setShow(!show);
   };
@@ -46,145 +72,71 @@ const CarFiles = ({ navigation }) => {
     return `${month}/${day}/${year} - ${hours}:${minutes}${ampm}`;
   };
 
-  const postCarDetails = async () => {
+  const saveCarDetails = async () => {
+    setLoading(true)
     const newDateTime = currentDateAndTime();
+    const newTempID = await incrementTempIDCounter();
+    
+    if (newTempID === null) return;
 
-    setCarData((prevData) => ({
-      ...prevData,
+    const carDetails = {
+      dealershipId: carData.dealershipId,
+      duserId: carData.duserId,
+      customerID: carData.customerID,
+      registrationNo: carData.registrationNo,
+      chasisNo: carData.chasisNo,
+      EngineNo: carData.EngineNo,
       inspectionDate: newDateTime,
-    }));
+      mfgId: carData.mfgId,
+      carId: carData.carId,
+      varientId: carData.varientId,
+      engineDisplacement: carData.engineDisplacement,
+      model: carData.model,
+      cplc: carData.cplc,
+      buyingCode: carData.buyingCode,
+      NoOfOwners: carData.NoOfOwners,
+      transmissionType: carData.transmissionType,
+      mileage: carData.mileage,
+      registrationCity: carData.registrationCity,
+      engineCapacity: carData.engineCapacity,
+      FuelType: carData.FuelType,
+      color: carData.color,
+      images: selectedImages.map((image, index) => ({
+        uri: image.uri,
+        name: image.name,
+        type: image.type,
+      })),
+      documents: selectedDocuments.map((document, index) => ({
+        uri: document.uri,
+        name: document.name,
+        type: document.type,
+      })),
+      status: carData.status,
+      tempID: newTempID,
+    };
 
-    if (selectedImages.length > 0 || selectedDocuments.length > 0) {
-      let data = new FormData();
-      data.append("dealershipId", carData.dealershipId);
-      data.append("duserId", carData.duserId);
-      data.append("customerID", carData.customerID);
-      data.append("registrationNo", carData.registrationNo);
-      data.append("chasisNo", carData.chasisNo);
-      data.append("EngineNo", carData.EngineNo);
-      data.append("inspectionDate", newDateTime);
-      data.append("mfgId", carData.mfgId);
-      data.append("carId", carData.carId);
-      data.append("varientId", carData.varientId);
-      data.append("engineDisplacement", carData.engineDisplacement);
-      data.append("model", carData.model);
-      data.append("cplc", carData.cplc);
-      data.append("buyingCode", carData.buyingCode);
-      data.append("NoOfOwners", carData.NoOfOwners);
-      data.append("transmissionType", carData.transmissionType);
-      data.append("mileage", carData.mileage);
-      data.append("registrationCity", carData.registrationCity);
-      data.append("engineCapacity", carData.engineCapacity);
-      data.append("FuelType", carData.FuelType);
-      data.append("color", carData.color);
-      selectedImages.forEach((image, index) => {
-        data.append(`images[${index}]`, {
-          uri: image.uri,
-          name: image.name,
-          type: image.type,
-        });
+    try {
+      // Save car details with tempID to AsyncStorage
+      const storedData = await AsyncStorage.getItem("@carformdata");
+      const carFormDataArray = storedData ? JSON.parse(storedData) : [];
+      carFormDataArray.push(carDetails);
+      await AsyncStorage.setItem("@carformdata", JSON.stringify(carFormDataArray));
+      
+      setLoading(false)
+      navigation.navigate("InspectionBoard", {
+        id: newTempID,
       });
-      selectedDocuments.forEach((document, index) => {
-        data.append(`documents[${index}]`, {
-          uri: document.uri,
-          name: document.name,
-          type: document.type,
-        });
-      });
-      data.append("status", carData.status);
 
-      try {
-        setLoading(true);
-        const headers = {
-          "Content-Type": "multipart/form-data",
-        };
-        const response = await axios.post("/auth/addcarInfo.php", data, {
-          headers: headers,
-        });
-
-        console.log("Response:", response.data);
-
-        setLoading(false);
-        resetCarData(); // Reset the data here
-        navigation.navigate("InspectionBoard", {
-          id: response.data.last_id,
-        });
-      } catch (error) {
-        setLoading(false);
-        console.error("Error:", error);
-      }
-    } else {
-      alert("Please Select Image or Document First");
-    }
-  };
-
-  const postCarDetailsAsDraft = async () => {
-    const newDateTime = currentDateAndTime();
-
-    if (selectedImages.length > 0 || selectedDocuments.length > 0) {
-      let data = new FormData();
-      data.append("dealershipId", carData.dealershipId);
-      data.append("duserId", carData.duserId);
-      data.append("customerID", carData.customerID);
-      data.append("registrationNo", carData.registrationNo);
-      data.append("chasisNo", carData.chasisNo);
-      data.append("EngineNo", carData.EngineNo);
-      data.append("inspectionDate", newDateTime);
-      data.append("mfgId", carData.mfgId);
-      data.append("carId", carData.carId);
-      data.append("varientId", carData.varientId);
-      data.append("engineDisplacement", carData.engineDisplacement);
-      data.append("model", carData.model);
-      data.append("cplc", carData.cplc);
-      data.append("buyingCode", carData.buyingCode);
-      data.append("NoOfOwners", carData.NoOfOwners);
-      data.append("transmissionType", carData.transmissionType);
-      data.append("mileage", carData.mileage);
-      data.append("registrationCity", carData.registrationCity);
-      data.append("engineCapacity", carData.engineCapacity);
-      data.append("FuelType", carData.FuelType);
-      data.append("color", carData.color);
-      selectedImages.forEach((image, index) => {
-        data.append(`images[${index}]`, {
-          uri: image.uri,
-          name: image.name,
-          type: image.type,
-        });
-      });
-      selectedDocuments.forEach((document, index) => {
-        data.append(`documents[${index}]`, {
-          uri: document.uri,
-          name: document.name,
-          type: document.type,
-        });
-      });
-      data.append("status", carData.status);
-
-      try {
-        setLoading(true);
-        const headers = {
-          "Content-Type": "multipart/form-data",
-        };
-        const response = await axios.post("/auth/addcarInfo.php", data, {
-          headers: headers,
-        });
-
-        console.log("Response:", response.data);
-        setLoading(false);
-        resetCarData(); // Reset the data here
-        navigation.navigate("Draft");
-      } catch (error) {
-        setLoading(false);
-        console.error("Error:", error);
-      }
-    } else {
-      alert("Please Select Image or Document First");
+      console.log("Car details saved with tempID:", newTempID);
+      resetCarData(); // Reset the data here
+    } catch (error) {
+      console.error("Error saving car details:", error);
     }
   };
 
   const handleImagesSelected = (images) => {
     setSelectedImages(images);
-    setIsImageUploaded(true); // Set the image uploaded state to true
+    setIsImageUploaded(true);
   };
 
   const handleDocumentsSelected = (documents) => {
@@ -196,7 +148,7 @@ const CarFiles = ({ navigation }) => {
       prevImages.filter((image) => image.uri !== removedImage.uri)
     );
     if (selectedImages.length === 1) {
-      setIsImageUploaded(false); // Set the image uploaded state to false if no images left
+      setIsImageUploaded(false);
     }
   };
 
@@ -217,9 +169,9 @@ const CarFiles = ({ navigation }) => {
           text={"You have to complete the inspection in 20 minutes."}
           pbtn={loading ? "Loading..." : "Start Inspection Now"}
           disabled={loading}
-          pbtnPress={postCarDetails}
+          pbtnPress={saveCarDetails}
           sbtn={"Save for later"}
-          sbtnPress={postCarDetailsAsDraft}
+          sbtnPress={saveCarDetails}
         />
       )}
       <InspectionHeader
@@ -230,12 +182,9 @@ const CarFiles = ({ navigation }) => {
       </InspectionHeader>
       <ScrollView>
         <View style={styles.UploadScreenContainer}>
-          {/* <AppText fontSize={mainStyles.h3FontSize} textAlign={"center"}>
-            Upload Car Images
-          </AppText> */}
           <AppImagePicker
             onImagesSelected={handleImagesSelected}
-            onRemoveImage={handleRemoveImage} // Pass the remove image handler
+            onRemoveImage={handleRemoveImage}
           />
           <AppText fontSize={mainStyles.h3FontSize} marginTop={20}>
             Upload Car Documents
@@ -265,9 +214,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 10,
     marginBottom: 120,
-  },
-  addMoreButton: {
-    alignItems: "flex-end",
   },
   formButton: {
     position: "absolute",

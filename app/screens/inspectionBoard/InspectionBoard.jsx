@@ -6,7 +6,7 @@ import {
   View,
   ScrollView,
 } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import AppScreen from "../../components/screen/Screen";
 import AppText from "../../components/text/Text";
 import IconButton from "../../components/buttons/IconButton";
@@ -19,54 +19,59 @@ import InspectionSkeletonPreloader from "../../components/skeletonLoader/Inspect
 import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
 import InspectionHeader from "../../components/header/InspectionHeader";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { QuesAndAnsContext } from "../../context/questionAndCategories";
+
 
 const InspectionBoard = ({ navigation, route }) => {
   const { id } = route.params || {};
 
   console.log(id);
 
-  const [categoriesList, setCategoriesList] = useState([]);
+  // const [categoriesList, setCategoriesList] = useState([]);
   const [checkCategories, setCheckCategories] = useState([]);
   const [show, setShow] = useState(false);
   const [allInspectionsDone, setAllInspectionsDone] = useState(false);
   const [loading, setLoading] = useState(true); // Initialize loading to true
   const [carInfo, setCarInfo] = useState(null);
+  const [categories, setCategories, questions, setQuestions] = useContext(QuesAndAnsContext);
+
 
   useEffect(() => {
-    if (!id) {
-      setError(new Error("No ID provided"));
-      setLoading(false);
-      return;
-    }
+      getCarDataByTempID(id)
+  }, [])
 
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `/auth/get_singledraftcarinfos.php?id=${id}`,
-      headers: {},
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        setCarInfo(response.data);
-        console.log(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
-  }, [id]);
-
-  const fetchCategories = async () => {
+  const getCarDataByTempID = async (tempID) => {
     try {
-      const response = await axios.get("/auth/get_category.php");
-      setCategoriesList(response.data);
+      const storedData = await AsyncStorage.getItem("@carformdata");
+      if (storedData !== null) {
+        const carFormDataArray = JSON.parse(storedData);
+        const carData = carFormDataArray.find((item) => item.tempID === tempID);
+        if (carData) {
+          setCarInfo(carData);
+          return carData;
+        } else {
+          console.log('No data found with tempID:', tempID);
+          return null;
+        }
+      } else {
+        console.log('No car data found in AsyncStorage');
+        return null;
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error retrieving car data:', error);
+      return null;
     }
   };
+
+  // const fetchCategories = async () => {
+  //   try {
+  //     const response = await axios.get("/auth/get_category.php");
+  //     setCategoriesList(response.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const fetchCheckCategories = async () => {
     try {
@@ -109,7 +114,7 @@ const InspectionBoard = ({ navigation, route }) => {
   useFocusEffect(
     useCallback(() => {
       setLoading(true); // Set loading to true on screen focus
-      fetchCategories(); // Fetch categories
+      // fetchCategories(); // Fetch categories
       fetchCheckCategories(); // Fetch check categories
     }, [id]) // Ensure dependencies are set correctly
   );
@@ -303,7 +308,7 @@ const InspectionBoard = ({ navigation, route }) => {
             </View>
           ) : (
             <View style={styles.inspectionCardsBox}>
-              {categoriesList.map((item) => {
+              {categories.map((item) => {
                 const checkCategory = checkCategories.find(
                   (cat) => cat.catId === item.id
                 );
@@ -316,10 +321,10 @@ const InspectionBoard = ({ navigation, route }) => {
                   <InspectionBoardCard
                     key={item.id}
                     name={item.category}
-                    inspectionIsDone={
-                      checkCategory ? checkCategory.inspectionIsDone : false
-                    }
-                    Rating={checkCategory ? checkCategory.Rating : ""}
+                    // inspectionIsDone={
+                    //   checkCategory ? checkCategory.inspectionIsDone : false
+                    // }
+                    // Rating={checkCategory ? checkCategory.Rating : ""}
                     icon={checkIcon?.icon}
                     onPress={() =>
                       navigation.navigate("SingleInspection", {

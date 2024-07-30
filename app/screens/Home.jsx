@@ -20,6 +20,7 @@ import SkeletonLoader from "../components/skeletonLoader/SkeletonLoader";
 import { colors } from "../constants/colors";
 import { mainStyles } from "../constants/style";
 import { FormDataContext } from "../context/formDataContext";
+import { QuesAndAnsContext } from "../context/questionAndCategories";
 
 const Home = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
@@ -43,6 +44,7 @@ const Home = ({ navigation }) => {
     citiesData,
     setCitiesData,
   ] = useContext(FormDataContext);
+    const [categories, setCategories, questions, setQuestions] = useContext(QuesAndAnsContext);
 
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -63,6 +65,7 @@ const Home = ({ navigation }) => {
           fetchTransmissionsTypes(),
           fetchEngineCapacity(),
           fetchRegistrationCity(),
+          fetchCategories(),
         ]);
         setDataLoading(false);
       } catch (error) {
@@ -290,6 +293,17 @@ const Home = ({ navigation }) => {
       );
     } catch (error) {
       console.error("Error fetching registration cities:", error);
+    }
+  };
+
+  // for categories
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("/auth/get_category.php");
+      setCategories(response.data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
