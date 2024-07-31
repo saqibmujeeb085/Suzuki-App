@@ -13,27 +13,21 @@ const QuesAndAnsProvider = ({ children }) => {
   // Local Storage Initial Data
   useEffect(() => {
     const localStorageData = async () => {
-        const category = await AsyncStorage.getItem("@Categories");
-        const question = await AsyncStorage.getItem("@questions");
-    
+      const category = await AsyncStorage.getItem("@Categories");
+      const question = await AsyncStorage.getItem("@questions");
 
       const categoryData = JSON.parse(category);
       const questionData = JSON.parse(question);
-      
-      setManufacturersData(categoryData || categories);
-      setModelsData(questionData || questions);
+
+      setCategories(categoryData || categories);
+      setQuestions(questionData || questions);
     };
     localStorageData();
   }, []);
 
   return (
     <QuesAndAnsContext.Provider
-      value={[
-        categories,
-        setCategories,
-        questions,
-        setQuestions
-      ]}
+      value={[categories, setCategories, questions, setQuestions]}
     >
       {children}
     </QuesAndAnsContext.Provider>

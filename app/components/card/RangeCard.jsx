@@ -43,7 +43,7 @@ const RangeCard = ({
           fontSize={mainStyles.h2FontSize}
           color={"#212121"}
         >
-          {sliderValue ? sliderValue : "NaN"} / 10
+          {sliderValue ? sliderValue : "NaN"} / 5
         </AppText>
         <View style={styles.range}>
           {[...Array(9)].map((_, index) => (
@@ -62,7 +62,7 @@ const RangeCard = ({
               paddingHorizontal: 0,
             }}
             minimumValue={1}
-            maximumValue={10}
+            maximumValue={5}
             step={1}
             value={sliderValue}
             onValueChange={handleValueChange}

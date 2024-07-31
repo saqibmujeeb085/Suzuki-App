@@ -19,9 +19,8 @@ import InspectionSkeletonPreloader from "../../components/skeletonLoader/Inspect
 import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
 import InspectionHeader from "../../components/header/InspectionHeader";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { QuesAndAnsContext } from "../../context/questionAndCategories";
-
 
 const InspectionBoard = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -34,12 +33,14 @@ const InspectionBoard = ({ navigation, route }) => {
   const [allInspectionsDone, setAllInspectionsDone] = useState(false);
   const [loading, setLoading] = useState(true); // Initialize loading to true
   const [carInfo, setCarInfo] = useState(null);
-  const [categories, setCategories, questions, setQuestions] = useContext(QuesAndAnsContext);
-
+  const [categories, setCategories, questions, setQuestions] =
+    useContext(QuesAndAnsContext);
 
   useEffect(() => {
-      getCarDataByTempID(id)
-  }, [])
+    getCarDataByTempID(id);
+  }, []);
+
+  console.log("hmm", categories);
 
   const getCarDataByTempID = async (tempID) => {
     try {
@@ -51,15 +52,15 @@ const InspectionBoard = ({ navigation, route }) => {
           setCarInfo(carData);
           return carData;
         } else {
-          console.log('No data found with tempID:', tempID);
+          console.log("No data found with tempID:", tempID);
           return null;
         }
       } else {
-        console.log('No car data found in AsyncStorage');
+        console.log("No car data found in AsyncStorage");
         return null;
       }
     } catch (error) {
-      console.error('Error retrieving car data:', error);
+      console.error("Error retrieving car data:", error);
       return null;
     }
   };
@@ -73,17 +74,17 @@ const InspectionBoard = ({ navigation, route }) => {
   //   }
   // };
 
-  const fetchCheckCategories = async () => {
-    try {
-      const response = await axios.get(
-        `/auth/get_checkInspectionCategories.php?carid=${id}`
-      );
-      setCheckCategories(response.data);
-      setLoading(false); // Ensure loading is set to false after fetching data
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const fetchCheckCategories = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `/auth/get_checkInspectionCategories.php?carid=${id}`
+  //     );
+  //     setCheckCategories(response.data);
+  //     setLoading(false); // Ensure loading is set to false after fetching data
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   useEffect(() => {
     const allDone = checkCategories.every((cat) => cat.inspectionIsDone);
@@ -113,9 +114,9 @@ const InspectionBoard = ({ navigation, route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      setLoading(true); // Set loading to true on screen focus
+      setLoading(false); // Set loading to true on screen focus
       // fetchCategories(); // Fetch categories
-      fetchCheckCategories(); // Fetch check categories
+      // fetchCheckCategories(); // Fetch check categories
     }, [id]) // Ensure dependencies are set correctly
   );
 
@@ -328,7 +329,7 @@ const InspectionBoard = ({ navigation, route }) => {
                     icon={checkIcon?.icon}
                     onPress={() =>
                       navigation.navigate("SingleInspection", {
-                        carid: id,
+                        tempID: id,
                         catid: item.id,
                         catName: item.category,
                       })

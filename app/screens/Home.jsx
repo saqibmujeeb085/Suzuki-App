@@ -44,7 +44,8 @@ const Home = ({ navigation }) => {
     citiesData,
     setCitiesData,
   ] = useContext(FormDataContext);
-    const [categories, setCategories, questions, setQuestions] = useContext(QuesAndAnsContext);
+  const [categories, setCategories, questions, setQuestions] =
+    useContext(QuesAndAnsContext);
 
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -66,6 +67,7 @@ const Home = ({ navigation }) => {
           fetchEngineCapacity(),
           fetchRegistrationCity(),
           fetchCategories(),
+          fetchQuestions(),
         ]);
         setDataLoading(false);
       } catch (error) {
@@ -304,6 +306,17 @@ const Home = ({ navigation }) => {
       setCategories(response.data);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  // foe Questions
+  const fetchQuestions = async () => {
+    try {
+      const response = await axios.get(`/auth/get_questionsnew.php`);
+      const data = response.data;
+      setQuestions(data);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
     }
   };
 

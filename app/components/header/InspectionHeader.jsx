@@ -38,6 +38,9 @@ const InspectionHeader = ({
         color={colors.fontBlack}
         width="250"
         textAlign={"center"}
+        ellipsizeMode={"tail"}
+        numberOfLines={1}
+        marginHorizontal={20}
       >
         {children}
       </AppText>
