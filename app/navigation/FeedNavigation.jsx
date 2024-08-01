@@ -1,5 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import BottomTabNavigation from "./BottonTabNavigation";
 import AuthNavigator from "./AuthNavigator";
@@ -8,10 +8,48 @@ import SingleCarInfo from "../screens/singleCarInfo/SingleCarInfo";
 import DraftSingleCar from "../screens/draftSingleCar/DraftSingleCar";
 import SingleInspection from "../screens/inspectionBoard/SingleInspection";
 import InspectionBoard from "../screens/inspectionBoard/InspectionBoard";
+import NetInfo from "@react-native-community/netinfo";
+import { DataPostContext } from "../context/dataPostContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Stack = createStackNavigator();
 const FeedNavigation = () => {
   const authContext = useContext(AuthContext);
+
+  const Stack = createStackNavigator();
+
+  const { triggerManualUpload } = useContext(DataPostContext);
+  const [isConnected, setIsConnected] = useState(false);
+  const [questionsInLocal, setQuestionsInLocal] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+    });
+
+    // Clean up the subscription
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      const data = await AsyncStorage.getItem("@carQuestionsdata");
+      setQuestionsInLocal(data);
+    };
+
+    fetchQuestions();
+
+    // Optionally, you can set up an interval to check for updates in AsyncStorage
+    const intervalId = setInterval(fetchQuestions, 300000); // Check every 5 seconds
+
+    // Clean up the interval
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    if (isConnected && questionsInLocal) {
+      triggerManualUpload();
+    }
+  }, [isConnected, questionsInLocal]);
 
   if (!authContext) {
     console.error("AuthContext is not available");

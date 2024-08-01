@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import FeedNavigation from "./app/navigation/FeedNavigation";
 import { useFonts } from "expo-font";
@@ -15,6 +15,7 @@ import {
 import { LoginDataProvider } from "./app/context/loginDataContext";
 import { FormDataProvider } from "./app/context/formDataContext";
 import { QuesAndAnsProvider } from "./app/context/questionAndCategories";
+import { DataPostProvider } from "./app/context/dataPostContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,19 +50,21 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <LoginDataProvider>
-        <FormDataProvider>
-          <QuesAndAnsProvider>
-          <NavigationContainer onLayout={onLayoutRootView}>
-            <SafeAreaProvider>
-              <InspecteCarProvider>
-                <FeedNavigation />
-              </InspecteCarProvider>
-            </SafeAreaProvider>
-          </NavigationContainer>
-          </QuesAndAnsProvider>
-        </FormDataProvider>
-      </LoginDataProvider>
+      <QuesAndAnsProvider>
+        <DataPostProvider>
+          <LoginDataProvider>
+            <FormDataProvider>
+              <NavigationContainer onLayout={onLayoutRootView}>
+                <SafeAreaProvider>
+                  <InspecteCarProvider>
+                    <FeedNavigation />
+                  </InspecteCarProvider>
+                </SafeAreaProvider>
+              </NavigationContainer>
+            </FormDataProvider>
+          </LoginDataProvider>
+        </DataPostProvider>
+      </QuesAndAnsProvider>
     </AuthProvider>
   );
 }

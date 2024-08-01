@@ -65,6 +65,28 @@ const InspectionBoard = ({ navigation, route }) => {
     }
   };
 
+  // useEffect(() => {
+  //   // Call the function to display the car form data
+  //   displayCarFormData();
+  // }, []);
+
+  // const displayCarFormData = async () => {
+  //   const key = "@carformdata";
+  //   try {
+  //     // Retrieve the stored data from AsyncStorage
+  //     const jsonValue = await AsyncStorage.getItem(key);
+  //     if (jsonValue !== null) {
+  //       // Parse the JSON string into a JavaScript object
+  //       const carFormData = JSON.parse(jsonValue);
+  //       console.log("Car Form Data:", carFormData);
+  //     } else {
+  //       console.log("No data found in AsyncStorage for key:", key);
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to load data from AsyncStorage:", error);
+  //   }
+  // };
+
   // const fetchCategories = async () => {
   //   try {
   //     const response = await axios.get("/auth/get_category.php");
@@ -283,6 +305,12 @@ const InspectionBoard = ({ navigation, route }) => {
             </View>
           </View>
         </ImageBackground>
+
+        <Image
+          src={{ uri: carInfo?.images?.[0]?.uri }}
+          style={{ width: 100, height: 100 }}
+        />
+
         <View style={styles.InspectionBoardContainer}>
           <View style={styles.headingAndButton}>
             <View style={styles.headingWithIcon}>

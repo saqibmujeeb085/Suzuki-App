@@ -11,6 +11,7 @@ import { mainStyles } from "../constants/style";
 
 const Drafts = ({ navigation }) => {
   const [userData] = useContext(AuthContext);
+
   const [fullData, setFullData] = useState([]);
   const [displayData, setDisplayData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -18,7 +19,6 @@ const Drafts = ({ navigation }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
-
 
   // Function to fetch inspected cars data
   const fetchInspectedCars = useCallback(

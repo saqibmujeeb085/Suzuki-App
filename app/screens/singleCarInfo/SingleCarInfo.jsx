@@ -27,8 +27,6 @@ const SingleCarInfo = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log(carInfo?.carPic);
-
   useEffect(() => {
     if (!id) {
       setError(new Error("No ID provided"));
@@ -105,8 +103,11 @@ const SingleCarInfo = ({ route, navigation }) => {
           </View>
           <View style={styles.contentBox}>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Inspection Date:
               </AppText>
 
@@ -115,15 +116,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.inspectionDate}
+                {carInfo?.inspectionDate}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Car:
               </AppText>
 
@@ -132,15 +136,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.car}
+                {carInfo?.car}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Variant:
               </AppText>
 
@@ -149,15 +156,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.varientId}
+                {carInfo?.varientId}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Model:
               </AppText>
 
@@ -166,15 +176,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.model}
+                {carInfo?.model}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Registration No:
               </AppText>
 
@@ -183,15 +196,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.registrationNo}
+                {carInfo?.registrationNo}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Chasis No:
               </AppText>
 
@@ -200,15 +216,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.chasisNo}
+                {carInfo?.chasisNo}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Manufacturer:
               </AppText>
 
@@ -217,15 +236,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.mfgId}
+                {carInfo?.mfgId}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 CPLC:
               </AppText>
 
@@ -234,15 +256,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.cplc}
+                {carInfo?.cplc}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 No Of Owners:
               </AppText>
 
@@ -251,15 +276,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.NoOfOwners}
+                {carInfo?.NoOfOwners}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Transmission Type:
               </AppText>
 
@@ -268,15 +296,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.transmissionType}
+                {carInfo?.transmissionType}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Mileage:
               </AppText>
 
@@ -285,15 +316,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.mileage}
+                {carInfo?.mileage}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Registration City:
               </AppText>
 
@@ -302,15 +336,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.registrationCity}
+                {carInfo?.registrationCity}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Fuel Type:
               </AppText>
 
@@ -319,7 +356,7 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
                 textTransform={"uppercase"}
                 style={{
@@ -328,12 +365,15 @@ const SingleCarInfo = ({ route, navigation }) => {
                   width: 200,
                 }}
               >
-                {carInfo.FuelType}
+                {carInfo?.FuelType}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Color:
               </AppText>
 
@@ -342,15 +382,18 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.color}
+                {carInfo?.color}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
-              <AppText minWidth={120}
-                    maxWidth={120} fontSize={mainStyles.h3FontSize}>
+              <AppText
+                minWidth={120}
+                maxWidth={120}
+                fontSize={mainStyles.h3FontSize}
+              >
                 Overall Rating:
               </AppText>
 
@@ -359,10 +402,10 @@ const SingleCarInfo = ({ route, navigation }) => {
               <AppText
                 fontSize={mainStyles.h3FontSize}
                 minWidth={120}
-                    maxWidth={120}
+                maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo.rank}
+                {carInfo?.rank}
               </AppText>
             </View>
           </View>

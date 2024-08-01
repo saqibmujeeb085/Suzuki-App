@@ -10,7 +10,7 @@ import AppText from "../../components/text/Text";
 import AppDocumentPicker from "../../components/imagePicker/DocumentPicker";
 import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CarFiles = ({ navigation }) => {
   const [carData, setCarData, resetCarData] = useContext(InspecteCarContext);
@@ -22,17 +22,16 @@ const CarFiles = ({ navigation }) => {
   const [show, setShow] = useState(false);
   const [tempIDCounter, setTempIDCounter] = useState(0);
 
-
   useEffect(() => {
     // Load tempIDCounter from AsyncStorage on component mount
     const loadTempIDCounter = async () => {
       try {
-        const counter = await AsyncStorage.getItem('@tempIDCounter');
+        const counter = await AsyncStorage.getItem("@tempIDCounter");
         if (counter !== null) {
           setTempIDCounter(parseInt(counter, 10));
         }
       } catch (error) {
-        console.error('Failed to load tempIDCounter:', error);
+        console.error("Failed to load tempIDCounter:", error);
       }
     };
     loadTempIDCounter();
@@ -41,11 +40,11 @@ const CarFiles = ({ navigation }) => {
   const incrementTempIDCounter = async () => {
     try {
       const newCounter = tempIDCounter + 1;
-      await AsyncStorage.setItem('@tempIDCounter', newCounter.toString());
+      await AsyncStorage.setItem("@tempIDCounter", newCounter.toString());
       setTempIDCounter(newCounter);
       return newCounter;
     } catch (error) {
-      console.error('Failed to increment tempIDCounter:', error);
+      console.error("Failed to increment tempIDCounter:", error);
       return null;
     }
   };
@@ -73,10 +72,10 @@ const CarFiles = ({ navigation }) => {
   };
 
   const saveCarDetails = async () => {
-    setLoading(true)
+    setLoading(true);
     const newDateTime = currentDateAndTime();
     const newTempID = await incrementTempIDCounter();
-    
+
     if (newTempID === null) return;
 
     const carDetails = {
@@ -120,9 +119,13 @@ const CarFiles = ({ navigation }) => {
       const storedData = await AsyncStorage.getItem("@carformdata");
       const carFormDataArray = storedData ? JSON.parse(storedData) : [];
       carFormDataArray.push(carDetails);
-      await AsyncStorage.setItem("@carformdata", JSON.stringify(carFormDataArray));
-      
-      setLoading(false)
+      await AsyncStorage.setItem(
+        "@carformdata",
+        JSON.stringify(carFormDataArray)
+      );
+
+      setLoading(false);
+      setShow(false);
       navigation.navigate("InspectionBoard", {
         id: newTempID,
       });
