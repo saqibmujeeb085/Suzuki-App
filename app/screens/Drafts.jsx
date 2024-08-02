@@ -1,79 +1,48 @@
 import { FlatList, StyleSheet, View } from "react-native";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AppScreen from "../components/screen/Screen";
 import AppText from "../components/text/Text";
-import axios from "axios";
-import { AuthContext } from "../context/authContext";
 import DraftInspectionCard from "../components/card/DraftInspectionCard";
 import { useFocusEffect } from "@react-navigation/native";
 import SkeletonLoader from "../components/skeletonLoader/SkeletonLoader";
 import { mainStyles } from "../constants/style";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import InspectionHeader from "../components/header/InspectionHeader";
 
 const Drafts = ({ navigation }) => {
-  const [userData] = useContext(AuthContext);
-
   const [fullData, setFullData] = useState([]);
-  const [displayData, setDisplayData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(true); // Loading state
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 10;
+  const [loading, setLoading] = useState(true);
 
-  // Function to fetch inspected cars data
-  const fetchInspectedCars = useCallback(
-    async (hardRefresh = false) => {
-      if (hardRefresh) {
-        setFullData([]); // Clear the cache for a hard refresh
-        setPage(1); // Reset the page to 1 for a hard refresh
+  // Function to fetch data from AsyncStorage
+  const fetchDataFromAsyncStorage = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carformdata" || []);
+      if (storedData) {
+        setFullData(JSON.parse(storedData));
       }
-      setRefreshing(true); // Start refreshing
-      const config = {
-        method: "get",
-        maxBodyLength: Infinity,
-        url: `auth/get_carinfosdraft.php?id=${userData.user.duserid}`, // Ensure the correct URL is used
-        headers: {},
-      };
-      try {
-        const response = await axios.request(config);
-        setFullData(response.data);
-        setDisplayData(response.data.slice(0, itemsPerPage));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setRefreshing(false); // Stop refreshing
-        setLoading(false); // Set loading to false after fetching data
-      }
-    },
-    [userData]
-  );
+    } catch (error) {
+      console.error("Error fetching data from AsyncStorage", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   // Using useFocusEffect to fetch data whenever the screen is focused
   useFocusEffect(
     useCallback(() => {
-      fetchInspectedCars(); // Hard refresh when screen is focused
-    }, [fetchInspectedCars])
+      fetchDataFromAsyncStorage(); // Refresh when screen is focused
+    }, [])
   );
-
-  const loadMoreData = () => {
-    setLoadingMore(true);
-    const nextPage = page + 1;
-    const startIndex = nextPage * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const moreData = fullData.slice(startIndex, endIndex);
-
-    setDisplayData((prev) => [...prev, ...moreData]);
-    setPage(nextPage);
-    setLoadingMore(false);
-  };
 
   return (
     <AppScreen>
       <View style={styles.recentInspectionContainer}>
         <View style={styles.headingAndButton}>
-          <AppText fontSize={mainStyles.h1FontSize} color={"#323232"}>
+          <InspectionHeader backIcon={false}>
             Draft Inspections
-          </AppText>
+          </InspectionHeader>
         </View>
 
         {loading ? (
@@ -88,6 +57,12 @@ const Drafts = ({ navigation }) => {
             showsHorizontalScrollIndicator={false}
             style={{ marginTop: 20, marginBottom: 30 }}
           />
+        ) : fullData.length === 0 ? (
+          <View style={styles.noDataContainer}>
+            <AppText fontSize={mainStyles.h1FontSize} color={"#323232"}>
+              No Data Found In Draft
+            </AppText>
+          </View>
         ) : (
           <FlatList
             contentContainerStyle={{
@@ -95,28 +70,26 @@ const Drafts = ({ navigation }) => {
             }}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 20, marginBottom: 30 }}
-            data={displayData}
-            extraData={displayData}
-            keyExtractor={(item) => item.id.toString()}
+            style={{ marginTop: 0, marginBottom: 30 }}
+            data={fullData}
+            extraData={fullData}
+            keyExtractor={(item) => item.tempID.toString()}
             renderItem={({ item }) => (
               <DraftInspectionCard
-                carId={item?.id}
-                car={item?.car}
+                carId={item?.tempID}
+                car={item?.carId}
                 varient={item?.varientId}
                 model={item?.model}
                 date={item?.inspectionDate}
-                carImage={item?.images[0]?.path}
+                carImage={item?.images[0]?.uri}
                 onPress={() =>
-                  navigation.navigate("DraftSingleCar", { id: item?.id })
+                  navigation.navigate("DraftSingleCar", { id: item?.tempID })
                 }
               />
             )}
             refreshing={refreshing}
-            onRefresh={() => fetchInspectedCars(true)}
-            onEndReached={loadMoreData}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={loadingMore ? <SkeletonLoader /> : null}
+            onRefresh={fetchDataFromAsyncStorage}
+            ListFooterComponent={loading && <SkeletonLoader />}
           />
         )}
       </View>
@@ -164,18 +137,24 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   recentInspectionContainer: {
-    marginTop: 20,
+    marginTop: 0,
   },
   headingAndButton: {
     flexDirection: "row",
     justifyContent: "center", // Centered
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 0,
   },
   pageHeading: {
     flexDirection: "row",
     gap: 5,
     justifyContent: "center",
     alignItems: "center",
+  },
+  noDataContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
   },
 });

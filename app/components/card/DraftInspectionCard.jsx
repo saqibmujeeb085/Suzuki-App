@@ -37,10 +37,7 @@ const DraftInspectionCard = ({
   return (
     <View style={styles.Container}>
       <View style={styles.inspectionDestailsContainer}>
-        <Image
-          source={{ uri: `${process.env.IMAGE_URL}/${carImage}` }}
-          style={styles.image}
-        />
+        <Image source={{ uri: carImage }} style={styles.image} />
         <View style={styles.contentContainer}>
           <AppText
             color={colors.fontBlack}

@@ -62,12 +62,14 @@ const DataPostProvider = ({ children }) => {
               (item) => item.QtempID == obj.tempID
             );
 
+            console.log(obj.images);
+
             const categoryIds = categories.map((category) => category.id);
             const allCategoriesPresent = categoryIds.every((categoryId) =>
               ques.some((q) => q.catID === categoryId)
             );
 
-            if (allCategoriesPresent) {
+            if (allCategoriesPresent && obj.status === "inspected") {
               postData(obj, ques);
             }
           });
@@ -110,19 +112,19 @@ const DataPostProvider = ({ children }) => {
     formData.append("registrationCity", obj.registrationCity);
     formData.append("FuelType", obj.FuelType);
     formData.append("color", obj.color);
-    formData.append("status", "inspected");
+    formData.append("status", obj.status);
 
     // Append images and documents
-    obj.images.forEach((image) => {
-      formData.append("images", {
+    obj.images.forEach((image, index) => {
+      formData.append(`images[${index}]`, {
         uri: image.uri,
         name: image.name,
         type: image.type,
       });
     });
 
-    obj.documents.forEach((doc) => {
-      formData.append("documents", {
+    obj.documents.forEach((doc, index) => {
+      formData.append(`documents[${index}]`, {
         uri: doc.uri,
         name: doc.name,
         type: doc.type,

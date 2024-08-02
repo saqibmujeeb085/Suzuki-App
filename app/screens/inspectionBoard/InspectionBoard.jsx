@@ -306,11 +306,6 @@ const InspectionBoard = ({ navigation, route }) => {
           </View>
         </ImageBackground>
 
-        <Image
-          src={{ uri: carInfo?.images?.[0]?.uri }}
-          style={{ width: 100, height: 100 }}
-        />
-
         <View style={styles.InspectionBoardContainer}>
           <View style={styles.headingAndButton}>
             <View style={styles.headingWithIcon}>

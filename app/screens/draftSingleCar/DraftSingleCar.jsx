@@ -17,6 +17,8 @@ import DeleteButton from "../../components/buttons/DeleteButton";
 import { AntDesign } from "@expo/vector-icons";
 import CarInfoSkeletonPreloader from "../../components/skeletonLoader/CarInfoSkeletonPreloader";
 import CarImagesCarousel from "../../components/carousel/CarImagesCarousel";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DraftCarImagesCarousel from "../../components/carousel/DraftCarImagesCarousel";
 
 const DraftSingleCar = ({ route, navigation }) => {
   const { id } = route.params || {}; // Add a default empty object to avoid destructuring error
@@ -27,64 +29,36 @@ const DraftSingleCar = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log(carInfo?.carPic);
+  console.log(carInfo);
 
-  useEffect(() => {
-    if (!id) {
-      setError(new Error("No ID provided"));
-      setLoading(false);
-      return;
-    }
-
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `/auth/get_singledraftcarinfos.php?id=${id}`,
-      headers: {},
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        setCarInfo(response.data);
-        console.log(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
-  }, [id]);
-
-  const handleDelete = async () => {
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `/auth/delete-car.php?id=${id}`,
-      headers: {},
-    };
-
+  const getCarDataByTempID = async (tempID) => {
     try {
-      const response = await axios.request(config);
-      console.log(response.data);
-      alert(response.data.message);
-      navigation.navigate("Draft"); // Navigate back to Drafts
+      const storedData = await AsyncStorage.getItem("@carformdata");
+      if (storedData !== null) {
+        const carFormDataArray = JSON.parse(storedData);
+        const carData = carFormDataArray.find((item) => item.tempID === tempID);
+        if (carData) {
+          setCarInfo(carData);
+          return carData;
+        } else {
+          console.log("No data found with tempID:", tempID);
+          return null;
+        }
+      } else {
+        console.log("No car data found in AsyncStorage");
+        return null;
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error retrieving car data:", error);
+      return null;
     }
   };
 
-  if (loading) {
-    return <CarInfoSkeletonPreloader />;
-  }
+  useEffect(() => {
+    getCarDataByTempID(id);
+  }, []);
 
-  if (error) {
-    return (
-      <View>
-        <AppText>Error: {error.message}</AppText>
-      </View>
-    );
-  }
+  const handleDelete = async () => {};
 
   return (
     <AppScreen>
@@ -93,7 +67,11 @@ const DraftSingleCar = ({ route, navigation }) => {
       </InspectionHeader>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.ImageContainer}>
-          <CarImagesCarousel images={carInfo?.images} />
+          {carInfo?.images ? (
+            <DraftCarImagesCarousel images={carInfo.images} />
+          ) : (
+            <ActivityIndicator size="large" />
+          )}
         </View>
         <View style={styles.contentContainer}>
           <View style={styles.infoContainer}>
@@ -110,7 +88,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.inspectionDate}
+              {carInfo?.inspectionDate}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -125,7 +103,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.car}
+              {carInfo?.carId}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -142,7 +120,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.varientId}
+              {carInfo?.varientId}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -159,7 +137,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.model}
+              {carInfo?.model}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -176,7 +154,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.registrationNo}
+              {carInfo?.registrationNo}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -193,7 +171,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.chasisNo}
+              {carInfo?.chasisNo}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -210,7 +188,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.mfgId}
+              {carInfo?.mfgId}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -225,7 +203,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.cplc}
+              {carInfo?.cplc}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -242,7 +220,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.NoOfOwners}
+              {carInfo?.NoOfOwners}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -259,7 +237,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.transmissionType}
+              {carInfo?.transmissionType}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -276,7 +254,24 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.mileage}
+              {carInfo?.mileage}
+            </AppText>
+          </View>
+          <View style={styles.infoContainer}>
+            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+              Capacity:
+            </AppText>
+            <AppText
+              fontSize={mainStyles.h3FontSize}
+              width={150}
+              textAlign={"right"}
+              style={{
+                fontSize: mainStyles.h3FontSize,
+                color: colors.fontGrey,
+                width: 200,
+              }}
+            >
+              {carInfo?.engineDisplacement}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -293,7 +288,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.registrationCity}
+              {carInfo?.registrationCity}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -311,7 +306,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.FuelType}
+              {carInfo?.FuelType}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -328,7 +323,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo.color}
+              {carInfo?.color}
             </AppText>
           </View>
         </View>
