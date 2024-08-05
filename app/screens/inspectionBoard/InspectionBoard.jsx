@@ -21,11 +21,31 @@ import { colors } from "../../constants/colors";
 import InspectionHeader from "../../components/header/InspectionHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { QuesAndAnsContext } from "../../context/questionAndCategories";
+import { FormDataContext } from "../../context/formDataContext";
 
 const InspectionBoard = ({ navigation, route }) => {
   const { id } = route.params || {};
 
-  console.log(id);
+  const [
+    manufacturersData,
+    setManufacturersData,
+    modelsData,
+    setModelsData,
+    varientsData,
+    setVarientsData,
+    yearsData,
+    setYearsData,
+    colorsData,
+    setColorsData,
+    fuelsData,
+    setFuelsData,
+    transmissionsData,
+    setTransmissionsData,
+    capacitiesData,
+    setCapacitiesData,
+    citiesData,
+    setCitiesData,
+  ] = useContext(FormDataContext);
 
   // const [categoriesList, setCategoriesList] = useState([]);
   const [checkCategories, setCheckCategories] = useState([]);
@@ -38,9 +58,56 @@ const InspectionBoard = ({ navigation, route }) => {
 
   useEffect(() => {
     getCarDataByTempID(id);
+
+    checkCategoriesPresent(id);
   }, []);
 
-  console.log("hmm", categories);
+  const checkCategoriesPresent = async (id) => {
+    try {
+      const quesString = await AsyncStorage.getItem("@carQuestionsdata");
+      const allQuestions = quesString ? JSON.parse(quesString) : []; // Parse or use empty array if null
+
+      // Filter questions based on QtempId
+      const ques = allQuestions.filter((q) => q.QtempId === id);
+
+      const categoryIds = categories.map((category) => category.id);
+      const allCategoriesPresent = categoryIds.every((categoryId) =>
+        ques.some((q) => q.catID === categoryId)
+      );
+
+      console.log("checking status", allCategoriesPresent);
+      setAllInspectionsDone(allCategoriesPresent);
+    } catch (error) {
+      console.error("Error checking categories presence:", error);
+      return false;
+    }
+  };
+  console.log(carInfo);
+
+  const getManufacturer = (manufacturerId) => {
+    if (manufacturersData) {
+      const m = manufacturersData.find((item) => item.key === manufacturerId);
+      return m ? m.value : "Unknown Manufacturer";
+    }
+  };
+
+  const getCarModel = (carId, manufacturerId) => {
+    const models = modelsData[manufacturerId];
+    if (models) {
+      const model = models.find((item) => item.key === carId);
+      return model ? model.value : "Unknown Model";
+    }
+    return "Unknown Model";
+  };
+
+  const getCarVarient = (varientId, carId) => {
+    const v = varientsData[carId];
+    if (v) {
+      const varient = v.find((item) => item.key === varientId);
+      return varient ? varient.value : "Unknown Varient";
+    }
+    return "Unknown Model";
+  };
 
   const getCarDataByTempID = async (tempID) => {
     try {
@@ -65,70 +132,44 @@ const InspectionBoard = ({ navigation, route }) => {
     }
   };
 
-  // useEffect(() => {
-  //   // Call the function to display the car form data
-  //   displayCarFormData();
-  // }, []);
-
-  // const displayCarFormData = async () => {
-  //   const key = "@carformdata";
-  //   try {
-  //     // Retrieve the stored data from AsyncStorage
-  //     const jsonValue = await AsyncStorage.getItem(key);
-  //     if (jsonValue !== null) {
-  //       // Parse the JSON string into a JavaScript object
-  //       const carFormData = JSON.parse(jsonValue);
-  //       console.log("Car Form Data:", carFormData);
-  //     } else {
-  //       console.log("No data found in AsyncStorage for key:", key);
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to load data from AsyncStorage:", error);
-  //   }
-  // };
-
-  // const fetchCategories = async () => {
-  //   try {
-  //     const response = await axios.get("/auth/get_category.php");
-  //     setCategoriesList(response.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  // const fetchCheckCategories = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `/auth/get_checkInspectionCategories.php?carid=${id}`
-  //     );
-  //     setCheckCategories(response.data);
-  //     setLoading(false); // Ensure loading is set to false after fetching data
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  useEffect(() => {
-    const allDone = checkCategories.every((cat) => cat.inspectionIsDone);
-    setAllInspectionsDone(allDone);
-  }, [checkCategories]);
-
   const ShowModal = useCallback(() => {
     setShow((prevShow) => !prevShow);
   }, []);
 
-  const changeStatus = useCallback(async () => {
+  const changeStatus = async () => {
     try {
-      const response = await axios.get(
-        `/auth/update_carstatus.php?carid=${id}`
-      );
-      console.log(JSON.stringify(response.data));
-      alert("Status Changed Successfully");
-      navigation.navigate("Home");
+      const storedData = await AsyncStorage.getItem("@carformdata");
+      if (storedData !== null) {
+        const carFormDataArray = JSON.parse(storedData);
+        const updatedCarFormDataArray = carFormDataArray.map((item) => {
+          if (item.tempID === id) {
+            return {
+              ...item,
+              status: "inspected",
+            };
+          }
+          return item;
+        });
+
+        await AsyncStorage.setItem(
+          "@carformdata",
+          JSON.stringify(updatedCarFormDataArray)
+        );
+
+        // Update local state as well
+        setCarInfo((prevCarInfo) => ({
+          ...prevCarInfo,
+          status: "inspected",
+        }));
+
+        navigation.navigate("Draft");
+      } else {
+        console.log("No car data found in AsyncStorage");
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error updating car status:", error);
     }
-  }, [id, navigation]);
+  };
 
   const handleSaveForLater = useCallback(() => {
     navigation.navigate("Draft");
@@ -213,13 +254,14 @@ const InspectionBoard = ({ navigation, route }) => {
                   fontSize={mainStyles.h2FontSize}
                   textTransform={"capitalize"}
                 >
-                  {carInfo?.mfgId} {carInfo?.car}
+                  {getManufacturer(carInfo?.mfgId)}{" "}
+                  {getCarModel(carInfo?.carId, carInfo?.mfgId)}
                 </AppText>
                 <AppText
                   color={colors.fontGrey}
                   fontSize={mainStyles.h3FontSize}
                 >
-                  Varient: {carInfo?.varientId}
+                  Varient: {getCarVarient(carInfo?.varientId, carInfo?.carId)}
                 </AppText>
               </View>
               <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>

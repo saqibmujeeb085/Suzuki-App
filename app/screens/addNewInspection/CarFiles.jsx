@@ -137,6 +137,70 @@ const CarFiles = ({ navigation }) => {
     }
   };
 
+  const saveCarDetailsInDraft = async () => {
+    setLoading(true);
+    const newDateTime = currentDateAndTime();
+    const newTempID = await incrementTempIDCounter();
+
+    if (newTempID === null) return;
+
+    const carDetails = {
+      dealershipId: carData.dealershipId,
+      duserId: carData.duserId,
+      customerID: carData.customerID,
+      registrationNo: carData.registrationNo,
+      chasisNo: carData.chasisNo,
+      EngineNo: carData.EngineNo,
+      inspectionDate: newDateTime,
+      mfgId: carData.mfgId,
+      carId: carData.carId,
+      varientId: carData.varientId,
+      engineDisplacement: carData.engineDisplacement,
+      model: carData.model,
+      cplc: carData.cplc,
+      buyingCode: carData.buyingCode,
+      NoOfOwners: carData.NoOfOwners,
+      transmissionType: carData.transmissionType,
+      mileage: carData.mileage,
+      registrationCity: carData.registrationCity,
+      engineCapacity: carData.engineCapacity,
+      FuelType: carData.FuelType,
+      color: carData.color,
+      images: selectedImages.map((image, index) => ({
+        uri: image.uri,
+        name: image.name,
+        type: image.type,
+      })),
+      documents: selectedDocuments.map((document, index) => ({
+        uri: document.uri,
+        name: document.name,
+        type: document.type,
+      })),
+      status: carData.status,
+      tempID: newTempID,
+    };
+
+    try {
+      // Save car details with tempID to AsyncStorage
+      const storedData = await AsyncStorage.getItem("@carformdata");
+      const carFormDataArray = storedData ? JSON.parse(storedData) : [];
+      carFormDataArray.push(carDetails);
+      await AsyncStorage.setItem(
+        "@carformdata",
+        JSON.stringify(carFormDataArray)
+      );
+
+      setLoading(false);
+      setShow(false);
+      navigation.navigate("Draft");
+
+      console.log("Car details saved with tempID:", newTempID);
+      resetCarData(); // Reset the data here
+    } catch (error) {
+      console.error("Error saving car details:", error);
+    }
+  };
+
   const handleImagesSelected = (images) => {
     setSelectedImages(images);
     setIsImageUploaded(true);
@@ -174,7 +238,7 @@ const CarFiles = ({ navigation }) => {
           disabled={loading}
           pbtnPress={saveCarDetails}
           sbtn={"Save for later"}
-          sbtnPress={saveCarDetails}
+          sbtnPress={saveCarDetailsInDraft}
         />
       )}
       <InspectionHeader

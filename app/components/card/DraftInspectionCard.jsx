@@ -9,7 +9,7 @@ import axios from "axios";
 const DraftInspectionCard = ({
   carId,
   car,
-  model,
+  mileage,
   date,
   varient,
   carImage,
@@ -52,7 +52,7 @@ const DraftInspectionCard = ({
             </AppText>
 
             <AppText color={colors.fontBlack} fontSize={mainStyles.h4FontSize}>
-              Model: {model}
+              Mileage: {mileage}
             </AppText>
           </View>
           <AppText color={colors.fontGrey} fontSize={mainStyles.h4FontSize}>

@@ -2,10 +2,12 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
-  Image,
   ScrollView,
+  Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import AppScreen from "../../components/screen/Screen";
 import AppText from "../../components/text/Text";
@@ -14,11 +16,8 @@ import InspectionHeader from "../../components/header/InspectionHeader";
 import { colors } from "../../constants/colors";
 import GradientButton from "../../components/buttons/GradientButton";
 import DeleteButton from "../../components/buttons/DeleteButton";
-import { AntDesign } from "@expo/vector-icons";
-import CarInfoSkeletonPreloader from "../../components/skeletonLoader/CarInfoSkeletonPreloader";
-import CarImagesCarousel from "../../components/carousel/CarImagesCarousel";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import DraftCarImagesCarousel from "../../components/carousel/DraftCarImagesCarousel";
+import { FormDataContext } from "../../context/formDataContext";
 
 const DraftSingleCar = ({ route, navigation }) => {
   const { id } = route.params || {}; // Add a default empty object to avoid destructuring error
@@ -30,6 +29,52 @@ const DraftSingleCar = ({ route, navigation }) => {
   const [error, setError] = useState(null);
 
   console.log(carInfo);
+
+  const [
+    manufacturersData,
+    setManufacturersData,
+    modelsData,
+    setModelsData,
+    varientsData,
+    setVarientsData,
+    yearsData,
+    setYearsData,
+    colorsData,
+    setColorsData,
+    fuelsData,
+    setFuelsData,
+    transmissionsData,
+    setTransmissionsData,
+    capacitiesData,
+    setCapacitiesData,
+    citiesData,
+    setCitiesData,
+  ] = useContext(FormDataContext);
+
+  const getManufacturer = (manufacturerId) => {
+    if (manufacturersData) {
+      const m = manufacturersData.find((item) => item.key === manufacturerId);
+      return m ? m.value : "Unknown Manufacturer";
+    }
+  };
+
+  const getCarModel = (carId, manufacturerId) => {
+    const models = modelsData[manufacturerId];
+    if (models) {
+      const model = models.find((item) => item.key === carId);
+      return model ? model.value : "Unknown Model";
+    }
+    return "Unknown Model";
+  };
+
+  const getCarVarient = (varientId, carId) => {
+    const v = varientsData[carId];
+    if (v) {
+      const varient = v.find((item) => item.key === varientId);
+      return varient ? varient.value : "Unknown Varient";
+    }
+    return "Unknown Model";
+  };
 
   const getCarDataByTempID = async (tempID) => {
     try {
@@ -58,7 +103,28 @@ const DraftSingleCar = ({ route, navigation }) => {
     getCarDataByTempID(id);
   }, []);
 
-  const handleDelete = async () => {};
+  const handleDelete = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carformdata");
+      if (storedData !== null) {
+        let carFormDataArray = JSON.parse(storedData);
+        carFormDataArray = carFormDataArray.filter(
+          (item) => item.tempID !== id
+        );
+        await AsyncStorage.setItem(
+          "@carformdata",
+          JSON.stringify(carFormDataArray)
+        );
+        Alert.alert("Success", "Car data deleted successfully");
+        navigation.goBack(); // Navigate back to the previous screen
+      } else {
+        console.log("No car data found in AsyncStorage");
+      }
+    } catch (error) {
+      console.error("Error deleting car data:", error);
+      Alert.alert("Error", "There was an error deleting the car data");
+    }
+  };
 
   return (
     <AppScreen>
@@ -103,7 +169,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo?.carId}
+              {getCarModel(carInfo?.carId, carInfo?.mfgId)}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -120,7 +186,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo?.varientId}
+              {getCarVarient(carInfo?.varientId, carInfo?.carId)}
             </AppText>
           </View>
           <View style={styles.infoContainer}>
@@ -188,7 +254,7 @@ const DraftSingleCar = ({ route, navigation }) => {
                 width: 200,
               }}
             >
-              {carInfo?.mfgId}
+              {getManufacturer(carInfo?.mfgId)}
             </AppText>
           </View>
           <View style={styles.infoContainer}>

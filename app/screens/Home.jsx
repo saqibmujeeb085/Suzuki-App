@@ -480,7 +480,7 @@ const Home = ({ navigation }) => {
                 carId={item?.id}
                 car={item?.car}
                 varient={item?.varientId}
-                model={item?.model}
+                mileage={item?.mileage}
                 date={item?.inspectionDate}
                 carImage={item?.images[0]?.path}
                 rank={item?.rank}

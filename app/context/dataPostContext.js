@@ -62,8 +62,6 @@ const DataPostProvider = ({ children }) => {
               (item) => item.QtempID == obj.tempID
             );
 
-            console.log(obj.images);
-
             const categoryIds = categories.map((category) => category.id);
             const allCategoriesPresent = categoryIds.every((categoryId) =>
               ques.some((q) => q.catID === categoryId)

@@ -10,9 +10,31 @@ import axios from "axios";
 import { AuthContext } from "../context/authContext";
 import FilterModal from "../components/modals/FilterModal";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FormDataContext } from "../context/formDataContext";
 
 const Reports = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
+  const [
+    manufacturersData,
+    setManufacturersData,
+    modelsData,
+    setModelsData,
+    varientsData,
+    setVarientsData,
+    yearsData,
+    setYearsData,
+    colorsData,
+    setColorsData,
+    fuelsData,
+    setFuelsData,
+    transmissionsData,
+    setTransmissionsData,
+    capacitiesData,
+    setCapacitiesData,
+    citiesData,
+    setCitiesData,
+  ] = useContext(FormDataContext);
+
   const [inspectedCar, setInspectedCar] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -236,7 +258,7 @@ const Reports = ({ navigation }) => {
                 carId={item?.id}
                 car={item?.car}
                 varient={item?.varientId}
-                model={item?.model}
+                mileage={item?.mileage}
                 date={item?.inspectionDate}
                 carImage={item?.images[0]?.path}
                 rank={item?.rank}

@@ -7,7 +7,7 @@ import { mainStyles } from "../../constants/style";
 
 const InspectionCard = ({
   car,
-  model,
+  mileage,
   date,
   varient,
   carImage,
@@ -49,7 +49,7 @@ const InspectionCard = ({
                 color={colors.fontBlack}
                 fontSize={mainStyles.h4FontSize}
               >
-                Model: {model}
+                mileage: {mileage}
               </AppText>
             </View>
             <AppText color={colors.fontGrey} fontSize={mainStyles.h4FontSize}>

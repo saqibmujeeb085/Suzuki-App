@@ -27,7 +27,7 @@ const AuthProvider = ({ children }) => {
             token: loginData?.token || "",
             user: loginData?.user || "",
           });
-          // console.log("Data loaded from AsyncStorage:", loginData);
+          
         } else {
           console.log("No data found in AsyncStorage for @auth");
         }

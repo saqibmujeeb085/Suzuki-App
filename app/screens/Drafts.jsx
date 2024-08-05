@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, View } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import AppScreen from "../components/screen/Screen";
 import AppText from "../components/text/Text";
 import DraftInspectionCard from "../components/card/DraftInspectionCard";
@@ -8,11 +8,58 @@ import SkeletonLoader from "../components/skeletonLoader/SkeletonLoader";
 import { mainStyles } from "../constants/style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import InspectionHeader from "../components/header/InspectionHeader";
+import { FormDataContext } from "../context/formDataContext";
 
 const Drafts = ({ navigation }) => {
+  const [
+    manufacturersData,
+    setManufacturersData,
+    modelsData,
+    setModelsData,
+    varientsData,
+    setVarientsData,
+    yearsData,
+    setYearsData,
+    colorsData,
+    setColorsData,
+    fuelsData,
+    setFuelsData,
+    transmissionsData,
+    setTransmissionsData,
+    capacitiesData,
+    setCapacitiesData,
+    citiesData,
+    setCitiesData,
+  ] = useContext(FormDataContext);
+
   const [fullData, setFullData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const getManufacturer = (manufacturerId) => {
+    if (manufacturersData) {
+      const m = manufacturersData.find((item) => item.key === manufacturerId);
+      return m ? m.value : "Unknown Manufacturer";
+    }
+  };
+
+  const getCarModel = (carId, manufacturerId) => {
+    const models = modelsData[manufacturerId];
+    if (models) {
+      const model = models.find((item) => item.key === carId);
+      return model ? model.value : "Unknown Model";
+    }
+    return "Unknown Model";
+  };
+
+  const getCarVarient = (varientId, carId) => {
+    const v = varientsData[carId];
+    if (v) {
+      const varient = v.find((item) => item.key === varientId);
+      return varient ? varient.value : "Unknown Varient";
+    }
+    return "Unknown Model";
+  };
 
   // Function to fetch data from AsyncStorage
   const fetchDataFromAsyncStorage = async () => {
@@ -77,9 +124,9 @@ const Drafts = ({ navigation }) => {
             renderItem={({ item }) => (
               <DraftInspectionCard
                 carId={item?.tempID}
-                car={item?.carId}
-                varient={item?.varientId}
-                model={item?.model}
+                car={getCarModel(item?.carId, item?.mfgId)}
+                varient={getCarVarient(item?.varientId, item?.carId)}
+                mileage={item?.mileage}
                 date={item?.inspectionDate}
                 carImage={item?.images[0]?.uri}
                 onPress={() =>
