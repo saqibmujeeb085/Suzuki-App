@@ -31,15 +31,15 @@ const FeedNavigation = () => {
   }, []);
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      const data = await AsyncStorage.getItem("@carQuestionsdata");
+    const fetchCarData = async () => {
+      const data = await AsyncStorage.getItem("@carformdata");
       setQuestionsInLocal(data);
     };
 
-    fetchQuestions();
+    fetchCarData();
 
     // Optionally, you can set up an interval to check for updates in AsyncStorage
-    const intervalId = setInterval(fetchQuestions, 300000); // Check every 5 seconds
+    const intervalId = setInterval(fetchCarData, 5000); // 300000 Check every 5 minutes
 
     // Clean up the interval
     return () => clearInterval(intervalId);

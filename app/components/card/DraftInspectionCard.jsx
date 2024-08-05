@@ -15,8 +15,6 @@ const DraftInspectionCard = ({
   carImage,
   onPress,
 }) => {
-  console.log(carImage);
-
   const deleteCar = () => {
     let config = {
       method: "get",

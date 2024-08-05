@@ -467,7 +467,7 @@ const Home = ({ navigation }) => {
         ) : (
           <FlatList
             contentContainerStyle={{
-              paddingBottom: 30,
+              paddingBottom: 90,
             }}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}

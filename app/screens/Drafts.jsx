@@ -113,7 +113,7 @@ const Drafts = ({ navigation }) => {
         ) : (
           <FlatList
             contentContainerStyle={{
-              paddingBottom: 30,
+              paddingBottom: 60,
             }}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}

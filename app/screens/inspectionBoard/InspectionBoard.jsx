@@ -56,11 +56,18 @@ const InspectionBoard = ({ navigation, route }) => {
   const [categories, setCategories, questions, setQuestions] =
     useContext(QuesAndAnsContext);
 
-  useEffect(() => {
-    getCarDataByTempID(id);
+  useEffect(() => {}, []);
 
-    checkCategoriesPresent(id);
-  }, []);
+  const fetchData = useCallback(async () => {
+    await getCarDataByTempID(id);
+    await checkCategoriesPresent(id);
+  }, [id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
 
   const checkCategoriesPresent = async (id) => {
     try {
@@ -68,21 +75,29 @@ const InspectionBoard = ({ navigation, route }) => {
       const allQuestions = quesString ? JSON.parse(quesString) : []; // Parse or use empty array if null
 
       // Filter questions based on QtempId
-      const ques = allQuestions.filter((q) => q.QtempId === id);
+      const ques = allQuestions.filter((q) => q.QtempID === `${id}`);
+
+      console.log("present data", ques);
 
       const categoryIds = categories.map((category) => category.id);
+
       const allCategoriesPresent = categoryIds.every((categoryId) =>
         ques.some((q) => q.catID === categoryId)
       );
 
-      console.log("checking status", allCategoriesPresent);
+      // Create the desired format
+      const categoryStatus = categoryIds.map((categoryId) => ({
+        catId: categoryId,
+        inspectionIsDone: ques.some((q) => q.catID === categoryId),
+      }));
+      setCheckCategories(categoryStatus);
+
       setAllInspectionsDone(allCategoriesPresent);
     } catch (error) {
-      console.error("Error checking categories presence:", error);
+      console.error("Error checking categories:", error);
       return false;
     }
   };
-  console.log(carInfo);
 
   const getManufacturer = (manufacturerId) => {
     if (manufacturersData) {
@@ -387,9 +402,9 @@ const InspectionBoard = ({ navigation, route }) => {
                   <InspectionBoardCard
                     key={item.id}
                     name={item.category}
-                    // inspectionIsDone={
-                    //   checkCategory ? checkCategory.inspectionIsDone : false
-                    // }
+                    inspectionIsDone={
+                      checkCategory ? checkCategory.inspectionIsDone : false
+                    }
                     // Rating={checkCategory ? checkCategory.Rating : ""}
                     icon={checkIcon?.icon}
                     onPress={() =>

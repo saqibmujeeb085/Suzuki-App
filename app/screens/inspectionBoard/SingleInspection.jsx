@@ -97,22 +97,25 @@ const SingleInspection = ({ navigation, route }) => {
     setIsButtonDisabled(hasEmptyValues);
   }, [values]);
 
-  const checkStoredData = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem("@carQuestionsdata");
-      if (storedData) {
-        console.log("Stored Data:", JSON.parse(storedData));
-      } else {
-        console.log("No data found in AsyncStorage");
-      }
-    } catch (error) {
-      console.error("Error retrieving data from AsyncStorage:", error);
-    }
-  };
+  // const checkStoredData = async () => {
+  //   try {
+  //     const storedData = await AsyncStorage.getItem("@carQuestionsdata");
+  //     if (storedData) {
+  //       console.log(
+  //         "Stored Data: 1111111111111111111111111111111111111111111--------------------------------------------------------------------------------",
+  //         JSON.parse(storedData)
+  //       );
+  //     } else {
+  //       console.log("No data found in AsyncStorage");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error retrieving data from AsyncStorage:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    checkStoredData();
-  }, []);
+  // useEffect(() => {
+  //   checkStoredData();
+  // }, []);
 
   const saveQuestionsData = async () => {
     setLoading(true);
@@ -148,7 +151,9 @@ const SingleInspection = ({ navigation, route }) => {
       );
 
       setLoading(false);
-      navigation.goBack();
+      navigation.navigate("InspectionBoard", {
+        id: tempID,
+      });
     } catch (error) {
       console.error("Error saving questions values:", error);
       setLoading(false);
