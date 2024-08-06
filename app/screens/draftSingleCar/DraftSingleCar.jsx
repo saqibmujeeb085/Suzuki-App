@@ -5,7 +5,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
@@ -18,12 +18,12 @@ import GradientButton from "../../components/buttons/GradientButton";
 import DeleteButton from "../../components/buttons/DeleteButton";
 import DraftCarImagesCarousel from "../../components/carousel/DraftCarImagesCarousel";
 import { FormDataContext } from "../../context/formDataContext";
+import ProcessModal from "../../components/modals/ProcessModal";
 
 const DraftSingleCar = ({ route, navigation }) => {
   const { id } = route.params || {}; // Add a default empty object to avoid destructuring error
 
-  console.log(id);
-
+  const [show, setShow] = useState(false);
   const [carInfo, setCarInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -116,6 +116,7 @@ const DraftSingleCar = ({ route, navigation }) => {
           JSON.stringify(carFormDataArray)
         );
         Alert.alert("Success", "Car data deleted successfully");
+        setShow(false);
         navigation.goBack(); // Navigate back to the previous screen
       } else {
         console.log("No car data found in AsyncStorage");
@@ -126,8 +127,29 @@ const DraftSingleCar = ({ route, navigation }) => {
     }
   };
 
+  const ShowModal = useCallback(() => {
+    setShow((prevShow) => !prevShow);
+  }, []);
+
   return (
     <AppScreen>
+      {show && (
+        <ProcessModal
+          show={show}
+          setShow={setShow}
+          icon
+          heading={`${getManufacturer(carInfo?.mfgId)}${" "}${getCarModel(
+            carInfo?.carId,
+            carInfo?.mfgId
+          )}`}
+          text={"Do you really want to Delete the Inspection"}
+          pbtn={"Delete Inspection"}
+          pbtnPress={handleDelete}
+          sbtn={"Cancel"}
+          sbtnPress={ShowModal}
+          sbtnColor={"#D20000"}
+        />
+      )}
       <InspectionHeader onPress={() => navigation.goBack()}>
         Draft Car Details
       </InspectionHeader>
@@ -403,7 +425,7 @@ const DraftSingleCar = ({ route, navigation }) => {
           >
             Save And Start Rating
           </GradientButton>
-          <DeleteButton onPress={handleDelete}>
+          <DeleteButton onPress={ShowModal}>
             <AntDesign
               name={"delete"}
               color={colors.fontRed}

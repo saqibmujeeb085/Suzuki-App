@@ -1,62 +1,49 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 import AppScreen from "../components/screen/Screen";
 import AppText from "../components/text/Text";
 import { mainStyles } from "../constants/style";
 import { colors } from "../constants/colors";
+import InspectionHeader from "../components/header/InspectionHeader";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Settings = () => {
   return (
     <AppScreen>
-      <ScrollView>
-        <View style={{ gap: 20, margin: 20 }}>
-          <AppText fontSize={mainStyles.h1FontSize}>h1FontSize</AppText>
-          <AppText fontSize={mainStyles.h2FontSize}>h2FontSize</AppText>
-          <AppText fontSize={mainStyles.h3FontSize}>h3FontSize</AppText>
-          <AppText fontSize={mainStyles.h4FontSize}>h4FontSize</AppText>
-          <AppText fontSize={mainStyles.RatingFont}>RatingFont</AppText>
-          <AppText fontSize={mainStyles.pageHeadingFont}>
-            pageHeadingFont
-          </AppText>
-          <AppText fontSize={mainStyles.ratingFontSize}>ratingFontSize</AppText>
-          <View style={{ backgroundColor: colors.blueColor, height: 50 }}>
-            <AppText>blueColor</AppText>
-          </View>
-
-          <View style={{ backgroundColor: colors.buttonGradient1, height: 50 }}>
-            <AppText>buttonGradient1</AppText>
-          </View>
-          <View style={{ backgroundColor: colors.buttonGradient2, height: 50 }}>
-            <AppText>buttonGradient2</AppText>
-          </View>
-          <View style={{ backgroundColor: colors.buttonGradient3, height: 50 }}>
-            <AppText>buttonGradient3</AppText>
-          </View>
-          <View style={{ backgroundColor: colors.fontBlack, height: 50 }}>
-            <AppText>fontBlack</AppText>
-          </View>
-          <View style={{ backgroundColor: colors.fontGrey, height: 50 }}>
-            <AppText>fontGrey</AppText>
-          </View>
-          <View style={{ backgroundColor: colors.fontRed, height: 50 }}>
-            <AppText>fontRed</AppText>
-          </View>
-          <View style={{ backgroundColor: colors.fontWhite, height: 50 }}>
-            <AppText>fontWhite</AppText>
-          </View>
-
-          <View style={{ backgroundColor: colors.greenColor, height: 50 }}>
-            <AppText>greenColor</AppText>
-          </View>
-          <View style={{ backgroundColor: colors.ligtGreyBg, height: 50 }}>
-            <AppText>ligtGreyBg</AppText>
-          </View>
-          <View style={{ backgroundColor: colors.purple, height: 50 }}>
-            <AppText>purple</AppText>
-          </View>
-          <View style={{ backgroundColor: colors.red, height: 50 }}>
-            <AppText>red</AppText>
-          </View>
+      <InspectionHeader backIcon={false}>App Settings</InspectionHeader>
+      <ScrollView style={{ marginBottom: 30, flex: 1 }}>
+        <View
+          style={{ gap: 10, paddingHorizontal: 20, flex: 1, paddingBottom: 20 }}
+        >
+          <TouchableOpacity style={styles.btn} activeOpacity={0.9}>
+            <View style={styles.btnDesign}>
+              <MaterialCommunityIcons
+                name="progress-upload"
+                size={30}
+                color={colors.purple}
+              />
+              <AppText>Uploading progress</AppText>
+            </View>
+            <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
+          </TouchableOpacity>
+          {/* //////////////////////////// */}
+          <TouchableOpacity style={styles.btn} activeOpacity={0.9}>
+            <View style={styles.btnDesign}>
+              <MaterialCommunityIcons
+                name="progress-upload"
+                size={30}
+                color={colors.purple}
+              />
+              <AppText>Uploading progress</AppText>
+            </View>
+            <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </AppScreen>
@@ -65,4 +52,21 @@ const Settings = () => {
 
 export default Settings;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  btn: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    padding: 10,
+    backgroundColor: colors.whiteBg,
+    elevation: 2,
+    borderRadius: 5,
+    gap: 20,
+  },
+  btnDesign: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+  },
+});

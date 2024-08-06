@@ -66,7 +66,9 @@ const Drafts = ({ navigation }) => {
     try {
       const storedData = await AsyncStorage.getItem("@carformdata" || []);
       if (storedData) {
-        setFullData(JSON.parse(storedData));
+        const parsedData = JSON.parse(storedData);
+        const draftData = parsedData.filter((item) => item.status === "draft");
+        setFullData(draftData);
       }
     } catch (error) {
       console.error("Error fetching data from AsyncStorage", error);

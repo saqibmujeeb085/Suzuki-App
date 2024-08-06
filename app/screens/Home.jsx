@@ -50,7 +50,7 @@ const Home = ({ navigation }) => {
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [dataLoading, setDataLoading] = useState(true);
+  // const [dataLoading, setDataLoading] = useState(true);
 
   // for form data
   useEffect(() => {
@@ -69,7 +69,7 @@ const Home = ({ navigation }) => {
           fetchCategories(),
           fetchQuestions(),
         ]);
-        setDataLoading(false);
+        // setDataLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -345,13 +345,13 @@ const Home = ({ navigation }) => {
     }
   };
 
-  if (dataLoading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
+  // if (dataLoading) {
+  //   return (
+  //     <View style={styles.loaderContainer}>
+  //       <ActivityIndicator size="large" color={colors.primary} />
+  //     </View>
+  //   );
+  // }
 
   return (
     <AppScreen>
