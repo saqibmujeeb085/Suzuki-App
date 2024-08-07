@@ -11,6 +11,8 @@ import InspectionBoard from "../screens/inspectionBoard/InspectionBoard";
 import NetInfo from "@react-native-community/netinfo";
 import { DataPostContext } from "../context/dataPostContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SettingsNavigation from "./SettingsNavigation";
+import UploadingProgress from "../screens/settingsPages/UploadingProcess";
 
 const FeedNavigation = () => {
   const authContext = useContext(AuthContext);
@@ -71,6 +73,8 @@ const FeedNavigation = () => {
           <Stack.Screen name="DraftSingleCar" component={DraftSingleCar} />
           <Stack.Screen name="InspectionBoard" component={InspectionBoard} />
           <Stack.Screen name="SingleInspection" component={SingleInspection} />
+          <Stack.Screen name="SettingsPage" component={SettingsNavigation} />
+          <Stack.Screen name="UploadProgress" component={UploadingProgress} />
         </>
       ) : (
         <Stack.Screen name="Auth" component={AuthNavigator} />

@@ -13,7 +13,7 @@ import { colors } from "../constants/colors";
 import InspectionHeader from "../components/header/InspectionHeader";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 
-const Settings = () => {
+const Settings = ({ navigation }) => {
   return (
     <AppScreen>
       <InspectionHeader backIcon={false}>App Settings</InspectionHeader>
@@ -21,26 +21,18 @@ const Settings = () => {
         <View
           style={{ gap: 10, paddingHorizontal: 20, flex: 1, paddingBottom: 20 }}
         >
-          <TouchableOpacity style={styles.btn} activeOpacity={0.9}>
+          <TouchableOpacity
+            style={styles.btn}
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate("UploadProgress")}
+          >
             <View style={styles.btnDesign}>
               <MaterialCommunityIcons
                 name="progress-upload"
                 size={30}
-                color={colors.purple}
+                color={colors.blue}
               />
-              <AppText>Uploading progress</AppText>
-            </View>
-            <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
-          </TouchableOpacity>
-          {/* //////////////////////////// */}
-          <TouchableOpacity style={styles.btn} activeOpacity={0.9}>
-            <View style={styles.btnDesign}>
-              <MaterialCommunityIcons
-                name="progress-upload"
-                size={30}
-                color={colors.purple}
-              />
-              <AppText>Uploading progress</AppText>
+              <AppText>Uploading Inspections</AppText>
             </View>
             <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
           </TouchableOpacity>
