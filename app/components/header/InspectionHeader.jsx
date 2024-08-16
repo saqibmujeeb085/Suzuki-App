@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   right: {
     position: "absolute",
-    right: 30,
+    right: 40,
     top: 20,
   },
 });

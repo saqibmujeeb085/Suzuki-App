@@ -6,7 +6,7 @@ import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
 import { colors } from "../../constants/colors";
 import { mainStyles } from "../../constants/style";
 
-const SelectCard = ({
+const TextCard = ({
   indicator,
   onValueChange,
   num,
@@ -76,7 +76,7 @@ const SelectCard = ({
   );
 };
 
-export default SelectCard;
+export default TextCard;
 
 const styles = StyleSheet.create({
   inspectionBox: {

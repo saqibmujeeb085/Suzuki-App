@@ -16,6 +16,7 @@ const RangeCard = ({
   onSelectedImageName,
   onRemoveImage,
   questionId,
+  img = false,
 }) => {
   const [sliderValue, setSliderValue] = useState(value);
 
@@ -73,13 +74,17 @@ const RangeCard = ({
           />
         </View>
       </View>
-      <View>
-        <InspectionImagePicker
-          onImageSelected={(uri) => onImageSelected(questionId, uri)}
-          onSelectedImageName={(name) => onSelectedImageName(questionId, name)}
-          onRemoveImage={() => onRemoveImage(questionId)}
-        />
-      </View>
+      {img && (
+        <View>
+          <InspectionImagePicker
+            onImageSelected={(uri) => onImageSelected(questionId, uri)}
+            onSelectedImageName={(name) =>
+              onSelectedImageName(questionId, name)
+            }
+            onRemoveImage={() => onRemoveImage(questionId)}
+          />
+        </View>
+      )}
     </View>
   );
 };

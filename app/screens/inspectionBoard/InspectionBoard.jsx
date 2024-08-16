@@ -53,7 +53,7 @@ const InspectionBoard = ({ navigation, route }) => {
   const [allInspectionsDone, setAllInspectionsDone] = useState(false);
   const [loading, setLoading] = useState(true); // Initialize loading to true
   const [carInfo, setCarInfo] = useState(null);
-  const [categories, setCategories, questions, setQuestions] =
+  const [setCategories, questions, setQuestions] =
     useContext(QuesAndAnsContext);
 
   useEffect(() => {}, []);
@@ -198,6 +198,17 @@ const InspectionBoard = ({ navigation, route }) => {
     }, [id]) // Ensure dependencies are set correctly
   );
 
+  const categories = [
+    { id: 1, category: "Test Drive" },
+    // { id: "2", category: "Exterior" },
+    // { id: "3", category: "Interior" },
+    // { id: "4", category: "Mechanical & Electrical" },
+    // { id: "5", category: "Engine & Cooling System" },
+    // { id: "6", category: "Tires & Brakes" },
+    // { id: "7", category: "Equipment" },
+    // { id: "8", category: "Body frame Accident Checklist" },
+  ];
+
   const catIcons = [
     {
       id: "1",
@@ -250,9 +261,6 @@ const InspectionBoard = ({ navigation, route }) => {
         />
       )}
 
-      {/* <View style={styles.headingContainer}>
-        <AppText fontSize={mainStyles.h2FontSize}>Inspection Board</AppText>
-      </View> */}
       <InspectionHeader backIcon={false} borderBottom={false}>
         Inspection Board
       </InspectionHeader>

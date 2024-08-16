@@ -2,7 +2,6 @@ import {
   FlatList,
   Image,
   ImageBackground,
-  ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -50,7 +49,6 @@ const Home = ({ navigation }) => {
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
-  // const [dataLoading, setDataLoading] = useState(true);
 
   // for form data
   useEffect(() => {
@@ -344,14 +342,6 @@ const Home = ({ navigation }) => {
       setRefreshing(false);
     }
   };
-
-  // if (dataLoading) {
-  //   return (
-  //     <View style={styles.loaderContainer}>
-  //       <ActivityIndicator size="large" color={colors.primary} />
-  //     </View>
-  //   );
-  // }
 
   return (
     <AppScreen>
