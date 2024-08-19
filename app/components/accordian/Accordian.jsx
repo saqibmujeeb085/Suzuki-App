@@ -39,8 +39,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: colors.whiteBg,
     minHeight: 60,
-    // paddingLeft: 20,
-    // alignItems: "center",
     justifyContent: "center",
   },
   header: {

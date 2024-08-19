@@ -5,6 +5,7 @@ import { RadioGroup } from "react-native-radio-buttons-group";
 import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
 import { colors } from "../../constants/colors";
 import { mainStyles } from "../../constants/style";
+import AppTextInput from "../formFields/TextInput";
 
 const SelectCard = ({
   indicator,
@@ -14,30 +15,21 @@ const SelectCard = ({
   onSelectedImageName,
   onRemoveImage,
   questionId,
+  points,
+  options,
   img = false,
+  textBox = false,
 }) => {
   const [selectedId, setSelectedId] = useState(null);
 
-  const radioButtons = useMemo(
-    () => [
-      {
-        id: "1",
-        label: "Yes",
-        value: true,
-        color: colors.blue,
-      },
-      {
-        id: "2",
-        label: "No",
-        value: false,
-        color: colors.blue,
-      },
-    ],
-    []
-  );
-
   const handleValueChange = (id) => {
-    const selectedValue = radioButtons.find((radio) => radio.id === id).value;
+    const selectedValue = options.find((radio) => radio.id === id).value;
+    setSelectedId(id);
+    onValueChange(selectedValue);
+  };
+
+  const handlePonitsValueChange = (id) => {
+    const selectedValue = points.find((radio) => radio.id === id).value;
     setSelectedId(id);
     onValueChange(selectedValue);
   };
@@ -57,7 +49,7 @@ const SelectCard = ({
           flexDirection: "row",
           alignItems: "flex-start",
         }}
-        radioButtons={radioButtons}
+        radioButtons={options}
         onPress={handleValueChange}
         selectedId={selectedId}
       />
@@ -69,6 +61,40 @@ const SelectCard = ({
               onSelectedImageName(questionId, name)
             }
             onRemoveImage={() => onRemoveImage(questionId)}
+          />
+        </View>
+      )}
+      {textBox && (
+        <View style={{ paddingHorizontal: 12 }}>
+          <AppTextInput
+            inputMode={"textArea"}
+            multiline
+            numberOfLines={3}
+            placeholder="Mention Reason"
+          />
+        </View>
+      )}
+      {points && points.length > 0 && (
+        <View
+          style={{
+            paddingHorizontal: 12,
+            elevation: 2,
+            borderRadius: 3,
+            marginHorizontal: 12,
+            paddingVertical: 10,
+            backgroundColor: colors.whiteBg,
+          }}
+        >
+          <AppText marginBottom={10}>Select Type:</AppText>
+          <RadioGroup
+            containerStyle={{
+              justifyContent: "flex-start",
+              flexDirection: "row",
+              alignItems: "flex-start",
+            }}
+            radioButtons={points}
+            onPress={handlePonitsValueChange}
+            selectedId={selectedId}
           />
         </View>
       )}

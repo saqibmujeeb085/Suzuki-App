@@ -6,6 +6,7 @@ import circle from "../../assets/componentsImages/circle.png";
 import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
 import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
+import { TextInput } from "react-native-gesture-handler";
 
 const RangeCard = ({
   indicator,

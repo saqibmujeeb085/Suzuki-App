@@ -10,6 +10,7 @@ import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
 import AppText from "../../components/text/Text";
 import Accordion from "../../components/accordian/Accordian";
+import TextCard from "../../components/card/TextCard";
 
 const SingleInspection = ({ navigation, route }) => {
   const { tempID, catid, catName } = route.params || {};
@@ -31,21 +32,26 @@ const SingleInspection = ({ navigation, route }) => {
               id: 1,
               type: "r",
               question: "Engine Performance",
-              condition: false,
-              options: [],
               image: true,
-              textBox: false,
-              points: [],
             },
             {
               id: 2,
               type: "b",
               question: "Acceleration and power",
               condition: true,
-              options: [{ key: 1, value: "ok", label: "sai ha" }],
+              options: [
+                { id: 1, value: "ok", label: "sai ha", color: colors.blue },
+              ],
               image: false,
               textBox: true,
-              points: [],
+              points: [
+                {
+                  key: 1,
+                  label: "black",
+                  value: "black",
+                  color: colors.blue,
+                },
+              ],
             },
             {
               id: 3,
@@ -53,55 +59,14 @@ const SingleInspection = ({ navigation, route }) => {
               question: "Engine Mounts",
               condition: true,
               options: [],
-              image: false,
-              textBox: true,
-              points: [
-                {
-                  key: 1,
-                  label: "black",
-                  value: "black",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          subCatId: 2,
-          subCatName: "Body Additional",
-          subCatData: [
-            {
-              id: 4,
-              type: "r",
-              question: "Engine Performance",
-              condition: false,
-              options: [],
               image: true,
-              textBox: false,
-              points: [],
-            },
-            {
-              id: 5,
-              type: "b",
-              question: "Acceleration and power",
-              condition: true,
-              options: [{ key: 1, value: "ok", label: "sai ha" }],
-              image: false,
-              textBox: true,
-              points: [],
-            },
-            {
-              id: 6,
-              type: "t",
-              question: "Engine Mounts",
-              condition: true,
-              options: [],
-              image: false,
               textBox: true,
               points: [
                 {
                   key: 1,
                   label: "black",
                   value: "black",
+                  color: colors.blue,
                 },
               ],
             },
@@ -142,6 +107,8 @@ const SingleInspection = ({ navigation, route }) => {
             name: null,
             type: "image/jpeg",
           },
+          reason: "",
+          ponit: "",
         }))
       );
       setValues(initialValues);
@@ -199,6 +166,8 @@ const SingleInspection = ({ navigation, route }) => {
       catID: item.catID,
       IndID: item.IndID,
       value: item.value,
+      reason: item.reason,
+      point: item.point,
       ...(item.image &&
         item.image.uri && {
           image: {
@@ -234,46 +203,79 @@ const SingleInspection = ({ navigation, route }) => {
       <InspectionHeader onPress={() => navigation.goBack()} rightBtn={"Next"}>
         {catName}
       </InspectionHeader>
-      <ScrollView style={{ marginBottom: 90, marginTop: -20 }}>
+      <ScrollView style={{ marginBottom: 100, marginTop: -20 }}>
         {questionsData.map((subCat, index) => (
           <Accordion key={index} title={subCat.subCatName}>
             <View style={{ gap: 10 }}>
-              {subCat.subCatData.map((question, index) =>
-                question.type === "r" ? (
-                  <RangeCard
-                    key={question.id}
-                    indicator={question.indicators}
-                    value={
-                      values.find((val) => val.IndID === question.id)?.value
-                    }
-                    onValueChange={(newValue) =>
-                      handleValueChange(question.id, newValue)
-                    }
-                    // img={}
-                    num={question.id}
-                    questionId={question.id}
-                    onImageSelected={handleImageSelected}
-                    onSelectedImageName={handleImageNameSelected}
-                    onRemoveImage={handleRemoveImage}
-                  />
-                ) : (
-                  <SelectCard
-                    key={question.id}
-                    indicator={question.indicators}
-                    value={
-                      values.find((val) => val.IndID === question.id)?.value
-                    }
-                    onValueChange={(newValue) =>
-                      handleValueChange(question.id, newValue)
-                    }
-                    num={question.id}
-                    questionId={question.id}
-                    onImageSelected={handleImageSelected}
-                    onSelectedImageName={handleImageNameSelected}
-                    onRemoveImage={handleRemoveImage}
-                  />
-                )
-              )}
+              {subCat.subCatData.map((question, index) => {
+                // Determine which component to render based on question type
+                if (question.type === "r") {
+                  return (
+                    <RangeCard
+                      key={question.id}
+                      indicator={question.question}
+                      img={question.image}
+                      value={
+                        values.find((val) => val.IndID === question.id)?.value
+                      }
+                      onValueChange={(newValue) =>
+                        handleValueChange(question.id, newValue)
+                      }
+                      num={question.id}
+                      questionId={question.id}
+                      onImageSelected={handleImageSelected}
+                      onSelectedImageName={handleImageNameSelected}
+                      onRemoveImage={handleRemoveImage}
+                    />
+                  );
+                } else if (question.type === "b") {
+                  return (
+                    <SelectCard
+                      key={question.id}
+                      indicator={question.question}
+                      img={question.image}
+                      textBox={question.textBox}
+                      options={question.options}
+                      condition={question.condition}
+                      value={
+                        values.find((val) => val.IndID === question.id)?.value
+                      }
+                      onValueChange={(newValue) =>
+                        handleValueChange(question.id, newValue)
+                      }
+                      points={question.points}
+                      num={question.id}
+                      questionId={question.id}
+                      onImageSelected={handleImageSelected}
+                      onSelectedImageName={handleImageNameSelected}
+                      onRemoveImage={handleRemoveImage}
+                    />
+                  );
+                } else if (question.type === "t") {
+                  {
+                    /* return (
+                    <TextCard
+                      key={question.id}
+                      question={question.question}
+                      value={
+                        values.find((val) => val.IndID === question.id)?.value
+                      }
+                      onValueChange={(newValue) =>
+                        handleValueChange(question.id, newValue)
+                      }
+                      points={question.points}
+                      img={question.image}
+                      num={question.id}
+                      onImageSelected={handleImageSelected}
+                      onSelectedImageName={handleImageNameSelected}
+                      onRemoveImage={handleRemoveImage}
+                    />
+                  ); */
+                  }
+                } else {
+                  return null;
+                }
+              })}
             </View>
           </Accordion>
         ))}

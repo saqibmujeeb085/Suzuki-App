@@ -211,35 +211,35 @@ const InspectionBoard = ({ navigation, route }) => {
 
   const catIcons = [
     {
-      id: "1",
+      id: 1,
       icon: "steering",
     },
     {
-      id: "2",
+      id: 2,
       icon: "car",
     },
     {
-      id: "3",
+      id: 3,
       icon: "car-clutch",
     },
     {
-      id: "4",
+      id: 4,
       icon: "car-door",
     },
     {
-      id: "5",
+      id: 5,
       icon: "engine-outline",
     },
     {
-      id: "6",
+      id: 6,
       icon: "car-brake-worn-linings",
     },
     {
-      id: "7",
+      id: 7,
       icon: "tools",
     },
     {
-      id: "8",
+      id: 8,
       icon: "car-side",
     },
   ];
