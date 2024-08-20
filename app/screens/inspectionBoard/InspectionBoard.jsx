@@ -199,24 +199,24 @@ const InspectionBoard = ({ navigation, route }) => {
   );
 
   const categories = [
-    { id: 1, category: "Test Drive" },
-    // { id: "2", category: "Exterior" },
-    // { id: "3", category: "Interior" },
-    // { id: "4", category: "Mechanical & Electrical" },
-    // { id: "5", category: "Engine & Cooling System" },
-    // { id: "6", category: "Tires & Brakes" },
-    // { id: "7", category: "Equipment" },
-    // { id: "8", category: "Body frame Accident Checklist" },
+    { id: 1, category: "Body and Frames" },
+    { id: 2, category: "MECHANICAL" },
+    { id: 3, category: "ELECTRICAL & ELECTRONICS" },
+    { id: 4, category: "Exterior" },
+    { id: 5, category: "Interior" },
+    { id: 6, category: "A/C & HEATER" },
+    { id: 7, category: "TEST DRIVE" },
+    // { id: 8, category: "Body frame Accident Checklist" },
   ];
 
   const catIcons = [
     {
       id: 1,
-      icon: "steering",
+      icon: "car",
     },
     {
-      id: 2,
-      icon: "car",
+      id: 7,
+      icon: "steering",
     },
     {
       id: 3,
@@ -235,13 +235,13 @@ const InspectionBoard = ({ navigation, route }) => {
       icon: "car-brake-worn-linings",
     },
     {
-      id: 7,
+      id: 2,
       icon: "tools",
     },
-    {
-      id: 8,
-      icon: "car-side",
-    },
+    // {
+    //   id: 8,
+    //   icon: "car-side",
+    // },
   ];
 
   return (

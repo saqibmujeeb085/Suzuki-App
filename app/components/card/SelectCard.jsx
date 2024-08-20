@@ -17,13 +17,14 @@ const SelectCard = ({
   questionId,
   points,
   options,
+  img,
   imgCondition = false,
   textCondition = false,
   pointsCondition = false,
   condition = false,
-  textBox = false,
 }) => {
   const [selectedId, setSelectedId] = useState(null);
+  const [selectedSubId, setSelectedSubId] = useState(null);
   const [selectedValue, setSelectedValue] = useState("");
 
   const handleValueChange = (id) => {
@@ -37,27 +38,31 @@ const SelectCard = ({
   const handlePointsValueChange = (id) => {
     const selectedOption = points.find((radio) => radio.id === id);
     const selectedValue = selectedOption.value;
-    setSelectedId(id);
+    setSelectedSubId(id);
     setSelectedValue(selectedValue);
     onValueChange(selectedValue);
   };
 
   const shouldShowImage =
-    imgCondition &&
-    (!condition ||
-      (condition && selectedValue !== "good" && selectedValue !== ""));
+    img &&
+    (!imgCondition ||
+      (imgCondition &&
+        selectedValue !== "good" &&
+        selectedValue !== "not-applicable" &&
+        selectedValue !== ""));
 
   const shouldShowText =
     textCondition &&
     condition &&
     selectedValue !== "good" &&
+    selectedValue !== "not-applicable" &&
     selectedValue !== "";
 
   const shouldShowPonits =
     pointsCondition &&
-    points.length > 0 &&
     condition &&
     selectedValue !== "good" &&
+    selectedValue !== "not-applicable" &&
     selectedValue !== "";
 
   return (
@@ -67,29 +72,20 @@ const SelectCard = ({
         color={colors.fontBlack}
         fontFamily={mainStyles.appFontBold}
       >
-        {num + 1}. {indicator}
+        {num}. {indicator}
       </AppText>
       <RadioGroup
         containerStyle={{
           justifyContent: "flex-start",
           flexDirection: "row",
           alignItems: "flex-start",
+          flexWrap: "wrap",
         }}
         radioButtons={options}
         onPress={handleValueChange}
         selectedId={selectedId}
       />
-      {shouldShowImage && (
-        <View>
-          <InspectionImagePicker
-            onImageSelected={(uri) => onImageSelected(questionId, uri)}
-            onSelectedImageName={(name) =>
-              onSelectedImageName(questionId, name)
-            }
-            onRemoveImage={() => onRemoveImage(questionId)}
-          />
-        </View>
-      )}
+
       {shouldShowText && (
         <View style={{ paddingHorizontal: 12 }}>
           <AppTextInput
@@ -121,7 +117,18 @@ const SelectCard = ({
             }}
             radioButtons={points}
             onPress={handlePointsValueChange}
-            selectedId={selectedId}
+            selectedId={selectedSubId}
+          />
+        </View>
+      )}
+      {shouldShowImage && (
+        <View>
+          <InspectionImagePicker
+            onImageSelected={(uri) => onImageSelected(questionId, uri)}
+            onSelectedImageName={(name) =>
+              onSelectedImageName(questionId, name)
+            }
+            onRemoveImage={() => onRemoveImage(questionId)}
           />
         </View>
       )}

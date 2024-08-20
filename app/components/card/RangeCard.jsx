@@ -37,7 +37,7 @@ const RangeCard = ({
         color={colors.fontBlack}
         fontFamily={mainStyles.appFontBold}
       >
-        {num + 1}. {indicator}
+        {num}. {indicator}
       </AppText>
       <View style={styles.sliderContainer}>
         <AppText
