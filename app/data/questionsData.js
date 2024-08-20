@@ -3645,19 +3645,13 @@ export const questions = [
               {
                 id: 1,
                 value: "good",
-                label: "Smooth",
+                label: "Working",
                 color: colors.blue,
               },
               {
                 id: 2,
                 value: "bad",
-                label: "Rough",
-                color: colors.blue,
-              },
-              {
-                id: 3,
-                value: "worst",
-                label: "Jerk",
+                label: "Not Working",
                 color: colors.blue,
               },
               {
