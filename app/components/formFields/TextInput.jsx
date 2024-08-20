@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     minHeight: 60,
-    textAlignVertical: "top",
   },
   textFieldBox: {
     gap: 5,

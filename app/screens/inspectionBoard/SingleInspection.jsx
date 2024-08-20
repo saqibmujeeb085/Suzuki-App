@@ -32,17 +32,26 @@ const SingleInspection = ({ navigation, route }) => {
               id: 1,
               type: "r",
               question: "Engine Performance",
-              image: true,
+              imgCondition: true,
             },
             {
               id: 2,
               type: "b",
               question: "Acceleration and power",
               condition: true,
+              imgCondition: true,
+              textCondition: false,
+              pointsCondition: true,
               options: [
-                { id: 1, value: "ok", label: "sai ha", color: colors.blue },
+                { id: 1, value: "good", label: "sai ha", color: colors.blue },
+                {
+                  id: 2,
+                  value: "bad",
+                  label: "sai nai ha",
+                  color: colors.blue,
+                },
               ],
-              image: false,
+              image: true,
               textBox: true,
               points: [
                 {
@@ -57,18 +66,9 @@ const SingleInspection = ({ navigation, route }) => {
               id: 3,
               type: "t",
               question: "Engine Mounts",
-              condition: true,
-              options: [],
-              image: true,
-              textBox: true,
-              points: [
-                {
-                  key: 1,
-                  label: "black",
-                  value: "black",
-                  color: colors.blue,
-                },
-              ],
+              showType: "s",
+              placeHolder: "In Milimeter",
+              imgCondition: true,
             },
           ],
         },
@@ -214,7 +214,7 @@ const SingleInspection = ({ navigation, route }) => {
                     <RangeCard
                       key={question.id}
                       indicator={question.question}
-                      img={question.image}
+                      img={question.imgCondition}
                       value={
                         values.find((val) => val.IndID === question.id)?.value
                       }
@@ -233,10 +233,12 @@ const SingleInspection = ({ navigation, route }) => {
                     <SelectCard
                       key={question.id}
                       indicator={question.question}
-                      img={question.image}
                       textBox={question.textBox}
                       options={question.options}
                       condition={question.condition}
+                      imgCondition={question.imgCondition}
+                      textCondition={question.textCondition}
+                      pointsCondition={question.pointsCondition}
                       value={
                         values.find((val) => val.IndID === question.id)?.value
                       }
@@ -253,24 +255,26 @@ const SingleInspection = ({ navigation, route }) => {
                   );
                 } else if (question.type === "t") {
                   {
-                    /* return (
-                    <TextCard
-                      key={question.id}
-                      question={question.question}
-                      value={
-                        values.find((val) => val.IndID === question.id)?.value
-                      }
-                      onValueChange={(newValue) =>
-                        handleValueChange(question.id, newValue)
-                      }
-                      points={question.points}
-                      img={question.image}
-                      num={question.id}
-                      onImageSelected={handleImageSelected}
-                      onSelectedImageName={handleImageNameSelected}
-                      onRemoveImage={handleRemoveImage}
-                    />
-                  ); */
+                    return (
+                      <TextCard
+                        key={question.id}
+                        indicator={question.question}
+                        value={
+                          values.find((val) => val.IndID === question.id)?.value
+                        }
+                        showType={question.showType}
+                        placeholder={question.placeHolder}
+                        onValueChange={(newValue) =>
+                          handleValueChange(question.id, newValue)
+                        }
+                        points={question.points}
+                        img={question.imgCondition}
+                        num={question.id}
+                        onImageSelected={handleImageSelected}
+                        onSelectedImageName={handleImageNameSelected}
+                        onRemoveImage={handleRemoveImage}
+                      />
+                    );
                   }
                 } else {
                   return null;

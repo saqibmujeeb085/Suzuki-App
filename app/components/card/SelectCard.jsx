@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import AppText from "../text/Text";
 import { RadioGroup } from "react-native-radio-buttons-group";
 import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
@@ -17,22 +17,48 @@ const SelectCard = ({
   questionId,
   points,
   options,
-  img = false,
+  imgCondition = false,
+  textCondition = false,
+  pointsCondition = false,
+  condition = false,
   textBox = false,
 }) => {
   const [selectedId, setSelectedId] = useState(null);
+  const [selectedValue, setSelectedValue] = useState("");
 
   const handleValueChange = (id) => {
-    const selectedValue = options.find((radio) => radio.id === id).value;
+    const selectedOption = options.find((radio) => radio.id === id);
+    const selectedValue = selectedOption.value;
     setSelectedId(id);
+    setSelectedValue(selectedValue);
     onValueChange(selectedValue);
   };
 
-  const handlePonitsValueChange = (id) => {
-    const selectedValue = points.find((radio) => radio.id === id).value;
+  const handlePointsValueChange = (id) => {
+    const selectedOption = points.find((radio) => radio.id === id);
+    const selectedValue = selectedOption.value;
     setSelectedId(id);
+    setSelectedValue(selectedValue);
     onValueChange(selectedValue);
   };
+
+  const shouldShowImage =
+    imgCondition &&
+    (!condition ||
+      (condition && selectedValue !== "good" && selectedValue !== ""));
+
+  const shouldShowText =
+    textCondition &&
+    condition &&
+    selectedValue !== "good" &&
+    selectedValue !== "";
+
+  const shouldShowPonits =
+    pointsCondition &&
+    points.length > 0 &&
+    condition &&
+    selectedValue !== "good" &&
+    selectedValue !== "";
 
   return (
     <View style={styles.inspectionBox}>
@@ -53,7 +79,7 @@ const SelectCard = ({
         onPress={handleValueChange}
         selectedId={selectedId}
       />
-      {img && (
+      {shouldShowImage && (
         <View>
           <InspectionImagePicker
             onImageSelected={(uri) => onImageSelected(questionId, uri)}
@@ -64,17 +90,18 @@ const SelectCard = ({
           />
         </View>
       )}
-      {textBox && (
+      {shouldShowText && (
         <View style={{ paddingHorizontal: 12 }}>
           <AppTextInput
             inputMode={"textArea"}
             multiline
             numberOfLines={3}
             placeholder="Mention Reason"
+            textAlignVertical={"top"}
           />
         </View>
       )}
-      {points && points.length > 0 && (
+      {shouldShowPonits && (
         <View
           style={{
             paddingHorizontal: 12,
@@ -93,7 +120,7 @@ const SelectCard = ({
               alignItems: "flex-start",
             }}
             radioButtons={points}
-            onPress={handlePonitsValueChange}
+            onPress={handlePointsValueChange}
             selectedId={selectedId}
           />
         </View>
