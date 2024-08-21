@@ -12,6 +12,7 @@ import AppText from "../../components/text/Text";
 import Accordion from "../../components/accordian/Accordian";
 import TextCard from "../../components/card/TextCard";
 import { questions } from "../../data/questionsData";
+import CarBody from "../../components/carBody/CarBody";
 
 const SingleInspection = ({ navigation, route }) => {
   const { tempID, catid, catName } = route.params || {};
@@ -149,11 +150,15 @@ const SingleInspection = ({ navigation, route }) => {
         {catName}
       </InspectionHeader>
       <ScrollView style={{ marginBottom: 100, marginTop: -20 }}>
+        {catid === 1 && (
+          <Accordion title={"Body Condition"}>
+            <CarBody />
+          </Accordion>
+        )}
         {questionsData.map((subCat, index) => (
           <Accordion key={index} title={subCat.subCatName}>
             <View style={{ gap: 10 }}>
               {subCat.subCatData.map((question, index) => {
-                // Determine which component to render based on question type
                 if (question.type === "r") {
                   return (
                     <RangeCard
