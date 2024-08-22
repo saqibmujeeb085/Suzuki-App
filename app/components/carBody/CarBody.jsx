@@ -1,5 +1,5 @@
 import { ImageBackground, StyleSheet, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import AppText from "../text/Text";
 import { Image } from "react-native";
 import { colors } from "../../constants/colors";
@@ -7,10 +7,14 @@ import { Button } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Octicons from "@expo/vector-icons/Octicons";
 import { mainStyles } from "../../constants/style";
+import CarBodyModal from "../modals/CarBodyModal";
 
 const CarBody = () => {
+  const [show, setShow] = useState(false);
+
   return (
     <View>
+      <CarBodyModal show={show} setShow={setShow} />
       <View
         style={{
           backgroundColor: colors.whiteBg,
@@ -55,6 +59,7 @@ const CarBody = () => {
                 left: 135,
                 padding: 10,
               }}
+              onPress={() => setShow(!show)}
             >
               <Octicons name="dot-fill" size={30} color={colors.fontBlack} />
             </TouchableOpacity>
