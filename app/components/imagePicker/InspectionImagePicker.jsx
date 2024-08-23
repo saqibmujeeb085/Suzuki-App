@@ -77,6 +77,7 @@ const InspectionImagePicker = ({
               color={colors.fontBlack}
               numberOfLines={1}
               ellipsizeMode="tail"
+              maxWidth={120}
             >
               {image.name}
             </AppText>

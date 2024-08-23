@@ -1,119 +1,148 @@
-import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  StyleSheet,
-  View,
-  TouchableWithoutFeedback,
-} from "react-native";
+import React, { useState } from "react";
+import { Modal, StyleSheet, View } from "react-native";
 import AppText from "../text/Text";
 import GradientButton from "../buttons/GradientButton";
-
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "../../constants/colors";
 import { mainStyles } from "../../constants/style";
 import Checkbox from "expo-checkbox";
 import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
+import RadioGroup from "react-native-radio-buttons-group";
 
 const CarBodyModal = ({ show = false, setShow }) => {
-  const [isColorChecked, setColorChecked] = useState(false);
-  const [isScratchChecked, setScratchChecked] = useState(false);
-  const [isDentChecked, setDentChecked] = useState(false);
+  const [problems, setProblems] = useState({
+    color: { checked: false, selectedId: null, selectedValue: null },
+    dent: { checked: false, selectedId: null, selectedValue: null },
+    scratch: { checked: false, selectedId: null, selectedValue: null },
+  });
+
+  const points = {
+    color: [
+      { id: "1", label: "Major", value: "Major", color: colors.purple },
+      { id: "2", label: "Minor", value: "Minor", color: colors.purple },
+    ],
+    dent: [
+      { id: "3", label: "Deep", value: "Deep", color: colors.purple },
+      { id: "4", label: "Shallow", value: "Shallow", color: colors.purple },
+    ],
+    scratch: [
+      { id: "5", label: "Long", value: "Long", color: colors.purple },
+      { id: "6", label: "Short", value: "Short", color: colors.purple },
+    ],
+  };
+
+  const handleProblemToggle = (problem) => {
+    setProblems((prev) => ({
+      ...prev,
+      [problem]: {
+        ...prev[problem],
+        checked: !prev[problem].checked,
+        selectedId: prev[problem].checked ? null : prev[problem].selectedId,
+        selectedValue: prev[problem].checked
+          ? null
+          : prev[problem].selectedValue,
+      },
+    }));
+  };
+
+  const handleSubProblemSelect = (problem, selectedId) => {
+    const selectedOption = points[problem].find(
+      (radio) => radio.id === selectedId
+    );
+    const selectedValue = selectedOption ? selectedOption.value : null;
+
+    setProblems((prev) => ({
+      ...prev,
+      [problem]: {
+        ...prev[problem],
+        selectedId: selectedId,
+        selectedValue: selectedValue,
+      },
+    }));
+  };
+
+  const handleSave = () => {
+    console.log("Selected Problems: ", problems);
+  };
+
   return (
     <Modal transparent visible={show}>
-      <TouchableWithoutFeedback
-        onPress={() => setShow(!show)}
-        style={{ flex: 1 }}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalBox}>
-            <View style={styles.closeButton}>
-              <MaterialCommunityIcons
-                name="close"
-                size={20}
-                color={colors.fontWhite}
-                onPress={() => setShow(!show)}
-              />
-            </View>
-
-            <View style={styles.FiltersInputs}>
-              <View style={styles.Content}>
-                <AppText fontSize={mainStyles.h2FontSize}>
-                  Describe Problem
-                </AppText>
-                <AppText fontSize={mainStyles.h3FontSize}>
-                  Select the Problems in the Car Body
-                </AppText>
-              </View>
-            </View>
-            <View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  gap: 10,
-                  justifyContent: "center",
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 10,
-                    alignItems: "center",
-                  }}
-                >
-                  <Checkbox
-                    onValueChange={setColorChecked}
-                    color={isColorChecked ? colors.purple : undefined}
-                    value={isColorChecked}
-                  />
-                  <AppText>Color</AppText>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 10,
-                    alignItems: "center",
-                  }}
-                >
-                  <Checkbox
-                    onValueChange={setDentChecked}
-                    color={isDentChecked ? colors.purple : undefined}
-                    value={isDentChecked}
-                  />
-                  <AppText>Dent</AppText>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 10,
-                    alignItems: "center",
-                  }}
-                >
-                  <Checkbox
-                    onValueChange={setScratchChecked}
-                    color={isScratchChecked ? colors.purple : undefined}
-                    value={isScratchChecked}
-                  />
-                  <AppText>Scratch</AppText>
-                </View>
-              </View>
-            </View>
-
-            <InspectionImagePicker
-              onImageSelected={(uri) => onImageSelected(questionId, uri)}
-              onSelectedImageName={(name) =>
-                onSelectedImageName(questionId, name)
-              }
-              onRemoveImage={() => onRemoveImage(questionId)}
+      <View style={styles.modalContainer}>
+        <View style={styles.modalBox}>
+          <View style={styles.closeButton}>
+            <MaterialCommunityIcons
+              name="close"
+              size={20}
+              color={colors.fontWhite}
+              onPress={() => setShow(!show)}
             />
+          </View>
 
-            <View style={styles.modalButtons}>
-              <GradientButton size={10} onPress={""}>
-                Save
-              </GradientButton>
+          <View style={styles.FiltersInputs}>
+            <View style={styles.Content}>
+              <AppText fontSize={mainStyles.h2FontSize}>
+                Describe Problem
+              </AppText>
+              <AppText fontSize={mainStyles.h3FontSize}>
+                Select the Problems in the Car Body
+              </AppText>
             </View>
           </View>
+
+          <View style={styles.problemList}>
+            {Object.keys(points).map((problem) => (
+              <View key={problem}>
+                <View style={styles.problemRow}>
+                  <Checkbox
+                    onValueChange={() => handleProblemToggle(problem)}
+                    color={
+                      problems[problem].checked ? colors.purple : undefined
+                    }
+                    value={problems[problem].checked}
+                  />
+                  <AppText>
+                    {problem.charAt(0).toUpperCase() + problem.slice(1)}
+                  </AppText>
+                </View>
+                {problems[problem].checked && (
+                  <View
+                    style={{
+                      padding: 10,
+                      borderRadius: 5,
+                      elevation: 2,
+                      backgroundColor: colors.whiteBg,
+                      marginVertical: 10,
+                    }}
+                  >
+                    <RadioGroup
+                      containerStyle={styles.radioGroup}
+                      radioButtons={points[problem]}
+                      onPress={(selectedId) =>
+                        handleSubProblemSelect(problem, selectedId)
+                      }
+                      selectedId={problems[problem].selectedId}
+                    />
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+
+          <InspectionImagePicker
+            onImageSelected={(uri) => console.log("Image selected: ", uri)}
+            onSelectedImageName={(name) =>
+              console.log("Selected Image Name: ", name)
+            }
+            onRemoveImage={() => console.log("Image removed")}
+          />
+
+          <View style={styles.modalButtons}>
+            <GradientButton size={15} onPress={handleSave}>
+              Save
+            </GradientButton>
+          </View>
         </View>
-      </TouchableWithoutFeedback>
+      </View>
     </Modal>
   );
 };
@@ -156,24 +185,18 @@ const styles = StyleSheet.create({
     gap: 5,
     alignItems: "center",
   },
-  Inputs: {
-    marginTop: 10,
+  problemList: {
+    paddingHorizontal: 20,
     gap: 10,
   },
-  DatePickers: {
-    gap: 10,
+  problemRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
+    gap: 10,
+    alignItems: "center",
   },
-  datePickerContainer: {
-    flex: 1,
-  },
-  datePickerButton: {
-    borderColor: "#CCCCCC",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    textAlign: "center",
+  radioGroup: {
+    justifyContent: "flex-start",
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
 });
