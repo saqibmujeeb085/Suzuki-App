@@ -152,7 +152,7 @@ const SingleInspection = ({ navigation, route }) => {
       <ScrollView style={{ marginBottom: 100, marginTop: -20 }}>
         {catid === 1 && (
           <Accordion title={"Body Condition"}>
-            <CarBody />
+            <CarBody tempID={tempID} />
           </Accordion>
         )}
         {questionsData.map((subCat, index) => (
@@ -236,7 +236,7 @@ const SingleInspection = ({ navigation, route }) => {
       </ScrollView>
       <View style={styles.formButton}>
         <GradientButton onPress={saveQuestionsData} disabled={isButtonDisabled}>
-          Submit
+          {loading ? "Loading..." : "Submit"}
         </GradientButton>
       </View>
     </AppScreen>

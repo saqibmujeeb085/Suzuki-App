@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, StyleSheet, View } from "react-native";
 import AppText from "../text/Text";
 import GradientButton from "../buttons/GradientButton";
@@ -8,13 +8,19 @@ import { mainStyles } from "../../constants/style";
 import Checkbox from "expo-checkbox";
 import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
 import RadioGroup from "react-native-radio-buttons-group";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const CarBodyModal = ({ show = false, setShow }) => {
+const CarBodyModal = ({ show = false, setShow, activeProblem, tempID }) => {
   const [problems, setProblems] = useState({
     color: { checked: false, selectedId: null, selectedValue: null },
     dent: { checked: false, selectedId: null, selectedValue: null },
     scratch: { checked: false, selectedId: null, selectedValue: null },
   });
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageName, setSelectedImageName] = useState(null);
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const points = {
     color: [
@@ -30,6 +36,13 @@ const CarBodyModal = ({ show = false, setShow }) => {
       { id: "6", label: "Short", value: "Short", color: colors.purple },
     ],
   };
+
+  useEffect(() => {
+    const isAnyProblemChecked = Object.values(problems).some(
+      (problem) => problem.checked && problem.selectedValue
+    );
+    setIsSaveDisabled(!isAnyProblemChecked && !selectedImage);
+  }, [problems, selectedImage]);
 
   const handleProblemToggle = (problem) => {
     setProblems((prev) => ({
@@ -61,8 +74,79 @@ const CarBodyModal = ({ show = false, setShow }) => {
     }));
   };
 
-  const handleSave = () => {
-    console.log("Selected Problems: ", problems);
+  const handleSave = async () => {
+    setLoading(true);
+
+    const filteredProblems = Object.keys(problems)
+      .filter((problem) => problems[problem].checked)
+      .map((problem) => ({
+        problemName: problem,
+        selectedValue: problems[problem].selectedValue,
+      }));
+
+    const dataToSave = {
+      tempID: `${tempID}`,
+      problemLocation: activeProblem,
+      problems: filteredProblems,
+      image: selectedImage
+        ? { uri: selectedImage, name: selectedImageName }
+        : undefined,
+    };
+
+    console.log("Data to Save: ", dataToSave);
+
+    try {
+      const storedData = await AsyncStorage.getItem("@carBodyQuestionsdata");
+      const existingData = storedData ? JSON.parse(storedData) : [];
+      const updatedData = [...existingData, dataToSave];
+      await AsyncStorage.setItem(
+        "@carBodyQuestionsdata",
+        JSON.stringify(updatedData)
+      );
+
+      setLoading(false);
+      resetFields();
+      setShow(false);
+    } catch (error) {
+      console.error("Error saving questions values:", error);
+      setLoading(false);
+    }
+  };
+
+  const resetFields = () => {
+    setProblems({
+      color: { checked: false, selectedId: null, selectedValue: null },
+      dent: { checked: false, selectedId: null, selectedValue: null },
+      scratch: { checked: false, selectedId: null, selectedValue: null },
+    });
+    setSelectedImage(null);
+    setSelectedImageName(null);
+  };
+
+  useEffect(() => {
+    getAllDataFromStorage();
+  }, []);
+
+  const getAllDataFromStorage = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carBodyQuestionsdata");
+      if (storedData) {
+        const data = JSON.parse(storedData);
+
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          console.log("All Data from Storage: ", data);
+          // You can handle the data here, e.g., set it to a state variable
+          // setYourStateVariable(data);
+        } else {
+          console.error("Stored data is not an array");
+        }
+      } else {
+        console.log("No data found in storage");
+      }
+    } catch (error) {
+      console.error("Error retrieving data from storage:", error);
+    }
   };
 
   return (
@@ -74,7 +158,10 @@ const CarBodyModal = ({ show = false, setShow }) => {
               name="close"
               size={20}
               color={colors.fontWhite}
-              onPress={() => setShow(!show)}
+              onPress={() => {
+                resetFields();
+                setShow(false);
+              }}
             />
           </View>
 
@@ -105,15 +192,7 @@ const CarBodyModal = ({ show = false, setShow }) => {
                   </AppText>
                 </View>
                 {problems[problem].checked && (
-                  <View
-                    style={{
-                      padding: 10,
-                      borderRadius: 5,
-                      elevation: 2,
-                      backgroundColor: colors.whiteBg,
-                      marginVertical: 10,
-                    }}
-                  >
+                  <View style={styles.subProblemContainer}>
                     <RadioGroup
                       containerStyle={styles.radioGroup}
                       radioButtons={points[problem]}
@@ -129,16 +208,21 @@ const CarBodyModal = ({ show = false, setShow }) => {
           </View>
 
           <InspectionImagePicker
-            onImageSelected={(uri) => console.log("Image selected: ", uri)}
-            onSelectedImageName={(name) =>
-              console.log("Selected Image Name: ", name)
-            }
-            onRemoveImage={() => console.log("Image removed")}
+            onImageSelected={(uri) => setSelectedImage(uri)}
+            onSelectedImageName={(name) => setSelectedImageName(name)}
+            onRemoveImage={() => {
+              setSelectedImage(null);
+              setSelectedImageName(null);
+            }}
           />
 
           <View style={styles.modalButtons}>
-            <GradientButton size={15} onPress={handleSave}>
-              Save
+            <GradientButton
+              size={15}
+              onPress={handleSave}
+              disabled={isSaveDisabled}
+            >
+              {loading ? "Loading..." : "Save"}
             </GradientButton>
           </View>
         </View>
@@ -193,6 +277,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
+  },
+  subProblemContainer: {
+    padding: 10,
+    borderRadius: 5,
+    elevation: 2,
+    backgroundColor: colors.whiteBg,
+    marginVertical: 10,
   },
   radioGroup: {
     justifyContent: "flex-start",
