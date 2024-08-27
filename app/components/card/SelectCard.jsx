@@ -10,6 +10,8 @@ import AppTextInput from "../formFields/TextInput";
 const SelectCard = ({
   indicator,
   onValueChange,
+  onPointsValueChange,
+  onReasonValueChange, // Add this prop
   num,
   onImageSelected,
   onSelectedImageName,
@@ -27,10 +29,15 @@ const SelectCard = ({
   const [selectedSubId, setSelectedSubId] = useState(null);
   const [selectedValue, setSelectedValue] = useState("");
 
+  const [conditionValue, setConditionValue] = useState("");
+  const [reasonValue, setReasonValue] = useState(""); // Add state for reasonValue
+
   const handleValueChange = (id) => {
     const selectedOption = options.find((radio) => radio.id === id);
-    const selectedValue = selectedOption.value;
+    const selectedValue = selectedOption.label;
+    const selectedCondition = selectedOption.value;
     setSelectedId(id);
+    setConditionValue(selectedCondition);
     setSelectedValue(selectedValue);
     onValueChange(selectedValue);
   };
@@ -39,30 +46,35 @@ const SelectCard = ({
     const selectedOption = points.find((radio) => radio.id === id);
     const selectedValue = selectedOption.value;
     setSelectedSubId(id);
-    setSelectedValue(selectedValue);
-    onValueChange(selectedValue);
+    onPointsValueChange(selectedValue); // Pass the new value directly
+    console.log(selectedValue); // This will now correctly log the selected value
+  };
+
+  const handleReasonValueChange = (text) => {
+    setReasonValue(text);
+    onReasonValueChange(text); // Call the prop function with the text value
   };
 
   const shouldShowImage =
     img &&
     (!imgCondition ||
       (imgCondition &&
-        selectedValue !== "good" &&
-        selectedValue !== "not-applicable" &&
+        conditionValue !== "good" &&
+        conditionValue !== "not-applicable" &&
         selectedValue !== ""));
 
   const shouldShowText =
     textCondition &&
     condition &&
-    selectedValue !== "good" &&
-    selectedValue !== "not-applicable" &&
+    conditionValue !== "good" &&
+    conditionValue !== "not-applicable" &&
     selectedValue !== "";
 
-  const shouldShowPonits =
+  const shouldShowPoints =
     pointsCondition &&
     condition &&
-    selectedValue !== "good" &&
-    selectedValue !== "not-applicable" &&
+    conditionValue !== "good" &&
+    conditionValue !== "not-applicable" &&
     selectedValue !== "";
 
   return (
@@ -94,10 +106,12 @@ const SelectCard = ({
             numberOfLines={3}
             placeholder="Mention Reason"
             textAlignVertical={"top"}
+            value={reasonValue} // Bind the value
+            onChangeText={handleReasonValueChange} // Handle text change
           />
         </View>
       )}
-      {shouldShowPonits && (
+      {shouldShowPoints && (
         <View
           style={{
             paddingHorizontal: 12,

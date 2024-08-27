@@ -1,15 +1,21 @@
-import { ImageBackground, StyleSheet, View } from "react-native";
 import React, { useState, useEffect } from "react";
+import {
+  View,
+  TouchableOpacity,
+  ImageBackground,
+  StyleSheet,
+} from "react-native";
 import AppText from "../text/Text";
 import { colors } from "../../constants/colors";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import Octicons from "@expo/vector-icons/Octicons";
-import { mainStyles } from "../../constants/style";
 import CarBodyModal from "../modals/CarBodyModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { mainStyles } from "../../constants/style";
 
-const CarBody = ({ catId, tempID }) => {
+const CarBody = ({ tempID }) => {
   const [showModal, setShowModal] = useState(false);
   const [activeProblem, setActiveProblem] = useState(null);
+  const [disabledButtons, setDisabledButtons] = useState({});
 
   const problemAreas = [
     { name: "Front Left Door", position: { top: 30, left: 135 } },
@@ -29,9 +35,35 @@ const CarBody = ({ catId, tempID }) => {
     { name: "Rear Right Fender", position: { top: 350, right: 60 } },
   ];
 
+  const checkButtonStatus = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carBodyQuestionsdata");
+      const existingData = storedData ? JSON.parse(storedData) : [];
+
+      const status = {};
+      problemAreas.forEach((area) => {
+        // Check if the area exists in the stored data for the given tempID
+        const exists = existingData.some(
+          (item) => item.problemLocation == area.name && item.tempID == tempID
+        );
+        status[area.name] = exists;
+      });
+
+      setDisabledButtons(status);
+    } catch (error) {
+      console.error("Error retrieving data from storage:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkButtonStatus();
+  }, [tempID]);
+
   const handleDotPress = (problemName) => {
-    setActiveProblem(problemName);
-    setShowModal(true);
+    if (!disabledButtons[problemName]) {
+      setActiveProblem(problemName);
+      setShowModal(true);
+    }
   };
 
   useEffect(() => {
@@ -48,56 +80,40 @@ const CarBody = ({ catId, tempID }) => {
         setShow={setShowModal}
         activeProblem={activeProblem}
         tempID={tempID}
+        onSave={checkButtonStatus}
       />
 
-      <View
-        style={{
-          backgroundColor: colors.whiteBg,
-          borderRadius: 5,
-          padding: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 10,
-          flexDirection: "row",
-        }}
-      >
+      <View style={styles.container}>
         <AppText
           fontSize={20}
-          fontFamily={mainStyles.appFontBold}
+          fontFamily="mainStyles.appFontBold"
           color={colors.red}
         >
           L
         </AppText>
 
-        <View
-          style={{
-            width: 350,
-            height: 520,
-            alignSelf: "center",
-            flex: 1,
-            position: "relative",
-          }}
-        >
+        <View style={styles.imageContainer}>
           <ImageBackground
             resizeMode="contain"
-            style={{
-              width: 320,
-              height: 520,
-              alignSelf: "center",
-            }}
+            style={styles.imageBackground}
             source={require("../../assets/carBody.png")}
           >
             {problemAreas.map((area, index) => (
               <TouchableOpacity
                 key={index}
-                style={{
-                  position: "absolute",
-                  ...area.position,
-                  padding: 10,
-                }}
+                style={{ ...styles.dot, ...area.position }}
                 onPress={() => handleDotPress(area.name)}
+                disabled={disabledButtons[area.name]}
               >
-                <Octicons name="dot-fill" size={30} color={colors.fontBlack} />
+                <Octicons
+                  name="dot-fill"
+                  size={30}
+                  color={
+                    disabledButtons[area.name]
+                      ? colors.purple
+                      : colors.fontBlack
+                  }
+                />
               </TouchableOpacity>
             ))}
           </ImageBackground>
@@ -115,6 +131,32 @@ const CarBody = ({ catId, tempID }) => {
   );
 };
 
-export default CarBody;
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.whiteBg,
+    borderRadius: 5,
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+    flexDirection: "row",
+  },
+  imageContainer: {
+    width: 350,
+    height: 520,
+    alignSelf: "center",
+    flex: 1,
+    position: "relative",
+  },
+  imageBackground: {
+    width: 320,
+    height: 520,
+    alignSelf: "center",
+  },
+  dot: {
+    position: "absolute",
+    padding: 10,
+  },
+});
 
-const styles = StyleSheet.create({});
+export default CarBody;

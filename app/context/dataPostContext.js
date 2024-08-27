@@ -6,8 +6,7 @@ import axios from "axios";
 const DataPostContext = createContext();
 
 const DataPostProvider = ({ children }) => {
-  const [categories, setCategories, questions, setQuestions] =
-    useContext(QuesAndAnsContext);
+  const [categories] = useContext(QuesAndAnsContext);
 
   const removeProcessedData = async (processedTempID) => {
     try {
@@ -15,10 +14,18 @@ const DataPostProvider = ({ children }) => {
       const carjsonValue = await AsyncStorage.getItem("@carformdata");
       const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
 
-      if (carjsonValue !== null && questionjsonValue !== null) {
+      if (carjsonValue && questionjsonValue) {
         // Parse the JSON string into a JavaScript object
         let carFormData = JSON.parse(carjsonValue);
         let questionsData = JSON.parse(questionjsonValue);
+
+        // Ensure the data is an array
+        if (!Array.isArray(carFormData)) {
+          carFormData = [];
+        }
+        if (!Array.isArray(questionsData)) {
+          questionsData = [];
+        }
 
         // Filter out the processed data
         carFormData = carFormData.filter(
@@ -46,19 +53,32 @@ const DataPostProvider = ({ children }) => {
     }
   };
 
-  // Example usage after postData function
   const processDataUpload = async () => {
     try {
       const carjsonValue = await AsyncStorage.getItem("@carformdata");
       const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
+      const carbodyjsonValue = await AsyncStorage.getItem(
+        "@carBodyQuestionsdata"
+      );
 
-      if (carjsonValue !== null && questionjsonValue !== null) {
+      if (carjsonValue && questionjsonValue) {
         const carFormData = JSON.parse(carjsonValue);
         const questionsData = JSON.parse(questionjsonValue);
+        const carbodyData = carbodyjsonValue
+          ? JSON.parse(carbodyjsonValue)
+          : [];
 
-        if (Array.isArray(carFormData) && Array.isArray(questionsData)) {
+        // console.log(carbodyData);
+        // console.log(questionsData);
+
+        // Ensure the data is an array
+        if (Array.isArray(carFormData) && Array.isArray(carbodyData)) {
           carFormData.forEach((obj) => {
             const ques = questionsData.filter(
+              (item) => item.QtempID == obj.tempID
+            );
+
+            const carbodyques = carbodyData.filter(
               (item) => item.QtempID == obj.tempID
             );
 
@@ -68,7 +88,7 @@ const DataPostProvider = ({ children }) => {
             );
 
             if (allCategoriesPresent && obj.status === "inspected") {
-              postData(obj, ques);
+              postData(obj, ques, carbodyques);
             }
           });
         } else {
@@ -83,9 +103,9 @@ const DataPostProvider = ({ children }) => {
       console.error("Error processing data upload:", error);
     }
   };
-  // Function to post data (replace with actual logic)
-  const postData = async (obj, ques) => {
-    console.log("uploading temp iD", obj.tempID);
+
+  const postData = async (obj, ques, carbodyques) => {
+    console.log("uploading temp ID", obj.tempID);
 
     const formData = new FormData();
 
@@ -133,12 +153,45 @@ const DataPostProvider = ({ children }) => {
     ques.forEach((item, index) => {
       formData.append(`data[${index}][catID]`, item.catID);
       formData.append(`data[${index}][IndID]`, item.IndID);
+      formData.append(`data[${index}][IndQuestion]`, item.IndQuestion);
       formData.append(`data[${index}][value]`, item.value);
+      if (item.point) {
+        formData.append(`data[${index}][point]`, item.point);
+      }
+      if (item.reason) {
+        formData.append(`data[${index}][reason]`, item.reason);
+      }
       if (item.image && item.image.uri) {
         formData.append(`inspectionImages[${index}]`, {
           uri: item.image.uri,
           name: item.image.name,
           type: item.image.type,
+        });
+      }
+    });
+
+    carbodyques.forEach((problemItem, problemIndex) => {
+      formData.append(
+        `problems[${problemIndex}][problemLocation]`,
+        problemItem.problemLocation
+      );
+
+      problemItem.problems.forEach((problem, index) => {
+        formData.append(
+          `problems[${problemIndex}][problems][${index}][problemName]`,
+          problem.problemName
+        );
+        formData.append(
+          `problems[${problemIndex}][problems][${index}][selectedValue]`,
+          problem.selectedValue
+        );
+      });
+
+      if (problemItem.image && problemItem.image.uri) {
+        formData.append(`problems[${problemIndex}][image]`, {
+          uri: problemItem.image.uri,
+          name: problemItem.image.name,
+          type: problemItem.image.type,
         });
       }
     });
@@ -168,7 +221,6 @@ const DataPostProvider = ({ children }) => {
     }
   };
 
-  // Function to manually invoke processDataUpload
   const triggerManualUpload = async () => {
     await processDataUpload();
   };

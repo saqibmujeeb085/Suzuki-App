@@ -10,7 +10,13 @@ import InspectionImagePicker from "../imagePicker/InspectionImagePicker";
 import RadioGroup from "react-native-radio-buttons-group";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const CarBodyModal = ({ show = false, setShow, activeProblem, tempID }) => {
+const CarBodyModal = ({
+  show = false,
+  setShow,
+  activeProblem,
+  tempID,
+  onSave,
+}) => {
   const [problems, setProblems] = useState({
     color: { checked: false, selectedId: null, selectedValue: null },
     dent: { checked: false, selectedId: null, selectedValue: null },
@@ -107,6 +113,9 @@ const CarBodyModal = ({ show = false, setShow, activeProblem, tempID }) => {
       setLoading(false);
       resetFields();
       setShow(false);
+      if (onSave) {
+        onSave(); // Call the onSave callback after successful save
+      }
     } catch (error) {
       console.error("Error saving questions values:", error);
       setLoading(false);
@@ -121,32 +130,6 @@ const CarBodyModal = ({ show = false, setShow, activeProblem, tempID }) => {
     });
     setSelectedImage(null);
     setSelectedImageName(null);
-  };
-
-  useEffect(() => {
-    getAllDataFromStorage();
-  }, []);
-
-  const getAllDataFromStorage = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem("@carBodyQuestionsdata");
-      if (storedData) {
-        const data = JSON.parse(storedData);
-
-        // Ensure data is an array
-        if (Array.isArray(data)) {
-          console.log("All Data from Storage: ", data);
-          // You can handle the data here, e.g., set it to a state variable
-          // setYourStateVariable(data);
-        } else {
-          console.error("Stored data is not an array");
-        }
-      } else {
-        console.log("No data found in storage");
-      }
-    } catch (error) {
-      console.error("Error retrieving data from storage:", error);
-    }
   };
 
   return (

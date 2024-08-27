@@ -13,6 +13,7 @@ import Accordion from "../../components/accordian/Accordian";
 import TextCard from "../../components/card/TextCard";
 import { questions } from "../../data/questionsData";
 import CarBody from "../../components/carBody/CarBody";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SingleInspection = ({ navigation, route }) => {
   const { tempID, catid, catName } = route.params || {};
@@ -47,14 +48,15 @@ const SingleInspection = ({ navigation, route }) => {
           carID: "",
           catID: catid,
           IndID: question.id,
+          IndQuestion: question.question,
           value: "",
           image: {
             uri: null,
             name: null,
             type: "image/jpeg",
           },
-          reason: "",
-          ponit: "",
+          reasonValue: "",
+          ponitValue: "",
         }))
       );
       setValues(initialValues);
@@ -70,12 +72,35 @@ const SingleInspection = ({ navigation, route }) => {
     );
   };
 
+  const handleTextValueChange = (id, newValue) => {
+    setValues((prevValues) =>
+      prevValues.map((item) =>
+        item.IndID === id ? { ...item, value: newValue } : item
+      )
+    );
+  };
+
+  const handlePonitsValueChange = (id, newValue) => {
+    setValues((prevValues) =>
+      prevValues.map((item) =>
+        item.IndID === id ? { ...item, ponitValue: newValue } : item
+      )
+    );
+  };
+
   const handleImageSelected = (id, imageUri) => {
     setValues((prevValues) =>
       prevValues.map((item) =>
         item.IndID === id
           ? { ...item, image: { ...item.image, uri: imageUri } }
           : item
+      )
+    );
+  };
+  const handleReasonValueChange = (id, newReason) => {
+    setValues((prevValues) =>
+      prevValues.map((item) =>
+        item.IndID === id ? { ...item, reasonValue: newReason } : item
       )
     );
   };
@@ -111,9 +136,10 @@ const SingleInspection = ({ navigation, route }) => {
       carID: item.carID,
       catID: item.catID,
       IndID: item.IndID,
+      IndQuestion: item.IndQuestion,
       value: item.value,
-      reason: item.reason,
-      point: item.point,
+      reason: item.reasonValue,
+      point: item.ponitValue,
       ...(item.image &&
         item.image.uri && {
           image: {
@@ -140,6 +166,32 @@ const SingleInspection = ({ navigation, route }) => {
     } catch (error) {
       console.error("Error saving questions values:", error);
       setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllDataFromStorage();
+  }, []);
+
+  const getAllDataFromStorage = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carQuestionsdata");
+      if (storedData) {
+        const data = JSON.parse(storedData);
+
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          console.log("All Data from Storage 11: ", data);
+          // You can handle the data here, e.g., set it to a state variable
+          // setYourStateVariable(data);
+        } else {
+          console.error("Stored data is not an array");
+        }
+      } else {
+        console.log("No data found in storage");
+      }
+    } catch (error) {
+      console.error("Error retrieving data from storage:", error);
     }
   };
 
@@ -195,6 +247,12 @@ const SingleInspection = ({ navigation, route }) => {
                       onValueChange={(newValue) =>
                         handleValueChange(question.id, newValue)
                       }
+                      onPointsValueChange={(newValue) =>
+                        handlePonitsValueChange(question.id, newValue)
+                      }
+                      onReasonValueChange={(newReason) =>
+                        handleReasonValueChange(question.id, newReason)
+                      } // Pass the handler here
                       points={question.points}
                       num={question.id}
                       questionId={question.id}
@@ -215,7 +273,7 @@ const SingleInspection = ({ navigation, route }) => {
                         showType={question.showType}
                         placeholder={question.placeHolder}
                         onValueChange={(newValue) =>
-                          handleValueChange(question.id, newValue)
+                          handleTextValueChange(question.id, newValue)
                         }
                         points={question.points}
                         img={question.image}

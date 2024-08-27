@@ -18,27 +18,27 @@ const TextCard = ({
   img = false,
   showType,
 }) => {
-  const handleValueChange = () => {
-    onValueChange(selectedValue);
-  };
-
   const [tyreSize, setTyreSize] = useState("");
 
+  // Function to format the tyre size input
+  const formatTyreSize = (value) => {
+    // Remove non-alphanumeric characters except "/"
+    let cleanedValue = value.replace(/[^a-zA-Z0-9]/g, "");
+
+    // Create an array of segments to format
+    let segments = [];
+    if (cleanedValue.length > 0) segments.push(cleanedValue.slice(0, 3));
+    if (cleanedValue.length > 3) segments.push(cleanedValue.slice(3, 5));
+    if (cleanedValue.length > 5) segments.push(cleanedValue.slice(5, 8));
+
+    // Join segments with slashes
+    return segments.join("/");
+  };
+
   const handleInputChange = (value) => {
-    // Remove any non-alphanumeric characters except "/"
-    let formattedValue = value.replace(/[^a-zA-Z0-9]/g, "");
-
-    // Add slashes automatically
-    if (formattedValue.length > 3) {
-      formattedValue =
-        formattedValue.slice(0, 3) + "/" + formattedValue.slice(3);
-    }
-    if (formattedValue.length > 6) {
-      formattedValue =
-        formattedValue.slice(0, 6) + "/" + formattedValue.slice(6);
-    }
-
+    const formattedValue = formatTyreSize(value);
     setTyreSize(formattedValue);
+    onValueChange(formattedValue); // Call the parent function with the formatted value
   };
 
   return (
@@ -53,15 +53,16 @@ const TextCard = ({
       </AppText>
       {showType === "n" && (
         <AppTextInput
-          placeholder={"In Milimeter"}
-          onValueChange={handleValueChange}
+          placeholder={placeholder || "In Millimeter"}
+          onChangeText={(text) => onValueChange(text)}
         />
       )}
       {showType === "s" && (
         <AppTextInput
-          placeholder={"E.g: 18565R15"}
-          maxLength={8}
+          placeholder={placeholder || "E.g: 18565R15"}
+          maxLength={10} // Set length based on maximum formatted length
           onChangeText={handleInputChange}
+          value={tyreSize} // Ensure the input value is controlled
         />
       )}
       {img && (
