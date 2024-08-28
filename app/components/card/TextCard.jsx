@@ -55,6 +55,7 @@ const TextCard = ({
         <AppTextInput
           placeholder={placeholder || "In Millimeter"}
           onChangeText={(text) => onValueChange(text)}
+          inputMode={"numeric"}
         />
       )}
       {showType === "s" && (

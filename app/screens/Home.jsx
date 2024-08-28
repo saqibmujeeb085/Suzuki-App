@@ -64,8 +64,8 @@ const Home = ({ navigation }) => {
           fetchTransmissionsTypes(),
           fetchEngineCapacity(),
           fetchRegistrationCity(),
-          fetchCategories(),
-          fetchQuestions(),
+          // fetchCategories(),
+          // fetchQuestions(),
         ]);
         // setDataLoading(false);
       } catch (error) {
@@ -298,25 +298,25 @@ const Home = ({ navigation }) => {
 
   // for categories
 
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get("/auth/get_category.php");
-      setCategories(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const fetchCategories = async () => {
+  //   try {
+  //     const response = await axios.get("/auth/get_category.php");
+  //     setCategories(response.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  // foe Questions
-  const fetchQuestions = async () => {
-    try {
-      const response = await axios.get(`/auth/get_questionsnew.php`);
-      const data = response.data;
-      setQuestions(data);
-    } catch (error) {
-      console.error("Error fetching questions:", error);
-    }
-  };
+  // // foe Questions
+  // const fetchQuestions = async () => {
+  //   try {
+  //     const response = await axios.get(`/auth/get_questionsnew.php`);
+  //     const data = response.data;
+  //     setQuestions(data);
+  //   } catch (error) {
+  //     console.error("Error fetching questions:", error);
+  //   }
+  // };
 
   // for car data
   const inspectedCarsData = async () => {

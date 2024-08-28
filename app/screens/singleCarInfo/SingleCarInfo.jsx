@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -16,6 +17,7 @@ import CarInfoSkeletonPreloader from "../../components/skeletonLoader/CarInfoSke
 import CarImagesCarousel from "../../components/carousel/CarImagesCarousel";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import InspectionRatingCard from "../../components/card/InspectionRatingCard";
+import GradientButton from "../../components/buttons/GradientButton";
 
 const SingleCarInfo = ({ route, navigation }) => {
   const { id } = route.params || {};
@@ -86,6 +88,10 @@ const SingleCarInfo = ({ route, navigation }) => {
     );
   }
 
+  const saleToCustomer = () => {
+    navigation.navigate("CustomerForm");
+  };
+
   return (
     <AppScreen>
       <InspectionHeader onPress={() => navigation.goBack()}>
@@ -94,6 +100,10 @@ const SingleCarInfo = ({ route, navigation }) => {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.ImageContainer}>
           <CarImagesCarousel images={carInfo?.images} />
+        </View>
+        <View style={{ marginBottom: 10, flexDirection: "row", gap: 10 }}>
+          <GradientButton>Download</GradientButton>
+          <GradientButton onPress={saleToCustomer}>Sale</GradientButton>
         </View>
         <View style={styles.ContentContainer}>
           <View style={styles.contentBox}>
