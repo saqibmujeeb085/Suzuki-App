@@ -77,7 +77,7 @@ const InspectionBoard = ({ navigation, route }) => {
       // Filter questions based on QtempId
       const ques = allQuestions.filter((q) => q.QtempID === `${id}`);
 
-      console.log("present data", ques);
+      // console.log("present data", ques);
 
       const categoryIds = categories.map((category) => category.id);
 
@@ -238,10 +238,6 @@ const InspectionBoard = ({ navigation, route }) => {
       id: 2,
       icon: "tools",
     },
-    // {
-    //   id: 8,
-    //   icon: "car-side",
-    // },
   ];
 
   return (
@@ -402,10 +398,8 @@ const InspectionBoard = ({ navigation, route }) => {
                   (cat) => cat.catId === item.id
                 );
 
-                console.log(checkCategory);
-
                 const checkIcon = catIcons.find((icon) => icon.id === item.id);
-                console.log(checkIcon);
+
                 return (
                   <InspectionBoardCard
                     key={item.id}

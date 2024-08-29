@@ -95,7 +95,7 @@ const CarBodyModal = ({
       problemLocation: activeProblem,
       problems: filteredProblems,
       image: selectedImage
-        ? { uri: selectedImage, name: selectedImageName }
+        ? { uri: selectedImage, name: selectedImageName, type: "image/jpeg" }
         : undefined,
     };
 

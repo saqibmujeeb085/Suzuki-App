@@ -13,7 +13,6 @@ const InspectionBoardCard = ({
   Rating,
   inspectionIsDone,
 }) => {
-  console.log(icon);
   return (
     <TouchableWithoutFeedback
       style={{ marginBottom: 10 }}

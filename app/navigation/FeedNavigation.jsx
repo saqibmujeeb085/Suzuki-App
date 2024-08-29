@@ -42,7 +42,7 @@ const FeedNavigation = () => {
     fetchCarData();
 
     // Optionally, you can set up an interval to check for updates in AsyncStorage
-    const intervalId = setInterval(fetchCarData, 5000); // 300000 Check every 5 minutes
+    const intervalId = setInterval(fetchCarData, 0); // 300000 Check every 5 minutes
 
     // Clean up the interval
     return () => clearInterval(intervalId);

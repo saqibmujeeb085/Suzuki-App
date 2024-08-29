@@ -1,14 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import {
-  ActivityIndicator,
-  ImageBackground,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ImageBackground, StyleSheet, View } from "react-native";
 import axios from "axios";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AppScreen from "../components/screen/Screen";
-import IconButton from "../components/buttons/IconButton";
 import GradientButton from "../components/buttons/GradientButton";
 import AppText from "../components/text/Text";
 import { AuthContext } from "../context/authContext";
@@ -16,7 +10,6 @@ import { mainStyles } from "../constants/style";
 import { colors } from "../constants/colors";
 import ToastManager, { Toast } from "toastify-react-native";
 import PasswordInput from "../components/formFields/PasswordInput";
-import { LoginDataContext } from "../context/loginDataContext";
 import AppTextInput from "../components/formFields/TextInput";
 
 const LogIn = ({ navigation }) => {

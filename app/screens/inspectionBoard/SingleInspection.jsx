@@ -47,6 +47,8 @@ const SingleInspection = ({ navigation, route }) => {
           QtempID: `${tempID}`,
           carID: "",
           catID: catid,
+          catName: `${catName}`,
+          subCatName: subCat.subCatName, // Add subCatName here
           IndID: question.id,
           IndQuestion: question.question,
           value: "",
@@ -135,6 +137,8 @@ const SingleInspection = ({ navigation, route }) => {
       QtempID: item.QtempID,
       carID: item.carID,
       catID: item.catID,
+      catName: item.catName,
+      subCatName: item.subCatName,
       IndID: item.IndID,
       IndQuestion: item.IndQuestion,
       value: item.value,

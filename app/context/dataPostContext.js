@@ -79,8 +79,54 @@ const DataPostProvider = ({ children }) => {
             );
 
             const carbodyques = carbodyData.filter(
-              (item) => item.QtempID == obj.tempID
+              (item) => item.tempID == obj.tempID
             );
+
+            console.log(carbodyques);
+
+            const groupedData = ques.reduce((acc, item) => {
+              const {
+                catName,
+                subCatName,
+                IndID,
+                value,
+                point,
+                reason,
+                image,
+              } = item;
+
+              let category = acc.find((cat) => cat.mainCat === catName);
+
+              if (!category) {
+                category = {
+                  mainCat: catName,
+                  mainCatData: [],
+                };
+                acc.push(category);
+              }
+
+              let subCategory = category.mainCatData.find(
+                (subCat) => subCat.subCatName === subCatName
+              );
+
+              if (!subCategory) {
+                subCategory = {
+                  subCatName: subCatName,
+                  subCatData: [],
+                };
+                category.mainCatData.push(subCategory);
+              }
+
+              subCategory.subCatData.push({
+                IndQuestion: `Question${IndID}`,
+                value: value,
+                point: point,
+                reason: reason,
+                image: image ? { name: image.name, type: image.type } : {},
+              });
+
+              return acc;
+            }, []);
 
             const categoryIds = categories.map((category) => category.id);
             const allCategoriesPresent = categoryIds.every((categoryId) =>
@@ -88,7 +134,7 @@ const DataPostProvider = ({ children }) => {
             );
 
             if (allCategoriesPresent && obj.status === "inspected") {
-              postData(obj, ques, carbodyques);
+              postData(obj, groupedData, carbodyques);
             }
           });
         } else {
@@ -104,7 +150,7 @@ const DataPostProvider = ({ children }) => {
     }
   };
 
-  const postData = async (obj, ques, carbodyques) => {
+  const postData = async (obj, groupedData, carbodyques) => {
     console.log("uploading temp ID", obj.tempID);
 
     const formData = new FormData();
@@ -150,24 +196,34 @@ const DataPostProvider = ({ children }) => {
     });
 
     // Append ques data
-    ques.forEach((item, index) => {
-      formData.append(`data[${index}][catID]`, item.catID);
-      formData.append(`data[${index}][IndID]`, item.IndID);
-      formData.append(`data[${index}][IndQuestion]`, item.IndQuestion);
-      formData.append(`data[${index}][value]`, item.value);
-      if (item.point) {
-        formData.append(`data[${index}][point]`, item.point);
-      }
-      if (item.reason) {
-        formData.append(`data[${index}][reason]`, item.reason);
-      }
-      if (item.image && item.image.uri) {
-        formData.append(`inspectionImages[${index}]`, {
-          uri: item.image.uri,
-          name: item.image.name,
-          type: item.image.type,
+    groupedData.forEach((category, catIndex) => {
+      category.mainCatData.forEach((subCategory, subCatIndex) => {
+        subCategory.subCatData.forEach((item, itemIndex) => {
+          const baseIndex = `data[${catIndex}].mainCatData[${subCatIndex}].subCatData[${itemIndex}]`;
+
+          formData.append(`data[${catIndex}].mainCat`, category.mainCat);
+          formData.append(
+            `data[${catIndex}].mainCatData[${subCatIndex}].subCatName`,
+            subCategory.subCatName
+          );
+          formData.append(`${baseIndex}[IndQuestion]`, item.IndQuestion);
+          formData.append(`${baseIndex}[value]`, item.value);
+
+          if (item.point) {
+            formData.append(`${baseIndex}[point]`, item.point);
+          }
+
+          if (item.reason) {
+            formData.append(`${baseIndex}[reason]`, item.reason);
+          }
+
+          if (item.image && item.image.uri) {
+            formData.append(`${baseIndex}[image][uri]`, item.image.uri);
+            formData.append(`${baseIndex}[image][name]`, item.image.name);
+            formData.append(`${baseIndex}[image][type]`, item.image.type);
+          }
         });
-      }
+      });
     });
 
     carbodyques.forEach((problemItem, problemIndex) => {
@@ -203,7 +259,7 @@ const DataPostProvider = ({ children }) => {
         "Content-Type": "multipart/form-data",
       };
       const response = await axios.post(
-        "/auth/add_carandquestionscombine.php",
+        "/auth/get_carinspectionsnew.php",
         formData,
         {
           headers: headers,
