@@ -183,7 +183,7 @@ const DataPostProvider = ({ children }) => {
       formData.append(`images[${index}]`, {
         uri: image.uri,
         name: image.name,
-        type: image.type,
+        type: "image/jpeg",
       });
     });
 
@@ -220,7 +220,7 @@ const DataPostProvider = ({ children }) => {
           if (item.image && item.image.uri) {
             formData.append(`${baseIndex}[image][uri]`, item.image.uri);
             formData.append(`${baseIndex}[image][name]`, item.image.name);
-            formData.append(`${baseIndex}[image][type]`, item.image.type);
+            formData.append(`${baseIndex}[image][type]`, "image/jpeg");
           }
         });
       });
@@ -247,7 +247,7 @@ const DataPostProvider = ({ children }) => {
         formData.append(`problems[${problemIndex}][image]`, {
           uri: problemItem.image.uri,
           name: problemItem.image.name,
-          type: problemItem.image.type,
+          type: "image/jpeg",
         });
       }
     });
