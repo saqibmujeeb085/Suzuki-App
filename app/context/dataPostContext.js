@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { QuesAndAnsContext } from "./questionAndCategories";
 import axios from "axios";
@@ -8,9 +8,10 @@ const DataPostContext = createContext();
 const DataPostProvider = ({ children }) => {
   const [categories] = useContext(QuesAndAnsContext);
 
+  // Function to remove processed data from AsyncStorage
   const removeProcessedData = async (processedTempID) => {
     try {
-      // Retrieve the stored data from AsyncStorage
+      // Retrieve stored data from AsyncStorage
       const carjsonValue = await AsyncStorage.getItem("@carformdata");
       const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
 
@@ -53,6 +54,7 @@ const DataPostProvider = ({ children }) => {
     }
   };
 
+  // Function to process and upload data
   const processDataUpload = async () => {
     try {
       const carjsonValue = await AsyncStorage.getItem("@carformdata");
@@ -68,11 +70,8 @@ const DataPostProvider = ({ children }) => {
           ? JSON.parse(carbodyjsonValue)
           : [];
 
-        // console.log(carbodyData);
-        // console.log(questionsData);
-
         // Ensure the data is an array
-        if (Array.isArray(carFormData) && Array.isArray(carbodyData)) {
+        if (Array.isArray(carFormData) && Array.isArray(questionsData)) {
           carFormData.forEach((obj) => {
             const ques = questionsData.filter(
               (item) => item.QtempID == obj.tempID
@@ -150,8 +149,9 @@ const DataPostProvider = ({ children }) => {
     }
   };
 
+  // Function to post data to the server
   const postData = async (obj, groupedData, carbodyques) => {
-    console.log("uploading temp ID", obj.tempID);
+    console.log("Uploading temp ID:", obj.tempID);
 
     const formData = new FormData();
 
@@ -183,7 +183,7 @@ const DataPostProvider = ({ children }) => {
       formData.append(`images[${index}]`, {
         uri: image.uri,
         name: image.name,
-        type: "image/jpeg",
+        type: image.type,
       });
     });
 
@@ -220,12 +220,13 @@ const DataPostProvider = ({ children }) => {
           if (item.image && item.image.uri) {
             formData.append(`${baseIndex}[image][uri]`, item.image.uri);
             formData.append(`${baseIndex}[image][name]`, item.image.name);
-            formData.append(`${baseIndex}[image][type]`, "image/jpeg");
+            formData.append(`${baseIndex}[image][type]`, item.image.type);
           }
         });
       });
     });
 
+    // Append car body questions
     carbodyques.forEach((problemItem, problemIndex) => {
       formData.append(
         `problems[${problemIndex}][problemLocation]`,
@@ -247,36 +248,38 @@ const DataPostProvider = ({ children }) => {
         formData.append(`problems[${problemIndex}][image]`, {
           uri: problemItem.image.uri,
           name: problemItem.image.name,
-          type: "image/jpeg",
+          type: problemItem.image.type,
         });
       }
     });
 
-    console.log("form all data", formData);
+    console.log("Form data ready for submission:", formData);
 
     try {
       const headers = {
         "Content-Type": "multipart/form-data",
       };
       const response = await axios.post(
-        "/auth/get_carinspectionsnew.php",
+        "auth/get_carinspectionsnew.php", // Use your server URL
         formData,
         {
           headers: headers,
         }
       );
 
-      console.log("done to post data");
+      console.log("Data posted successfully");
       console.log("Response:", response.data.message);
 
       if (response.data.code == 200) {
         removeProcessedData(obj.tempID);
+        console.log("Processed data removed.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error posting data:", error);
     }
   };
 
+  // Function to trigger manual upload
   const triggerManualUpload = async () => {
     await processDataUpload();
   };
