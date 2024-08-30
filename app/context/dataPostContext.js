@@ -149,7 +149,6 @@ const DataPostProvider = ({ children }) => {
     }
   };
 
-  // Function to post data to the server
   const postData = async (obj, groupedData, carbodyques) => {
     console.log("Uploading temp ID:", obj.tempID);
 
@@ -178,34 +177,40 @@ const DataPostProvider = ({ children }) => {
     formData.append("color", obj.color);
     formData.append("status", obj.status);
 
-    // Append images and documents
-    obj.images.forEach((image, index) => {
-      formData.append(`images[${index}]`, {
-        uri: image.uri,
-        name: image.name,
-        type: image.type,
+    // Append images and documents (uncomment when image data is available)
+    if (obj.images && Array.isArray(obj.images)) {
+      obj.images.forEach((image, index) => {
+        formData.append(`images[${index}]`, {
+          uri: image.uri,
+          name: image.name,
+          type: image.type,
+        });
       });
-    });
+    }
 
-    obj.documents.forEach((doc, index) => {
-      formData.append(`documents[${index}]`, {
-        uri: doc.uri,
-        name: doc.name,
-        type: doc.type,
+    if (obj.documents && Array.isArray(obj.documents)) {
+      obj.documents.forEach((doc, index) => {
+        formData.append(`documents[${index}]`, {
+          uri: doc.uri,
+          name: doc.name,
+          type: doc.type,
+        });
       });
-    });
+    }
 
     // Append ques data
     groupedData.forEach((category, catIndex) => {
+      formData.append(`data[${catIndex}].mainCat`, category.mainCat);
+
       category.mainCatData.forEach((subCategory, subCatIndex) => {
+        formData.append(
+          `data[${catIndex}].mainCatData[${subCatIndex}].subCatName`,
+          subCategory.subCatName
+        );
+
         subCategory.subCatData.forEach((item, itemIndex) => {
           const baseIndex = `data[${catIndex}].mainCatData[${subCatIndex}].subCatData[${itemIndex}]`;
 
-          formData.append(`data[${catIndex}].mainCat`, category.mainCat);
-          formData.append(
-            `data[${catIndex}].mainCatData[${subCatIndex}].subCatName`,
-            subCategory.subCatName
-          );
           formData.append(`${baseIndex}[IndQuestion]`, item.IndQuestion);
           formData.append(`${baseIndex}[value]`, item.value);
 
@@ -227,31 +232,38 @@ const DataPostProvider = ({ children }) => {
     });
 
     // Append car body questions
-    carbodyques.forEach((problemItem, problemIndex) => {
-      formData.append(
-        `problems[${problemIndex}][problemLocation]`,
-        problemItem.problemLocation
-      );
+    // carbodyques.forEach((problemItem, problemIndex) => {
+    //   formData.append(
+    //     `problems[${problemIndex}][problemLocation]`,
+    //     problemItem.problemLocation
+    //   );
 
-      problemItem.problems.forEach((problem, index) => {
-        formData.append(
-          `problems[${problemIndex}][problems][${index}][problemName]`,
-          problem.problemName
-        );
-        formData.append(
-          `problems[${problemIndex}][problems][${index}][selectedValue]`,
-          problem.selectedValue
-        );
-      });
+    //   problemItem.problems.forEach((problem, index) => {
+    //     formData.append(
+    //       `problems[${problemIndex}][problems][${index}][problemName]`,
+    //       problem.problemName
+    //     );
+    //     formData.append(
+    //       `problems[${problemIndex}][problems][${index}][selectedValue]`,
+    //       problem.selectedValue
+    //     );
+    //   });
 
-      if (problemItem.image && problemItem.image.uri) {
-        formData.append(`problems[${problemIndex}][image]`, {
-          uri: problemItem.image.uri,
-          name: problemItem.image.name,
-          type: problemItem.image.type,
-        });
-      }
-    });
+    //   if (problemItem.image && problemItem.image.uri) {
+    //     formData.append(
+    //       `problems[${problemIndex}][image][uri]`,
+    //       problemItem.image.uri
+    //     );
+    //     formData.append(
+    //       `problems[${problemIndex}][image][name]`,
+    //       problemItem.image.name
+    //     );
+    //     formData.append(
+    //       `problems[${problemIndex}][image][type]`,
+    //       problemItem.image.type
+    //     );
+    //   }
+    // });
 
     console.log("Form data ready for submission:", formData);
 
@@ -271,7 +283,7 @@ const DataPostProvider = ({ children }) => {
       console.log("Response:", response.data.message);
 
       if (response.data.code == 200) {
-        removeProcessedData(obj.tempID);
+        // removeProcessedData(obj.tempID);
         console.log("Processed data removed.");
       }
     } catch (error) {
