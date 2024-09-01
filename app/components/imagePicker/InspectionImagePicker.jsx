@@ -28,6 +28,7 @@ const InspectionImagePicker = ({
       allowsEditing: false,
       quality: 0.5,
     });
+    setModalVisible(false);
 
     if (!result.canceled) {
       const localUri = result.assets[0].uri;
@@ -35,7 +36,6 @@ const InspectionImagePicker = ({
 
       addImage(localUri, filename);
     }
-    setModalVisible(false);
   };
 
   const captureImage = async () => {
