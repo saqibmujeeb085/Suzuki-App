@@ -47,7 +47,9 @@
     "react-native-screens": "3.31.1",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-svg": "15.2.0",
-    "toastify-react-native": "^5.0.0"
+    "toastify-react-native": "^5.0.0",
+    "expo-notifications": "~0.28.16",
+    "expo-device": "~6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

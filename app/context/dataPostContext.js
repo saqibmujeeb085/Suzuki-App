@@ -1,23 +1,70 @@
 import React, { createContext, useContext, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import * as Notifications from "expo-notifications"; // Import Expo Notifications
+import * as Device from "expo-device"; // Import Expo Device
+import { Platform } from "react-native"; // Import Platform from react-native
 
 const DataPostContext = createContext();
 
 const DataPostProvider = ({ children }) => {
+  // Function to register for push notifications and get the Expo push token
+  const registerForPushNotificationsAsync = async () => {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    if (Platform.OS === "android") {
+      // Use Platform here
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    return token;
+  };
+
+  // Call this function to send a notification
+  const sendPushNotification = async (expoPushToken, message) => {
+    const messageToSend = {
+      to: expoPushToken,
+      sound: "default",
+      title: "Data Upload Status",
+      body: message,
+      data: { message },
+    };
+
+    await axios.post("https://exp.host/--/api/v2/push/send", messageToSend);
+  };
+
   // Function to remove processed data from AsyncStorage
   const removeProcessedData = async (processedTempID) => {
     try {
-      // Retrieve stored data from AsyncStorage
       const carjsonValue = await AsyncStorage.getItem("@carformdata");
       const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
 
       if (carjsonValue && questionjsonValue) {
-        // Parse the JSON string into a JavaScript object
         let carFormData = JSON.parse(carjsonValue);
         let questionsData = JSON.parse(questionjsonValue);
 
-        // Ensure the data is an array
         if (!Array.isArray(carFormData)) {
           carFormData = [];
         }
@@ -25,7 +72,6 @@ const DataPostProvider = ({ children }) => {
           questionsData = [];
         }
 
-        // Filter out the processed data
         carFormData = carFormData.filter(
           (obj) => obj.tempID !== processedTempID
         );
@@ -33,7 +79,6 @@ const DataPostProvider = ({ children }) => {
           (q) => q.QtempID !== processedTempID
         );
 
-        // Update AsyncStorage with the new data
         await AsyncStorage.setItem("@carformdata", JSON.stringify(carFormData));
         await AsyncStorage.setItem(
           "@carQuestionsdata",
@@ -67,7 +112,6 @@ const DataPostProvider = ({ children }) => {
           ? JSON.parse(carbodyjsonValue)
           : [];
 
-        // Ensure the data is an array
         if (Array.isArray(carFormData) && Array.isArray(questionsData)) {
           carFormData.forEach((obj) => {
             const ques = questionsData.filter(
@@ -92,11 +136,9 @@ const DataPostProvider = ({ children }) => {
                 image,
               } = item;
 
-              // Find the main category in the accumulator
               let category = acc.find((cat) => cat.mainCat == catName);
 
               if (!category) {
-                // If the main category does not exist, create a new one
                 category = {
                   mainCat: catName,
                   mainCatData: [],
@@ -104,13 +146,11 @@ const DataPostProvider = ({ children }) => {
                 acc.push(category);
               }
 
-              // Find the subcategory within the main category
               let subCategory = category.mainCatData.find(
                 (subCat) => subCat.subCatName == subCatName
               );
 
               if (!subCategory) {
-                // If the subcategory does not exist, create a new one
                 subCategory = {
                   subCatName: subCatName,
                   subCatData: [],
@@ -118,14 +158,13 @@ const DataPostProvider = ({ children }) => {
                 category.mainCatData.push(subCategory);
               }
 
-              // Add the data item to the subcategory
               const dataItem = {
                 IndID: IndID,
                 IndQuestion: IndQuestion,
                 value: value,
                 point: point,
                 reason: reason,
-                image: image, // Directly use the image object
+                image: image,
               };
 
               subCategory.subCatData.push(dataItem);
@@ -153,7 +192,6 @@ const DataPostProvider = ({ children }) => {
   const postData = async (obj, groupedData, carbodyques) => {
     const formData = new FormData();
 
-    // Append text fields
     formData.append("dealershipId", obj.dealershipId);
     formData.append("duserId", obj.duserId);
     formData.append("customerID", obj.customerID);
@@ -176,11 +214,9 @@ const DataPostProvider = ({ children }) => {
     formData.append("color", obj.color);
     formData.append("status", obj.status);
 
-    // Convert image URIs to file objects and append them to FormData
     if (obj.images && Array.isArray(obj.images)) {
       for (const image of obj.images) {
         if (image.uri) {
-          // Create a file object from the image URI
           const file = {
             uri: image.uri,
             type: image.type,
@@ -194,7 +230,6 @@ const DataPostProvider = ({ children }) => {
     if (obj.documents && Array.isArray(obj.documents)) {
       for (const doc of obj.documents) {
         if (doc.uri) {
-          // Create a file object from the document URI
           const file = {
             uri: doc.uri,
             type: doc.type,
@@ -206,22 +241,17 @@ const DataPostProvider = ({ children }) => {
     }
 
     groupedData.forEach((category, catIndex) => {
-      // Append the main category to FormData
       formData.append(`data[${catIndex}][mainCat]`, category.mainCat);
 
-      // Iterate through each subCategory within a main category
       category.mainCatData.forEach((subCategory, subCatIndex) => {
-        // Append the sub-category name to FormData
         formData.append(
           `data[${catIndex}][mainCatData][${subCatIndex}][subCatName]`,
           subCategory.subCatName
         );
 
-        // Iterate through each item within a subCategory
         subCategory.subCatData.forEach((item, itemIndex) => {
           const baseIndex = `data[${catIndex}][mainCatData][${subCatIndex}][subCatData][${itemIndex}]`;
 
-          // Append each item's details to FormData
           formData.append(`${baseIndex}[IndQuestion]`, item.IndQuestion);
           formData.append(`${baseIndex}[value]`, item.value);
 
@@ -233,7 +263,6 @@ const DataPostProvider = ({ children }) => {
             formData.append(`${baseIndex}[reason]`, item.reason);
           }
 
-          // Convert image URIs to file objects and append them to FormData
           if (item.image && item.image.uri) {
             const file = {
               uri: item.image.uri,
@@ -241,7 +270,6 @@ const DataPostProvider = ({ children }) => {
               name: item.image.name,
             };
             formData.append(`${baseIndex}[image]`, file);
-            // console.log(`${baseIndex}[image]`, file);
           }
         });
       });
@@ -275,34 +303,39 @@ const DataPostProvider = ({ children }) => {
           type: problemItem.image.type,
         };
         formData.append(`problems[${problemIndex}][image]`, file);
-        console.log(`problems[${problemIndex}][image]`, file);
       }
     });
 
-    // try {
-    //   const headers = {
-    //     "Content-Type": "multipart/form-data",
-    //   };
+    try {
+      const headers = {
+        "Content-Type": "multipart/form-data",
+      };
 
-    //   const response = await axios.post(
-    //     "auth/get_carinspectionsnew.php", // Use your server URL
-    //     formData,
-    //     {
-    //       headers: headers,
-    //     }
-    //   );
+      const response = await axios.post(
+        "auth/get_carinspectionsnew.php", // Use your server URL
+        formData,
+        {
+          headers: headers,
+        }
+      );
 
-    //   if (response.data.success) {
-    //     // Optionally remove processed data
-    //     // removeProcessedData(obj.tempID);
+      if (response.data.success) {
+        // Optionally remove processed data
+        // removeProcessedData(obj.tempID);
 
-    //     console.log(response.data);
-    //   } else {
-    //     console.error("Server responded with an error:", response.data.message);
-    //   }
-    // } catch (error) {
-    //   console.error("Error posting data:", error);
-    // }
+        console.log(response.data);
+
+        // Fetch the Expo Push Token and send a notification
+        const expoPushToken = await registerForPushNotificationsAsync();
+        if (expoPushToken) {
+          sendPushNotification(expoPushToken, "Data posted successfully!");
+        }
+      } else {
+        console.error("Server responded with an error:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error posting data:", error);
+    }
   };
 
   // Function to trigger manual upload
