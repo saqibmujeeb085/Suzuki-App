@@ -20,6 +20,7 @@ import { colors } from "../constants/colors";
 import { mainStyles } from "../constants/style";
 import { FormDataContext } from "../context/formDataContext";
 import { QuesAndAnsContext } from "../context/questionAndCategories";
+import NetInfo from "@react-native-community/netinfo";
 
 const Home = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
@@ -49,32 +50,42 @@ const Home = ({ navigation }) => {
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+    });
+
+    // Clean up the subscription on component unmount
+    return () => unsubscribe();
+  }, []);
 
   // for form data
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await Promise.all([
-          fetchManufacturers(),
-          fetchCarModel(),
-          fetchCarVarient(),
-          fetchCarYears(),
-          fetchCarColors(),
-          fetchFuelTypes(),
-          fetchTransmissionsTypes(),
-          fetchEngineCapacity(),
-          fetchRegistrationCity(),
-          // fetchCategories(),
-          // fetchQuestions(),
-        ]);
-        // setDataLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
+    if (isConnected) {
+      fetchData();
+    }
   }, []);
+
+  const fetchData = async () => {
+    try {
+      await Promise.all([
+        fetchManufacturers(),
+        fetchCarModel(),
+        fetchCarVarient(),
+        fetchCarYears(),
+        fetchCarColors(),
+        fetchFuelTypes(),
+        fetchTransmissionsTypes(),
+        fetchEngineCapacity(),
+        fetchRegistrationCity(),
+      ]);
+      // setDataLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     if (userData && userData.user && userData.user.duserid) {
@@ -296,28 +307,6 @@ const Home = ({ navigation }) => {
     }
   };
 
-  // for categories
-
-  // const fetchCategories = async () => {
-  //   try {
-  //     const response = await axios.get("/auth/get_category.php");
-  //     setCategories(response.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  // // foe Questions
-  // const fetchQuestions = async () => {
-  //   try {
-  //     const response = await axios.get(`/auth/get_questionsnew.php`);
-  //     const data = response.data;
-  //     setQuestions(data);
-  //   } catch (error) {
-  //     console.error("Error fetching questions:", error);
-  //   }
-  // };
-
   // for car data
   const inspectedCarsData = async () => {
     setRefreshing(true);
@@ -442,46 +431,62 @@ const Home = ({ navigation }) => {
             View All
           </IconButton>
         </View>
-        {loading ? (
-          <FlatList
-            data={Array(10).fill(0)}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={() => <SkeletonLoader />}
-            contentContainerStyle={{
-              paddingBottom: 30,
-            }}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 20, marginBottom: 190 }}
-          />
-        ) : (
-          <FlatList
-            contentContainerStyle={{
-              paddingBottom: 90,
-            }}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 20, marginBottom: 190 }}
-            data={inspectedCar}
-            extraData={inspectedCar}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <InspectionCard
-                carId={item?.id}
-                car={item?.car}
-                varient={item?.varientId}
-                mileage={item?.mileage}
-                date={item?.inspectionDate}
-                carImage={item?.images[0]?.path}
-                rank={item?.rank}
-                onPress={() =>
-                  navigation.navigate("SingleCar", { id: item?.id })
-                }
+        {isConnected ? (
+          <View>
+            {loading ? (
+              <FlatList
+                data={Array(10).fill(0)}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={() => <SkeletonLoader />}
+                contentContainerStyle={{
+                  paddingBottom: 30,
+                }}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                style={{ marginTop: 20, marginBottom: 190 }}
+              />
+            ) : (
+              <FlatList
+                contentContainerStyle={{
+                  paddingBottom: 90,
+                }}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                style={{ marginTop: 20, marginBottom: 190 }}
+                data={inspectedCar}
+                extraData={inspectedCar}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <InspectionCard
+                    carId={item?.id}
+                    car={item?.car}
+                    varient={item?.varientId}
+                    mileage={item?.mileage}
+                    date={item?.inspectionDate}
+                    carImage={item?.images[0]?.path}
+                    rank={item?.rank}
+                    onPress={() =>
+                      navigation.navigate("SingleCar", { id: item?.id })
+                    }
+                  />
+                )}
+                refreshing={refreshing}
+                onRefresh={inspectedCarsData}
               />
             )}
-            refreshing={refreshing}
-            onRefresh={inspectedCarsData}
-          />
+          </View>
+        ) : (
+          <View
+            style={{
+              height: 400,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <AppText maxWidth={350}>
+              You Don't Have Internet Connection To See Data.
+            </AppText>
+          </View>
         )}
       </View>
     </AppScreen>

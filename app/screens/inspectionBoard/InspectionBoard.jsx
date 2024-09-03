@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  BackHandler, // Import BackHandler
 } from "react-native";
 import React, { useEffect, useState, useCallback, useContext } from "react";
 import AppScreen from "../../components/screen/Screen";
@@ -48,7 +49,6 @@ const InspectionBoard = ({ navigation, route }) => {
     setCitiesData,
   ] = useContext(FormDataContext);
 
-  // const [categoriesList, setCategoriesList] = useState([]);
   const [checkCategories, setCheckCategories] = useState([]);
   const [show, setShow] = useState(false);
   const [allInspectionsDone, setAllInspectionsDone] = useState(false);
@@ -68,6 +68,24 @@ const InspectionBoard = ({ navigation, route }) => {
     useCallback(() => {
       fetchData();
     }, [fetchData])
+  );
+
+  // Add the back button handler inside useFocusEffect
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        ShowModal(); // Run showModal when back button is pressed
+        return true; // Prevent the default back button behavior
+      };
+
+      // Add event listener for the hardware back button
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () => {
+        // Clean up the event listener
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      };
+    }, [ShowModal]) // Add ShowModal as a dependency
   );
 
   const checkCategoriesPresent = async (id) => {
@@ -193,10 +211,8 @@ const InspectionBoard = ({ navigation, route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      setLoading(false); // Set loading to true on screen focus
-      // fetchCategories(); // Fetch categories
-      // fetchCheckCategories(); // Fetch check categories
-    }, [id]) // Ensure dependencies are set correctly
+      setLoading(false);
+    }, [id])
   );
 
   const catIcons = [

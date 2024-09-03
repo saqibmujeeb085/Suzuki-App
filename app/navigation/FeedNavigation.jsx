@@ -1,6 +1,6 @@
+// FeedNavigation.js
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react";
-
 import BottomTabNavigation from "./BottonTabNavigation";
 import AuthNavigator from "./AuthNavigator";
 import { AuthContext } from "../context/authContext";
@@ -17,37 +17,44 @@ import Customerform from "../screens/carSelling/Customerform";
 
 const FeedNavigation = () => {
   const authContext = useContext(AuthContext);
-
-  const Stack = createStackNavigator();
-
   const { triggerManualUpload } = useContext(DataPostContext);
   const [isConnected, setIsConnected] = useState(false);
   const [questionsInLocal, setQuestionsInLocal] = useState(null);
 
+  const Stack = createStackNavigator();
+
+  // Monitor internet connectivity changes
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected);
     });
 
-    // Clean up the subscription
+    // Clean up the subscription on component unmount
     return () => unsubscribe();
   }, []);
 
+  // Fetch car data from AsyncStorage periodically
   useEffect(() => {
     const fetchCarData = async () => {
-      const data = await AsyncStorage.getItem("@carformdata");
-      setQuestionsInLocal(data);
+      try {
+        const data = await AsyncStorage.getItem("@carformdata");
+        setQuestionsInLocal(data);
+      } catch (error) {
+        console.error("Error fetching car data from AsyncStorage:", error);
+      }
     };
 
+    // Initial fetch
     fetchCarData();
 
-    // Optionally, you can set up an interval to check for updates in AsyncStorage
-    const intervalId = setInterval(fetchCarData, 0); // 300000 Check every 5 minutes
+    // Set up interval to periodically check for updates in AsyncStorage
+    const intervalId = setInterval(fetchCarData, 300000); // Check every 5 minutes
 
-    // Clean up the interval
+    // Clean up the interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
+  // Trigger upload when internet is connected and data is available
   useEffect(() => {
     if (isConnected && questionsInLocal) {
       triggerManualUpload();
@@ -62,14 +69,11 @@ const FeedNavigation = () => {
   const [userData] = authContext;
   const authenticatedUser = userData?.token !== "";
 
-  console.log(authenticatedUser);
-
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {authenticatedUser ? (
         <>
           <Stack.Screen name="Home" component={BottomTabNavigation} />
-
           <Stack.Screen name="SingleCar" component={SingleCarInfo} />
           <Stack.Screen name="DraftSingleCar" component={DraftSingleCar} />
           <Stack.Screen name="InspectionBoard" component={InspectionBoard} />

@@ -122,5 +122,6 @@ const styles = StyleSheet.create({
   },
   IconButton: {
     marginRight: 10,
+    padding: 10,
   },
 });

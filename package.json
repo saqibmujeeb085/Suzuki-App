@@ -49,7 +49,9 @@
     "react-native-svg": "15.2.0",
     "toastify-react-native": "^5.0.0",
     "expo-notifications": "~0.28.16",
-    "expo-device": "~6.0.2"
+    "expo-device": "~6.0.2",
+    "expo-background-fetch": "~12.0.1",
+    "expo-task-manager": "~11.8.2"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

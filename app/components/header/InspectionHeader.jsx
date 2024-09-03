@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
   left: {
     position: "absolute",
     left: 30,
-    top: 18,
+    top: 8,
+    padding: 10,
   },
   right: {
     position: "absolute",

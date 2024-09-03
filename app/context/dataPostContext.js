@@ -1,9 +1,14 @@
-import React, { createContext, useContext, useEffect } from "react";
+// DataPostProvider.js
+import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import * as Notifications from "expo-notifications"; // Import Expo Notifications
 import * as Device from "expo-device"; // Import Expo Device
 import { Platform } from "react-native"; // Import Platform from react-native
+import * as TaskManager from "expo-task-manager";
+import * as BackgroundFetch from "expo-background-fetch";
+import NetInfo from "@react-native-community/netinfo";
+import _ from "lodash"; // Import lodash for debounce
 
 // Set notification handler to show alerts when app is in foreground
 Notifications.setNotificationHandler({
@@ -14,111 +19,106 @@ Notifications.setNotificationHandler({
   }),
 });
 
+// Define the background fetch task name
+const BACKGROUND_FETCH_TASK = "background-fetch-task";
+
+// Create context
 const DataPostContext = createContext();
 
-const DataPostProvider = ({ children }) => {
-  useEffect(() => {
-    // This listener is fired whenever a notification is received while the app is in the foreground
-    const foregroundSubscription =
-      Notifications.addNotificationReceivedListener((notification) => {
-        console.log("Notification received in foreground:", notification);
-      });
+// Define the background task
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+  const { isConnected } = await NetInfo.fetch();
 
-    // Clean up the subscription when the component unmounts
+  if (isConnected) {
+    try {
+      // Call your data upload function when internet is connected
+      const data = await AsyncStorage.getItem("@carformdata");
+      if (data) {
+        await triggerManualUpload(); // Ensure this function only triggers once
+      }
+      return BackgroundFetch.BackgroundFetchResult.NewData;
+    } catch (error) {
+      console.error("Error during background fetch task", error);
+      return BackgroundFetch.BackgroundFetchResult.Failed;
+    }
+  } else {
+    return BackgroundFetch.BackgroundFetchResult.NoData;
+  }
+});
+
+// Register background fetch task
+async function registerBackgroundFetchAsync() {
+  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+    minimumInterval: 15 * 60, // 15 minutes
+    stopOnTerminate: false, // Continue running when app is closed
+    startOnBoot: true, // Start task when device is rebooted
+  });
+}
+
+// Unregister background task (optional)
+async function unregisterBackgroundFetchAsync() {
+  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+}
+
+const DataPostProvider = ({ children }) => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [questionsInLocal, setQuestionsInLocal] = useState(null);
+
+  // Register background fetch task
+  useEffect(() => {
+    const registerFetchTask = async () => {
+      const isRegistered = await BackgroundFetch.getStatusAsync();
+      if (!isRegistered) {
+        await registerBackgroundFetchAsync();
+      }
+    };
+
+    registerFetchTask();
+
     return () => {
-      foregroundSubscription.remove();
+      unregisterBackgroundFetchAsync(); // Optional cleanup
     };
   }, []);
 
-  // Function to register for push notifications and get the Expo push token
-  const registerForPushNotificationsAsync = async () => {
-    let token;
-    if (Device.isDevice) {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
+  // Monitor internet connectivity changes
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+    });
+
+    // Clean up the subscription on component unmount
+    return () => unsubscribe();
+  }, []);
+
+  // Fetch car data from AsyncStorage periodically
+  useEffect(() => {
+    const fetchCarData = async () => {
+      try {
+        const data = await AsyncStorage.getItem("@carformdata");
+        setQuestionsInLocal(data);
+      } catch (error) {
+        console.error("Error fetching car data from AsyncStorage:", error);
       }
-      if (finalStatus !== "granted") {
-        alert("Failed to get push token for push notification!");
-        return;
-      }
-      token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log(token);
-    } else {
-      alert("Must use physical device for Push Notifications");
-    }
-
-    if (Platform.OS === "android") {
-      Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
-      });
-    }
-
-    return token;
-  };
-
-  // Call this function to send a notification
-  const sendPushNotification = async (expoPushToken, title, message) => {
-    const messageToSend = {
-      to: expoPushToken,
-      sound: "default",
-      title: title, // Set the title based on the function argument
-      body: message, // Set the body based on the function argument
-      data: { message },
     };
 
-    await axios.post("https://exp.host/--/api/v2/push/send", messageToSend);
-  };
+    // Initial fetch
+    fetchCarData();
 
-  // Function to remove processed data from AsyncStorage
-  const removeProcessedData = async (processedTempID) => {
-    try {
-      const carjsonValue = await AsyncStorage.getItem("@carformdata");
-      const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
+    // Set up interval to periodically check for updates in AsyncStorage
+    const intervalId = setInterval(fetchCarData, 300000); // Check every 5 minutes
 
-      if (carjsonValue && questionjsonValue) {
-        let carFormData = JSON.parse(carjsonValue);
-        let questionsData = JSON.parse(questionjsonValue);
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
-        if (!Array.isArray(carFormData)) {
-          carFormData = [];
-        }
-        if (!Array.isArray(questionsData)) {
-          questionsData = [];
-        }
-
-        carFormData = carFormData.filter(
-          (obj) => obj.tempID !== processedTempID
-        );
-        questionsData = questionsData.filter(
-          (q) => q.QtempID !== processedTempID
-        );
-
-        await AsyncStorage.setItem("@carformdata", JSON.stringify(carFormData));
-        await AsyncStorage.setItem(
-          "@carQuestionsdata",
-          JSON.stringify(questionsData)
-        );
-
-        console.log("Processed data removed successfully.");
-      } else {
-        console.log(
-          "No data found in AsyncStorage for @carformdata or @carQuestionsdata."
-        );
-      }
-    } catch (error) {
-      console.error("Error removing processed data:", error);
+  // Trigger upload when internet is connected and data is available
+  useEffect(() => {
+    if (isConnected && questionsInLocal) {
+      triggerManualUpload();
     }
-  };
+  }, [isConnected, questionsInLocal]);
 
-  // Function to process and upload data
-  const processDataUpload = async () => {
+  const triggerManualUpload = async () => {
     try {
       const carjsonValue = await AsyncStorage.getItem("@carformdata");
       const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
@@ -138,7 +138,6 @@ const DataPostProvider = ({ children }) => {
             const ques = questionsData.filter(
               (item) => item.QtempID == obj.tempID
             );
-
             const carbodyques = carbodyData.filter(
               (item) => item.tempID == obj.tempID
             );
@@ -211,6 +210,7 @@ const DataPostProvider = ({ children }) => {
   };
 
   const postData = async (obj, groupedData, carbodyques) => {
+    console.log("postData called"); // Log function call for debugging
     const formData = new FormData();
 
     formData.append("dealershipId", obj.dealershipId);
@@ -311,10 +311,6 @@ const DataPostProvider = ({ children }) => {
           `problems[${problemIndex}][problems][${index}][selectedValue]`,
           problem.selectedValue
         );
-        console.log(
-          `problems[${problemIndex}][problems][${index}][selectedValue]`,
-          problem.selectedValue
-        );
       });
 
       if (problemItem.image && problemItem.image.uri) {
@@ -341,12 +337,9 @@ const DataPostProvider = ({ children }) => {
       );
 
       if (response.data.success) {
-        console.log(response.data);
-
-        // Fetch the Expo Push Token and send a notification
+        console.log("Success response received");
         const expoPushToken = await registerForPushNotificationsAsync();
         if (expoPushToken) {
-          // Send notification with response success and message
           sendPushNotification(
             expoPushToken,
             "Data Upload Success",
@@ -354,7 +347,7 @@ const DataPostProvider = ({ children }) => {
           );
         }
       } else {
-        // Fetch the Expo Push Token and send an error notification
+        console.error("Server responded with an error:", response.data.message);
         const expoPushToken = await registerForPushNotificationsAsync();
         if (expoPushToken) {
           sendPushNotification(
@@ -363,16 +356,57 @@ const DataPostProvider = ({ children }) => {
             response.data.message
           );
         }
-        console.error("Server responded with an error:", response.data.message);
       }
     } catch (error) {
       console.error("Error posting data:", error);
     }
   };
 
-  // Function to trigger manual upload
-  const triggerManualUpload = async () => {
-    await processDataUpload();
+  // Debounce the sendPushNotification function
+  const sendPushNotification = _.debounce(
+    async (expoPushToken, title, message) => {
+      const messageToSend = {
+        to: expoPushToken,
+        sound: "default",
+        title: title,
+        body: message,
+        data: { message },
+      };
+
+      await axios.post("https://exp.host/--/api/v2/push/send", messageToSend);
+    },
+    1000
+  ); // Debounce for 1 second
+
+  const registerForPushNotificationsAsync = async () => {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    return token;
   };
 
   return (
