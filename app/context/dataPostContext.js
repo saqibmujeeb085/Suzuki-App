@@ -5,9 +5,31 @@ import * as Notifications from "expo-notifications"; // Import Expo Notification
 import * as Device from "expo-device"; // Import Expo Device
 import { Platform } from "react-native"; // Import Platform from react-native
 
+// Set notification handler to show alerts when app is in foreground
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 const DataPostContext = createContext();
 
 const DataPostProvider = ({ children }) => {
+  useEffect(() => {
+    // This listener is fired whenever a notification is received while the app is in the foreground
+    const foregroundSubscription =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log("Notification received in foreground:", notification);
+      });
+
+    // Clean up the subscription when the component unmounts
+    return () => {
+      foregroundSubscription.remove();
+    };
+  }, []);
+
   // Function to register for push notifications and get the Expo push token
   const registerForPushNotificationsAsync = async () => {
     let token;
@@ -30,7 +52,6 @@ const DataPostProvider = ({ children }) => {
     }
 
     if (Platform.OS === "android") {
-      // Use Platform here
       Notifications.setNotificationChannelAsync("default", {
         name: "default",
         importance: Notifications.AndroidImportance.MAX,
@@ -43,12 +64,12 @@ const DataPostProvider = ({ children }) => {
   };
 
   // Call this function to send a notification
-  const sendPushNotification = async (expoPushToken, message) => {
+  const sendPushNotification = async (expoPushToken, title, message) => {
     const messageToSend = {
       to: expoPushToken,
       sound: "default",
-      title: "Data Upload Status",
-      body: message,
+      title: title, // Set the title based on the function argument
+      body: message, // Set the body based on the function argument
       data: { message },
     };
 
@@ -320,17 +341,28 @@ const DataPostProvider = ({ children }) => {
       );
 
       if (response.data.success) {
-        // Optionally remove processed data
-        // removeProcessedData(obj.tempID);
-
         console.log(response.data);
 
         // Fetch the Expo Push Token and send a notification
         const expoPushToken = await registerForPushNotificationsAsync();
         if (expoPushToken) {
-          sendPushNotification(expoPushToken, "Data posted successfully!");
+          // Send notification with response success and message
+          sendPushNotification(
+            expoPushToken,
+            "Data Upload Success",
+            response.data.message
+          );
         }
       } else {
+        // Fetch the Expo Push Token and send an error notification
+        const expoPushToken = await registerForPushNotificationsAsync();
+        if (expoPushToken) {
+          sendPushNotification(
+            expoPushToken,
+            "Data Upload Failed",
+            response.data.message
+          );
+        }
         console.error("Server responded with an error:", response.data.message);
       }
     } catch (error) {
