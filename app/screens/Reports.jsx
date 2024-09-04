@@ -186,7 +186,7 @@ const Reports = ({ navigation }) => {
           Inspection Reports
         </AppText>
       </View> */}
-      <InspectionHeader backIcon={false} borderBottom={false}>
+      <InspectionHeader backIcon={false} borderBottom={true}>
         Inspection Reports
       </InspectionHeader>
       <View style={styles.reportSearchBox}>
@@ -289,6 +289,7 @@ export default Reports;
 const styles = StyleSheet.create({
   reportSearchBox: {
     padding: 20,
+    paddingTop: 0,
     gap: 20,
   },
   filterChips: {

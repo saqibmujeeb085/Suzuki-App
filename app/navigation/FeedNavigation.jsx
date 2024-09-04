@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SettingsNavigation from "./SettingsNavigation";
 import UploadingProgress from "../screens/settingsPages/UploadingProcess";
 import Customerform from "../screens/carSelling/Customerform";
+import ViewReport from "../screens/updateCarData/ViewReport";
 
 const FeedNavigation = () => {
   const authContext = useContext(AuthContext);
@@ -81,6 +82,7 @@ const FeedNavigation = () => {
           <Stack.Screen name="SettingsPage" component={SettingsNavigation} />
           <Stack.Screen name="UploadProgress" component={UploadingProgress} />
           <Stack.Screen name="CustomerForm" component={Customerform} />
+          <Stack.Screen name="ViewReport" component={ViewReport} />
         </>
       ) : (
         <Stack.Screen name="Auth" component={AuthNavigator} />

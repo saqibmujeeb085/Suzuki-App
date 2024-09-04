@@ -51,6 +51,7 @@ const InspectionBoard = ({ navigation, route }) => {
 
   const [checkCategories, setCheckCategories] = useState([]);
   const [show, setShow] = useState(false);
+  const [submitShow, setSubmitShow] = useState(false);
   const [allInspectionsDone, setAllInspectionsDone] = useState(false);
   const [loading, setLoading] = useState(true); // Initialize loading to true
   const [carInfo, setCarInfo] = useState(null);
@@ -170,6 +171,16 @@ const InspectionBoard = ({ navigation, route }) => {
     setShow((prevShow) => !prevShow);
   }, []);
 
+  const ShowSubmitModal = useCallback(() => {
+    setSubmitShow((prevShow) => !prevShow);
+  }, []);
+
+  const viewReport = () => {
+    navigation.navigate("ViewReport", {
+      id: `${id}`,
+    });
+  };
+
   const changeStatus = async () => {
     try {
       const storedData = await AsyncStorage.getItem("@carformdata");
@@ -260,6 +271,22 @@ const InspectionBoard = ({ navigation, route }) => {
           sbtn={"Save for later"}
           sbtnPress={handleSaveForLater}
           sbtnColor={"#D20000"}
+        />
+      )}
+
+      {submitShow && (
+        <ProcessModal
+          show={submitShow}
+          setShow={ShowSubmitModal}
+          icon
+          heading={`Registration No: ${carInfo?.registrationNo}`}
+          text={
+            "Want To Submit The Inspection Or Want To View Report Before Submiting"
+          }
+          pbtn={"Submit Inspection"}
+          pbtnPress={changeStatus}
+          sbtn={"View Report"}
+          sbtnPress={viewReport}
         />
       )}
 
@@ -430,8 +457,11 @@ const InspectionBoard = ({ navigation, route }) => {
         </View>
       </ScrollView>
       <View style={styles.formButton}>
-        <GradientButton onPress={changeStatus} disabled={!allInspectionsDone}>
-          Submit Inspection Report
+        <GradientButton
+          onPress={ShowSubmitModal}
+          disabled={!allInspectionsDone}
+        >
+          Submit Inspection
         </GradientButton>
       </View>
     </AppScreen>

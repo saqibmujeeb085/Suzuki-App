@@ -3,7 +3,6 @@ import React from "react";
 
 import InspectionBoard from "../screens/inspectionBoard/InspectionBoard";
 import SingleInspection from "../screens/inspectionBoard/SingleInspection";
-import SigngleCarPages from "./SingleCarPages";
 
 const Stack = createStackNavigator();
 const InspectionBoardNavigation = () => {

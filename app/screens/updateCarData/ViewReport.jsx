@@ -1,33 +1,25 @@
 import {
   StyleSheet,
+  Text,
   View,
-  ActivityIndicator,
-  ScrollView,
-  Alert,
+  BackHandler,
+  TouchableOpacity,
 } from "react-native";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AntDesign } from "@expo/vector-icons";
-import axios from "axios";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import AppScreen from "../../components/screen/Screen";
 import AppText from "../../components/text/Text";
-import { mainStyles } from "../../constants/style";
 import InspectionHeader from "../../components/header/InspectionHeader";
-import { colors } from "../../constants/colors";
-import GradientButton from "../../components/buttons/GradientButton";
-import DeleteButton from "../../components/buttons/DeleteButton";
-import DraftCarImagesCarousel from "../../components/carousel/DraftCarImagesCarousel";
-import { FormDataContext } from "../../context/formDataContext";
+import { ScrollView } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import ProcessModal from "../../components/modals/ProcessModal";
+import { FormDataContext } from "../../context/formDataContext";
+import { mainStyles } from "../../constants/style";
+import { colors } from "../../constants/colors";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Feather from "@expo/vector-icons/Feather";
+import GradientButton from "../../components/buttons/GradientButton";
 
-const DraftSingleCar = ({ route, navigation }) => {
-  const { id } = route.params || {}; // Add a default empty object to avoid destructuring error
-
-  const [show, setShow] = useState(false);
-  const [carInfo, setCarInfo] = useState(null);
-
-  console.log(carInfo);
-
+const ViewReport = ({ navigation, route }) => {
   const [
     manufacturersData,
     setManufacturersData,
@@ -49,37 +41,41 @@ const DraftSingleCar = ({ route, navigation }) => {
     setCitiesData,
   ] = useContext(FormDataContext);
 
-  const getManufacturer = (manufacturerId) => {
-    if (manufacturersData) {
-      const m = manufacturersData.find((item) => item.key === manufacturerId);
-      return m ? m.value : "Unknown Manufacturer";
-    }
-  };
+  const { id } = route.params || {};
+  const [show, setShow] = useState(false);
+  const [carInfo, setCarInfo] = useState(null);
+  const [carBodyProblems, setCarBodyProblems] = useState(null);
+  console.log("helloooo:", carBodyProblems);
 
-  const getCarModel = (carId, manufacturerId) => {
-    const models = modelsData[manufacturerId];
-    if (models) {
-      const model = models.find((item) => item.key === carId);
-      return model ? model.value : "Unknown Model";
-    }
-    return "Unknown Model";
-  };
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        ShowModal(); // Run showModal when back button is pressed
+        return true; // Prevent the default back button behavior
+      };
 
-  const getCarVarient = (varientId, carId) => {
-    const v = varientsData[carId];
-    if (v) {
-      const varient = v.find((item) => item.key === varientId);
-      return varient ? varient.value : "Unknown Varient";
-    }
-    return "Unknown Model";
-  };
+      // Add event listener for the hardware back button
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () => {
+        // Clean up the event listener
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      };
+    }, [ShowModal]) // Add ShowModal as a dependency
+  );
+
+  useEffect(() => {
+    getCarDataByTempID(`${id}`);
+    getCarProblemsDataByTempID(`${id}`);
+  }, []);
 
   const getCarDataByTempID = async (tempID) => {
     try {
       const storedData = await AsyncStorage.getItem("@carformdata");
+
       if (storedData !== null) {
         const carFormDataArray = JSON.parse(storedData);
-        const carData = carFormDataArray.find((item) => item.tempID === tempID);
+        const carData = carFormDataArray.find((item) => item.tempID == tempID);
         if (carData) {
           setCarInfo(carData);
           return carData;
@@ -97,38 +93,64 @@ const DraftSingleCar = ({ route, navigation }) => {
     }
   };
 
-  useEffect(() => {
-    getCarDataByTempID(id);
-  }, []);
-
-  const handleDelete = async () => {
+  const getCarProblemsDataByTempID = async (tempID) => {
     try {
-      const storedData = await AsyncStorage.getItem("@carformdata");
+      const storedData = await AsyncStorage.getItem("@carBodyQuestionsdata");
+
       if (storedData !== null) {
-        let carFormDataArray = JSON.parse(storedData);
-        carFormDataArray = carFormDataArray.filter(
-          (item) => item.tempID !== id
+        const carFormDataArray = JSON.parse(storedData);
+        const carbodyques = carFormDataArray.filter(
+          (item) => item.tempID == tempID
         );
-        await AsyncStorage.setItem(
-          "@carformdata",
-          JSON.stringify(carFormDataArray)
-        );
-        Alert.alert("Success", "Car data deleted successfully");
-        setShow(false);
-        navigation.goBack(); // Navigate back to the previous screen
+        if (carbodyques) {
+          setCarBodyProblems(carbodyques);
+          return carbodyques;
+        } else {
+          console.log("No data found with tempID:", tempID);
+          return null;
+        }
       } else {
         console.log("No car data found in AsyncStorage");
+        return null;
       }
     } catch (error) {
-      console.error("Error deleting car data:", error);
-      Alert.alert("Error", "There was an error deleting the car data");
+      console.error("Error retrieving car data:", error);
+      return null;
     }
   };
+
+  const getManufacturer = (manufacturerId) => {
+    if (manufacturersData) {
+      const m = manufacturersData.find((item) => item.key == manufacturerId);
+      return m ? m.value : "Unknown Manufacturer";
+    }
+  };
+
+  const getCarModel = (carId, manufacturerId) => {
+    const models = modelsData[manufacturerId];
+    if (models) {
+      const model = models.find((item) => item.key == carId);
+      return model ? model.value : "Unknown Model";
+    }
+    return "Unknown Model";
+  };
+
+  const getCarVarient = (varientId, carId) => {
+    const v = varientsData[carId];
+    if (v) {
+      const varient = v.find((item) => item.key == varientId);
+      return varient ? varient.value : "Unknown Varient";
+    }
+    return "Unknown Model";
+  };
+
+  const handleSaveForLater = useCallback(() => {
+    navigation.navigate("Draft");
+  }, [navigation]);
 
   const ShowModal = useCallback(() => {
     setShow((prevShow) => !prevShow);
   }, []);
-
   return (
     <AppScreen>
       {show && (
@@ -136,30 +158,47 @@ const DraftSingleCar = ({ route, navigation }) => {
           show={show}
           setShow={setShow}
           icon
-          heading={`${getManufacturer(carInfo?.mfgId)}${" "}${getCarModel(
-            carInfo?.carId,
-            carInfo?.mfgId
-          )}`}
-          text={"Do you really want to Delete the Inspection"}
-          pbtn={"Delete Inspection"}
-          pbtnPress={handleDelete}
-          sbtn={"Cancel"}
-          sbtnPress={ShowModal}
+          heading={"Customer ID: 0KD560PLF"}
+          text={"If you cancel the inspection, it will be saved as a draft"}
+          pbtn={"Continue Editing Inspection"}
+          pbtnPress={ShowModal}
+          sbtn={"Save for later"}
+          sbtnPress={handleSaveForLater}
           sbtnColor={"#D20000"}
         />
       )}
-      <InspectionHeader onPress={() => navigation.goBack()}>
-        Draft Car Details
+
+      <InspectionHeader
+        backIcon={false}
+        borderBottom={true}
+        rightText={"Cancel"}
+        rightOnpress={ShowModal}
+      >
+        Inspection Car Report
       </InspectionHeader>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.ImageContainer}>
-          {carInfo?.images ? (
-            <DraftCarImagesCarousel images={carInfo.images} />
-          ) : (
-            <ActivityIndicator size="large" />
-          )}
-        </View>
+
+      <ScrollView
+        style={[{ marginBottom: 100, paddingBottom: 20 }, styles.container]}
+      >
         <View style={styles.contentContainer}>
+          <View style={styles.headingContainer}>
+            <AppText
+              fontSize={mainStyles.h1FontSize}
+              fontFamily={mainStyles.appFontBold}
+            >
+              Car Information
+            </AppText>
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.purple,
+                padding: 10,
+                borderRadius: 5,
+              }}
+            >
+              <Feather name="edit" size={20} color={colors.whiteBg} />
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.infoContainer}>
             <AppText style={{ fontSize: mainStyles.h3FontSize }}>
               Inspection Date:
@@ -413,33 +452,84 @@ const DraftSingleCar = ({ route, navigation }) => {
             </AppText>
           </View>
         </View>
-        <View style={styles.ActionButtons}>
-          <GradientButton
-            onPress={() =>
-              navigation.navigate("InspectionBoard", {
-                id: id,
-              })
-            }
+        <View style={[styles.contentContainer, { marginTop: 20 }]}>
+          <AppText
+            fontSize={mainStyles.h1FontSize}
+            fontFamily={mainStyles.appFontBold}
+            textAlign={"center"}
           >
-            Save And Start Rating
-          </GradientButton>
-          <DeleteButton onPress={ShowModal}>
-            <AntDesign
-              name={"delete"}
-              color={colors.fontRed}
-              size={20}
-              style={{ backgroundColor: "transparent" }}
-            />
-          </DeleteButton>
+            Car Body Problems
+          </AppText>
+          <View
+            style={{
+              gap: 10,
+              paddingVertical: 5,
+              justifyContent: "space-between",
+            }}
+          >
+            {carBodyProblems &&
+              carBodyProblems.map((item, index) => (
+                <View key={index} style={{ flexDirection: "column" }}>
+                  {/* Display problem location */}
+                  <View style={styles.headingContainer}>
+                    <AppText
+                      fontSize={mainStyles.h2FontSize}
+                      fontFamily={mainStyles.appFontBold}
+                    >
+                      {item.problemLocation}
+                    </AppText>
+                    <TouchableOpacity
+                      style={{
+                        padding: 10,
+                        borderRadius: 5,
+                      }}
+                    >
+                      <Feather name="edit" size={20} color={colors.purple} />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Map over the problems array to display each problem */}
+                  <View>
+                    {item.problems.map((problem, problemIndex) => (
+                      <View
+                        key={problemIndex}
+                        style={{
+                          flexDirection: "row",
+                          gap: 10,
+                          padding: 5,
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <AppText>{problem.problemName}</AppText>
+                        <AppText>{problem.selectedValue}</AppText>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              ))}
+          </View>
         </View>
       </ScrollView>
+      <View style={styles.formButton}>
+        <GradientButton>Submit Inspection Report</GradientButton>
+      </View>
     </AppScreen>
   );
 };
 
-export default DraftSingleCar;
+export default ViewReport;
 
 const styles = StyleSheet.create({
+  headingContainer: {
+    padding: 10,
+    borderRadius: 5,
+    elevation: 2,
+    backgroundColor: colors.whiteBg,
+    marginBottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   contentContainer: {
     paddingVertical: 20,
     paddingHorizontal: 30,
@@ -449,13 +539,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
   },
-  bannerImage: {
-    width: "100%",
-    height: 300,
-    resizeMode: "cover",
-    borderRadius: 5,
-    marginBottom: 20,
-  },
+
   infoContainer: {
     flexDirection: "row",
     paddingVertical: 5,
@@ -468,17 +552,11 @@ const styles = StyleSheet.create({
   infoValue: {
     flexShrink: 1,
   },
-  ActionButtons: {
-    flexDirection: "row",
+  formButton: {
+    position: "absolute",
+    bottom: 0,
+    padding: 20,
     width: "100%",
-    gap: 10,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  ImageContainer: {
-    flex: 1,
-    height: "100%",
-    minHeight: 400,
+    backgroundColor: colors.ligtGreyBg,
   },
 });

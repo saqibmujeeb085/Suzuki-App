@@ -337,13 +337,13 @@ const DataPostProvider = ({ children }) => {
       );
 
       if (response.data.success) {
-        console.log("Success response received");
+        console.log(response.data);
         const expoPushToken = await registerForPushNotificationsAsync();
         if (expoPushToken) {
           sendPushNotification(
             expoPushToken,
-            "Data Upload Success",
-            response.data.message
+            "Car Uploaded Successfully",
+            `car With Registration No ${response.data.registration_no} Uploaded.`
           );
         }
       } else {
@@ -352,7 +352,7 @@ const DataPostProvider = ({ children }) => {
         if (expoPushToken) {
           sendPushNotification(
             expoPushToken,
-            "Data Upload Failed",
+            "Car Upload Failed",
             response.data.message
           );
         }
