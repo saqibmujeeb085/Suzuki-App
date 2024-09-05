@@ -45,7 +45,7 @@ const ViewReport = ({ navigation, route }) => {
   const [show, setShow] = useState(false);
   const [carInfo, setCarInfo] = useState(null);
   const [carBodyProblems, setCarBodyProblems] = useState(null);
-  console.log("helloooo:", carBodyProblems);
+  const [carIndicatorsRating, setCarIndicatorsRating] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -67,6 +67,7 @@ const ViewReport = ({ navigation, route }) => {
   useEffect(() => {
     getCarDataByTempID(`${id}`);
     getCarProblemsDataByTempID(`${id}`);
+    getCarIndicatorsRating(`${id}`);
   }, []);
 
   const getCarDataByTempID = async (tempID) => {
@@ -119,6 +120,82 @@ const ViewReport = ({ navigation, route }) => {
     }
   };
 
+  const getCarIndicatorsRating = async (tempID) => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carQuestionsdata");
+
+      if (storedData !== null) {
+        const carFormDataArray = JSON.parse(storedData);
+
+        const carData = carFormDataArray.filter(
+          (item) => item.QtempID == tempID
+        );
+
+        const groupedData = carData.reduce((acc, item) => {
+          const {
+            catName,
+            subCatName,
+            IndID,
+            IndQuestion,
+            value,
+            point,
+            reason,
+            image,
+          } = item;
+
+          let category = acc.find((cat) => cat.mainCat == catName);
+
+          if (!category) {
+            category = {
+              mainCat: catName,
+              mainCatData: [],
+            };
+            acc.push(category);
+          }
+
+          let subCategory = category.mainCatData.find(
+            (subCat) => subCat.subCatName == subCatName
+          );
+
+          if (!subCategory) {
+            subCategory = {
+              subCatName: subCatName,
+              subCatData: [],
+            };
+            category.mainCatData.push(subCategory);
+          }
+
+          const dataItem = {
+            IndID: IndID,
+            IndQuestion: IndQuestion,
+            value: value,
+            point: point,
+            reason: reason,
+            image: image,
+          };
+
+          subCategory.subCatData.push(dataItem);
+
+          return acc;
+        }, []);
+
+        if (groupedData) {
+          setCarIndicatorsRating(groupedData);
+          return groupedData;
+        } else {
+          console.log("No data found with tempID:", tempID);
+          return null;
+        }
+      } else {
+        console.log("No car data found in AsyncStorage");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error retrieving car data:", error);
+      return null;
+    }
+  };
+
   const getManufacturer = (manufacturerId) => {
     if (manufacturersData) {
       const m = manufacturersData.find((item) => item.key == manufacturerId);
@@ -145,6 +222,7 @@ const ViewReport = ({ navigation, route }) => {
   };
 
   const handleSaveForLater = useCallback(() => {
+    setShow((prevShow) => !prevShow);
     navigation.navigate("Draft");
   }, [navigation]);
 
@@ -177,9 +255,7 @@ const ViewReport = ({ navigation, route }) => {
         Inspection Car Report
       </InspectionHeader>
 
-      <ScrollView
-        style={[{ marginBottom: 100, paddingBottom: 20 }, styles.container]}
-      >
+      <ScrollView style={[{ marginBottom: 110 }, styles.container]}>
         <View style={styles.contentContainer}>
           <View style={styles.headingContainer}>
             <AppText
@@ -198,258 +274,263 @@ const ViewReport = ({ navigation, route }) => {
               <Feather name="edit" size={20} color={colors.whiteBg} />
             </TouchableOpacity>
           </View>
-
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Inspection Date:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.inspectionDate}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>Car:</AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {getCarModel(carInfo?.carId, carInfo?.mfgId)}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Variant:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {getCarVarient(carInfo?.varientId, carInfo?.carId)}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Model:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.model}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Registration No:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.registrationNo}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Chasis No:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.chasisNo}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Manufacturer:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {getManufacturer(carInfo?.mfgId)}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>CPLC:</AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.cplc}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              No Of Owners:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.NoOfOwners}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Transmission Type:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.transmissionType}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Mileage:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.mileage}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Capacity:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.engineDisplacement}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Registration City:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.registrationCity}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Fuel Type:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              textTransform={"uppercase"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.FuelType}
-            </AppText>
-          </View>
-          <View style={styles.infoContainer}>
-            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
-              Color:
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              width={150}
-              textAlign={"right"}
-              style={{
-                fontSize: mainStyles.h3FontSize,
-                color: colors.fontGrey,
-                width: 200,
-              }}
-            >
-              {carInfo?.color}
-            </AppText>
+          <View style={{ paddingHorizontal: 10 }}>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Inspection Date:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.inspectionDate}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Car:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {getCarModel(carInfo?.carId, carInfo?.mfgId)}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Variant:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {getCarVarient(carInfo?.varientId, carInfo?.carId)}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Model:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.model}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Registration No:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.registrationNo}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Chasis No:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.chasisNo}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Manufacturer:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {getManufacturer(carInfo?.mfgId)}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                CPLC:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.cplc}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                No Of Owners:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.NoOfOwners}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Transmission Type:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.transmissionType}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Mileage:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.mileage}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Capacity:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.engineDisplacement}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Registration City:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.registrationCity}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Fuel Type:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                textTransform={"uppercase"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.FuelType}
+              </AppText>
+            </View>
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Color:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.color}
+              </AppText>
+            </View>
           </View>
         </View>
         <View style={[styles.contentContainer, { marginTop: 20 }]}>
@@ -496,7 +577,8 @@ const ViewReport = ({ navigation, route }) => {
                         style={{
                           flexDirection: "row",
                           gap: 10,
-                          padding: 5,
+                          padding: 10,
+                          paddingTop: 0,
                           justifyContent: "space-between",
                         }}
                       >
@@ -505,6 +587,217 @@ const ViewReport = ({ navigation, route }) => {
                       </View>
                     ))}
                   </View>
+                </View>
+              ))}
+          </View>
+        </View>
+
+        <View style={[styles.contentContainer, { marginTop: 20 }]}>
+          <AppText
+            fontSize={mainStyles.h1FontSize}
+            fontFamily={mainStyles.appFontBold}
+            textAlign={"center"}
+          >
+            Car Indicators Rating
+          </AppText>
+          <View
+            style={{
+              gap: 10,
+              paddingVertical: 5,
+              justifyContent: "space-between",
+            }}
+          >
+            {carIndicatorsRating &&
+              carIndicatorsRating.map((item, index) => (
+                <View
+                  key={index}
+                  style={{
+                    flexDirection: "column",
+                    elevation: 2,
+                    padding: 10,
+                    backgroundColor: colors.whiteBg,
+                    borderRadius: 3,
+                  }}
+                >
+                  <View
+                    key={index}
+                    style={{
+                      flexDirection: "column",
+                      elevation: 2,
+                      padding: 10,
+                      backgroundColor: colors.whiteBg,
+                      borderRadius: 3,
+                    }}
+                  >
+                    <AppText
+                      fontSize={mainStyles.h2FontSize}
+                      fontFamily={mainStyles.appFontBold}
+                      textAlign={"center"}
+                    >
+                      {item.mainCat}
+                    </AppText>
+                  </View>
+
+                  {item.mainCatData.map((subItem, index) => (
+                    <View
+                      key={index}
+                      style={{
+                        flexDirection: "column",
+                        elevation: 2,
+                        padding: 10,
+                        backgroundColor: colors.whiteBg,
+                        borderRadius: 3,
+                        marginTop: 10,
+                      }}
+                    >
+                      <View
+                        key={index}
+                        style={{
+                          flexDirection: "column",
+                          elevation: 2,
+                          padding: 10,
+                          backgroundColor: colors.whiteBg,
+                          borderRadius: 3,
+                          marginBottom: 10,
+                        }}
+                      >
+                        <AppText
+                          fontSize={mainStyles.h3FontSize}
+                          fontFamily={mainStyles.appFontBold}
+                        >
+                          {subItem.subCatName}
+                        </AppText>
+                      </View>
+                      {subItem.subCatData.map((i, index) => (
+                        <View key={index}>
+                          <View style={styles.headingContainer}>
+                            <AppText
+                              fontSize={mainStyles.h3FontSize}
+                              fontFamily={mainStyles.appFontBold}
+                              numberOfLines={1}
+                              maxWidth={200}
+                            >
+                              {i.IndID}. {i.IndQuestion}
+                            </AppText>
+                            <TouchableOpacity
+                              style={{
+                                padding: 10,
+                                borderRadius: 5,
+                              }}
+                            >
+                              <Feather
+                                name="edit"
+                                size={20}
+                                color={colors.purple}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              gap: 10,
+                              padding: 5,
+                              paddingTop: 0,
+                              marginBottom: 10,
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <AppText>
+                              {typeof i.value === "number" ? "Rating" : "Value"}
+                            </AppText>
+                            <AppText>
+                              {i.value}
+                              {typeof i.value === "number" && "/5"}
+                            </AppText>
+                          </View>
+                          {i.point && (
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                gap: 10,
+                                padding: 5,
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <AppText>Problem</AppText>
+                              <AppText>{i.point}</AppText>
+                            </View>
+                          )}
+
+                          {i.reason && (
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                gap: 10,
+                                padding: 5,
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <AppText maxWidth={150}>Reason</AppText>
+                              <AppText>{i.reason}</AppText>
+                            </View>
+                          )}
+                        </View>
+                      ))}
+                    </View>
+                  ))}
+                  {/* <View style={styles.headingContainer}>
+                      <AppText
+                        fontSize={mainStyles.h2FontSize}
+                        fontFamily={mainStyles.appFontBold}
+                      >
+                        {item.IndID}. {item.IndQuestion}
+                      </AppText>
+                      <TouchableOpacity
+                        style={{
+                          padding: 10,
+                          borderRadius: 5,
+                        }}
+                      >
+                        <Feather name="edit" size={20} color={colors.purple} />
+                      </TouchableOpacity>
+                    </View>
+                    <View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          gap: 10,
+                          padding: 5,
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <AppText>Value</AppText>
+                        <AppText>{item.value}</AppText>
+                      </View>
+
+                      {item.point && (
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            gap: 10,
+                            padding: 5,
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <AppText>Problem</AppText>
+                          <AppText>{item.point}</AppText>
+                        </View>
+                      )}
+
+                      {item.reason && (
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            gap: 10,
+                            padding: 5,
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <AppText>Problem</AppText>
+                          <AppText>{item.reason}</AppText>
+                        </View>
+                      )}
+                    </View> */}
                 </View>
               ))}
           </View>

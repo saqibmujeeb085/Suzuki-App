@@ -86,7 +86,7 @@ const CarBody = ({ tempID }) => {
       <View style={styles.container}>
         <AppText
           fontSize={20}
-          fontFamily="mainStyles.appFontBold"
+          fontFamily={mainStyles.appFontBold}
           color={colors.red}
         >
           L

@@ -118,6 +118,51 @@ const DataPostProvider = ({ children }) => {
     }
   }, [isConnected, questionsInLocal]);
 
+  const removeProcessedData = async (processedTempID) => {
+    try {
+      // Retrieve stored data from AsyncStorage
+      const carjsonValue = await AsyncStorage.getItem("@carformdata");
+      const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
+
+      if (carjsonValue && questionjsonValue) {
+        // Parse the JSON string into a JavaScript object
+        let carFormData = JSON.parse(carjsonValue);
+        let questionsData = JSON.parse(questionjsonValue);
+
+        // Ensure the data is an array
+        if (!Array.isArray(carFormData)) {
+          carFormData = [];
+        }
+        if (!Array.isArray(questionsData)) {
+          questionsData = [];
+        }
+
+        // Filter out the processed data
+        carFormData = carFormData.filter(
+          (obj) => obj.tempID !== processedTempID
+        );
+        questionsData = questionsData.filter(
+          (q) => q.QtempID !== processedTempID
+        );
+
+        // Update AsyncStorage with the new data
+        await AsyncStorage.setItem("@carformdata", JSON.stringify(carFormData));
+        await AsyncStorage.setItem(
+          "@carQuestionsdata",
+          JSON.stringify(questionsData)
+        );
+
+        console.log("Processed data removed successfully.");
+      } else {
+        console.log(
+          "No data found in AsyncStorage for @carformdata or @carQuestionsdata."
+        );
+      }
+    } catch (error) {
+      console.error("Error removing processed data:", error);
+    }
+  };
+
   const triggerManualUpload = async () => {
     try {
       const carjsonValue = await AsyncStorage.getItem("@carformdata");
@@ -126,7 +171,7 @@ const DataPostProvider = ({ children }) => {
         "@carBodyQuestionsdata"
       );
 
-      if (carjsonValue && questionjsonValue) {
+      if (carjsonValue && questionjsonValue && carbodyjsonValue) {
         const carFormData = JSON.parse(carjsonValue);
         const questionsData = JSON.parse(questionjsonValue);
         const carbodyData = carbodyjsonValue
@@ -329,7 +374,7 @@ const DataPostProvider = ({ children }) => {
       };
 
       const response = await axios.post(
-        "auth/get_carinspectionsnew.php", // Use your server URL
+        "auth/add_carinspectionsnew.php", // Use your server URL
         formData,
         {
           headers: headers,
@@ -337,7 +382,7 @@ const DataPostProvider = ({ children }) => {
       );
 
       if (response.data.success) {
-        console.log(response.data);
+        removeProcessedData(obj.tempID);
         const expoPushToken = await registerForPushNotificationsAsync();
         if (expoPushToken) {
           sendPushNotification(
@@ -362,7 +407,6 @@ const DataPostProvider = ({ children }) => {
     }
   };
 
-  // Debounce the sendPushNotification function
   const sendPushNotification = _.debounce(
     async (expoPushToken, title, message) => {
       const messageToSend = {
@@ -375,8 +419,8 @@ const DataPostProvider = ({ children }) => {
 
       await axios.post("https://exp.host/--/api/v2/push/send", messageToSend);
     },
-    1000
-  ); // Debounce for 1 second
+    100
+  );
 
   const registerForPushNotificationsAsync = async () => {
     let token;

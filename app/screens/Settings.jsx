@@ -30,7 +30,7 @@ const Settings = ({ navigation }) => {
               <MaterialCommunityIcons
                 name="progress-upload"
                 size={30}
-                color={colors.blue}
+                color={colors.purple}
               />
               <AppText>Uploading Inspections</AppText>
             </View>

@@ -1,93 +1,7 @@
-// import React, { createContext, useState, useEffect } from "react";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// // Context
-// const FormDataContext = createContext();
-
-// // Provider
-// const FormDataProvider = ({ children }) => {
-//   // Global state
-//   const [manufacturersData, setManufacturersData] = useState([]);
-//   const [modelsData, setModelsData] = useState([]);
-//   const [varientsData, setVarientsData] = useState([]);
-//   const [yearsData, setYearsData] = useState([]);
-//   const [colorsData, setColorsData] = useState([]);
-//   const [fuelsData, setFuelsData] = useState([]);
-//   const [transmissionsData, setTransmissionsData] = useState([]);
-//   const [capacitiesData, setCapacitiesData] = useState([]);
-//   const [citiesData, setCitiesData] = useState([]);
-
-//   // Local Storage Initial Data
-//   useEffect(() => {
-//     const localStorageData = async () => {
-//       const manufacturer = await AsyncStorage.getItem("@formDataManufacturers");
-//       const models = await AsyncStorage.getItem("@formDataModels");
-//       const varients = await AsyncStorage.getItem("@formDataVarients");
-//       const years = await AsyncStorage.getItem("@formDataYears");
-//       const colors = await AsyncStorage.getItem("@formDataColors");
-//       const fuel = await AsyncStorage.getItem("@formDataFuel");
-//       const transmissions = await AsyncStorage.getItem(
-//         "@formDataTransmissions"
-//       );
-//       const capacity = await AsyncStorage.getItem("@formDataCapacity");
-//       const cities = await AsyncStorage.getItem("@formDataCities");
-
-//       const manufacturerData = JSON.parse(manufacturer);
-//       const modelData = JSON.parse(models);
-//       const varientData = JSON.parse(varients);
-//       const yearData = JSON.parse(years);
-//       const colorData = JSON.parse(colors);
-//       const fuelData = JSON.parse(fuel);
-//       const transmissionData = JSON.parse(transmissions);
-//       const capacityData = JSON.parse(capacity);
-//       const cityData = JSON.parse(cities);
-
-//       setManufacturersData(manufacturerData || manufacturersData);
-//       setModelsData(modelData || modelsData);
-//       setVarientsData(varientData || varientsData);
-//       setYearsData(yearData || yearsData);
-//       setColorsData(colorData || colorsData);
-//       setFuelsData(fuelData || fuelsData);
-//       setTransmissionsData(transmissionData || transmissionsData);
-//       setCapacitiesData(capacityData || capacitiesData);
-//       setCitiesData(cityData || citiesData);
-//     };
-//     localStorageData();
-//   }, []);
-
-//   return (
-//     <FormDataContext.Provider
-//       value={[
-//         manufacturersData,
-//         setManufacturersData,
-//         modelsData,
-//         setModelsData,
-//         varientsData,
-//         setVarientsData,
-//         yearsData,
-//         setYearsData,
-//         colorsData,
-//         setColorsData,
-//         fuelsData,
-//         setFuelsData,
-//         transmissionsData,
-//         setTransmissionsData,
-//         capacitiesData,
-//         setCapacitiesData,
-//         citiesData,
-//         setCitiesData,
-//       ]}
-//     >
-//       {children}
-//     </FormDataContext.Provider>
-//   );
-// };
-
-// export { FormDataContext, FormDataProvider };
-
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo"; // Import NetInfo
+import axios from "axios";
 
 // Context
 const FormDataContext = createContext();
@@ -108,27 +22,28 @@ const FormDataProvider = ({ children }) => {
   // Function to load data from AsyncStorage
   const loadLocalStorageData = async () => {
     try {
-      const manufacturer = await AsyncStorage.getItem("@formDataManufacturers");
-      const models = await AsyncStorage.getItem("@formDataModels");
-      const varients = await AsyncStorage.getItem("@formDataVarients");
-      const years = await AsyncStorage.getItem("@formDataYears");
-      const colors = await AsyncStorage.getItem("@formDataColors");
-      const fuel = await AsyncStorage.getItem("@formDataFuel");
-      const transmissions = await AsyncStorage.getItem(
-        "@formDataTransmissions"
-      );
-      const capacity = await AsyncStorage.getItem("@formDataCapacity");
-      const cities = await AsyncStorage.getItem("@formDataCities");
+      const keys = [
+        "@formDataManufacturers",
+        "@formDataModels",
+        "@formDataVarients",
+        "@formDataYears",
+        "@formDataColors",
+        "@formDataFuel",
+        "@formDataTransmissions",
+        "@formDataCapacity",
+        "@formDataCities",
+      ];
+      const values = await AsyncStorage.multiGet(keys);
 
-      setManufacturersData(JSON.parse(manufacturer) || []);
-      setModelsData(JSON.parse(models) || []);
-      setVarientsData(JSON.parse(varients) || []);
-      setYearsData(JSON.parse(years) || []);
-      setColorsData(JSON.parse(colors) || []);
-      setFuelsData(JSON.parse(fuel) || []);
-      setTransmissionsData(JSON.parse(transmissions) || []);
-      setCapacitiesData(JSON.parse(capacity) || []);
-      setCitiesData(JSON.parse(cities) || []);
+      setManufacturersData(JSON.parse(values[0][1]) || []);
+      setModelsData(JSON.parse(values[1][1]) || []);
+      setVarientsData(JSON.parse(values[2][1]) || []);
+      setYearsData(JSON.parse(values[3][1]) || []);
+      setColorsData(JSON.parse(values[4][1]) || []);
+      setFuelsData(JSON.parse(values[5][1]) || []);
+      setTransmissionsData(JSON.parse(values[6][1]) || []);
+      setCapacitiesData(JSON.parse(values[7][1]) || []);
+      setCitiesData(JSON.parse(values[8][1]) || []);
     } catch (error) {
       console.error("Failed to load data from AsyncStorage", error);
     }
@@ -137,27 +52,18 @@ const FormDataProvider = ({ children }) => {
   // Function to save data to AsyncStorage
   const saveDataToLocalStorage = async () => {
     try {
-      await AsyncStorage.setItem(
-        "@formDataManufacturers",
-        JSON.stringify(manufacturersData)
-      );
-      await AsyncStorage.setItem("@formDataModels", JSON.stringify(modelsData));
-      await AsyncStorage.setItem(
-        "@formDataVarients",
-        JSON.stringify(varientsData)
-      );
-      await AsyncStorage.setItem("@formDataYears", JSON.stringify(yearsData));
-      await AsyncStorage.setItem("@formDataColors", JSON.stringify(colorsData));
-      await AsyncStorage.setItem("@formDataFuel", JSON.stringify(fuelsData));
-      await AsyncStorage.setItem(
-        "@formDataTransmissions",
-        JSON.stringify(transmissionsData)
-      );
-      await AsyncStorage.setItem(
-        "@formDataCapacity",
-        JSON.stringify(capacitiesData)
-      );
-      await AsyncStorage.setItem("@formDataCities", JSON.stringify(citiesData));
+      const data = [
+        ["@formDataManufacturers", JSON.stringify(manufacturersData)],
+        ["@formDataModels", JSON.stringify(modelsData)],
+        ["@formDataVarients", JSON.stringify(varientsData)],
+        ["@formDataYears", JSON.stringify(yearsData)],
+        ["@formDataColors", JSON.stringify(colorsData)],
+        ["@formDataFuel", JSON.stringify(fuelsData)],
+        ["@formDataTransmissions", JSON.stringify(transmissionsData)],
+        ["@formDataCapacity", JSON.stringify(capacitiesData)],
+        ["@formDataCities", JSON.stringify(citiesData)],
+      ];
+      await AsyncStorage.multiSet(data);
     } catch (error) {
       console.error("Failed to save data to AsyncStorage", error);
     }
@@ -165,9 +71,7 @@ const FormDataProvider = ({ children }) => {
 
   // Function to fetch data from server and update state
   const fetchDataFromServer = async () => {
-    // Implement your server fetching logic here
     try {
-      // Assuming fetchManufacturers, fetchModels, etc., are functions that fetch from the server
       await Promise.all([
         fetchManufacturers(),
         fetchCarModel(),
@@ -179,52 +83,277 @@ const FormDataProvider = ({ children }) => {
         fetchEngineCapacity(),
         fetchRegistrationCity(),
       ]);
+      await saveDataToLocalStorage(); // Save fetched data after successful fetching
     } catch (error) {
       console.error("Error fetching data from the server:", error);
     }
   };
 
+  //////////////////////////////////////////////////////////////////////
+
+  // Fetch functions (server-side logic)
+  const fetchManufacturers = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_carmanufacturer.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const ManufacturerNames = response.data;
+      const transformedData = ManufacturerNames.map((object) => ({
+        key: object.id,
+        value: object.name,
+      }));
+      setManufacturersData(transformedData);
+      await AsyncStorage.setItem(
+        "@formDataManufacturers",
+        JSON.stringify(transformedData)
+      );
+    } catch (error) {
+      console.error("Error fetching manufacturers:", error);
+    }
+  };
+
+  const fetchCarModel = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_carlistnew.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const ModelNames = response.data;
+      const transformedList = ModelNames.reduce((acc, Model) => {
+        acc[Model.manufacturerID] = Model.carlistData.map((car) => ({
+          key: car.carID,
+          value: car.carName,
+        }));
+        return acc;
+      }, {});
+      setModelsData(transformedList);
+      await AsyncStorage.setItem(
+        "@formDataModels",
+        JSON.stringify(transformedList)
+      );
+    } catch (error) {
+      console.error("Error fetching car models:", error);
+    }
+  };
+
+  const fetchCarVarient = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_cartypenew.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const VarientNames = response.data;
+      const transformedList = VarientNames.reduce((acc, varient) => {
+        acc[varient.carID] = varient.cartypeData.map((v) => ({
+          key: v.typeID,
+          value: v.TypeName,
+        }));
+        return acc;
+      }, {});
+      setVarientsData(transformedList);
+      await AsyncStorage.setItem(
+        "@formDataVarients",
+        JSON.stringify(transformedList)
+      );
+    } catch (error) {
+      console.error("Error fetching car variants:", error);
+    }
+  };
+
+  const fetchCarYears = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_caryears.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const years = response.data;
+      const transformedList = years.reduce((acc, year) => {
+        acc[year.carID] = year.carYearData.map((y) => ({
+          key: y.YearId,
+          value: y.Year,
+        }));
+        return acc;
+      }, {});
+      setYearsData(transformedList);
+      await AsyncStorage.setItem(
+        "@formDataYears",
+        JSON.stringify(transformedList)
+      );
+    } catch (error) {
+      console.error("Error fetching car years:", error);
+    }
+  };
+
+  const fetchCarColors = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_color.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const CarColors = response.data;
+      const transformedData = CarColors.map((object) => ({
+        key: object.id,
+        value: object.color,
+      }));
+      setColorsData(transformedData);
+      await AsyncStorage.setItem(
+        "@formDataColors",
+        JSON.stringify(transformedData)
+      );
+    } catch (error) {
+      console.error("Error fetching car colors:", error);
+    }
+  };
+
+  const fetchFuelTypes = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_fuelType.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const FuelTypes = response.data;
+      const transformedData = FuelTypes.map((object) => ({
+        key: object.did,
+        value: object.type,
+      }));
+      setFuelsData(transformedData);
+      await AsyncStorage.setItem(
+        "@formDataFuel",
+        JSON.stringify(transformedData)
+      );
+    } catch (error) {
+      console.error("Error fetching fuel types:", error);
+    }
+  };
+
+  const fetchTransmissionsTypes = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_cartrans.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const TransmissionsTypes = response.data;
+      const transformedData = TransmissionsTypes.map((object) => ({
+        key: object.did,
+        value: object.type,
+      }));
+      setTransmissionsData(transformedData);
+      await AsyncStorage.setItem(
+        "@formDataTransmissions",
+        JSON.stringify(transformedData)
+      );
+    } catch (error) {
+      console.error("Error fetching transmission types:", error);
+    }
+  };
+
+  const fetchEngineCapacity = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_engdis.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const EngineCapacity = response.data;
+      const transformedData = EngineCapacity.map((object) => ({
+        key: object.id,
+        value: object.displacement,
+      }));
+      setCapacitiesData(transformedData);
+      await AsyncStorage.setItem(
+        "@formDataCapacity",
+        JSON.stringify(transformedData)
+      );
+    } catch (error) {
+      console.error("Error fetching engine capacities:", error);
+    }
+  };
+
+  const fetchRegistrationCity = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_cities.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const RegistrationCity = response.data;
+      const transformedData = RegistrationCity.map((object) => ({
+        key: object.id,
+        value: object.city,
+      }));
+      setCitiesData(transformedData);
+      await AsyncStorage.setItem(
+        "@formDataCities",
+        JSON.stringify(transformedData)
+      );
+    } catch (error) {
+      console.error("Error fetching registration cities:", error);
+    }
+  };
+
+  ///////////////////////////////////////////////////////////////
+
   // Check network status and load data accordingly
   useEffect(() => {
-    const checkNetworkAndLoadData = async () => {
-      const state = await NetInfo.fetch(); // Fetch the network status
+    const handleNetworkChange = async (state) => {
       if (!state.isConnected) {
-        // If not connected to the internet, load data from AsyncStorage
         await loadLocalStorageData();
       } else {
-        // Fetch data from the server and save it to AsyncStorage
         await fetchDataFromServer();
-        await saveDataToLocalStorage();
       }
+    };
+
+    const checkNetworkAndLoadData = async () => {
+      const state = await NetInfo.fetch();
+      handleNetworkChange(state);
     };
 
     checkNetworkAndLoadData();
 
     // Subscribe to network status changes
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      if (!state.isConnected) {
-        loadLocalStorageData();
-      } else {
-        fetchDataFromServer().then(saveDataToLocalStorage);
-      }
-    });
+    const unsubscribe = NetInfo.addEventListener(handleNetworkChange);
 
     // Cleanup function to save current state to AsyncStorage and unsubscribe
     return () => {
-      saveDataToLocalStorage(); // Save data to AsyncStorage
-      unsubscribe(); // Unsubscribe from network status changes
+      saveDataToLocalStorage();
+      unsubscribe();
     };
-  }, [
-    manufacturersData,
-    modelsData,
-    varientsData,
-    yearsData,
-    colorsData,
-    fuelsData,
-    transmissionsData,
-    capacitiesData,
-    citiesData,
-  ]);
+  }, []);
 
   return (
     <FormDataContext.Provider

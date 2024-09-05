@@ -217,6 +217,7 @@ const InspectionBoard = ({ navigation, route }) => {
   };
 
   const handleSaveForLater = useCallback(() => {
+    setShow((prevShow) => !prevShow);
     navigation.navigate("Draft");
   }, [navigation]);
 
