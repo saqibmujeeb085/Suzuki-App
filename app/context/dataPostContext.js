@@ -187,8 +187,6 @@ const DataPostProvider = ({ children }) => {
               (item) => item.tempID == obj.tempID
             );
 
-            console.log(carbodyques);
-
             const groupedData = ques.reduce((acc, item) => {
               const {
                 catName,
@@ -255,7 +253,6 @@ const DataPostProvider = ({ children }) => {
   };
 
   const postData = async (obj, groupedData, carbodyques) => {
-    console.log("postData called"); // Log function call for debugging
     const formData = new FormData();
 
     formData.append("dealershipId", obj.dealershipId);
@@ -392,7 +389,6 @@ const DataPostProvider = ({ children }) => {
           );
         }
       } else {
-        console.error("Server responded with an error:", response.data.message);
         const expoPushToken = await registerForPushNotificationsAsync();
         if (expoPushToken) {
           sendPushNotification(

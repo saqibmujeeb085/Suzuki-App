@@ -18,9 +18,9 @@ const CarBodyModal = ({
   onSave,
 }) => {
   const [problems, setProblems] = useState({
-    color: { checked: false, selectedId: null, selectedValue: null },
-    dent: { checked: false, selectedId: null, selectedValue: null },
-    scratch: { checked: false, selectedId: null, selectedValue: null },
+    "Paint Marked": { checked: false, selectedId: null, selectedValue: null },
+    Dent: { checked: false, selectedId: null, selectedValue: null },
+    Scratch: { checked: false, selectedId: null, selectedValue: null },
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -29,25 +29,58 @@ const CarBodyModal = ({
   const [loading, setLoading] = useState(false);
 
   const points = {
-    color: [
-      { id: "1", label: "Major", value: "Major", color: colors.purple },
-      { id: "2", label: "Minor", value: "Minor", color: colors.purple },
+    "Paint Marked": [
+      {
+        id: "1",
+        label: "Shower Paint",
+        value: "Shower Paint",
+        color: colors.purple,
+      },
+      {
+        id: "2",
+        label: "Polycate paint",
+        value: "Polycate paint",
+        color: colors.purple,
+      },
     ],
-    dent: [
-      { id: "3", label: "Deep", value: "Deep", color: colors.purple },
-      { id: "4", label: "Shallow", value: "Shallow", color: colors.purple },
+    Dent: [
+      {
+        id: "3",
+        label: "Minor Dent",
+        value: "Minor Dent",
+        color: colors.purple,
+      },
+      {
+        id: "4",
+        label: "Major Dent",
+        value: "Major Dent",
+        color: colors.purple,
+      },
     ],
-    scratch: [
-      { id: "5", label: "Long", value: "Long", color: colors.purple },
-      { id: "6", label: "Short", value: "Short", color: colors.purple },
+    Scratch: [
+      {
+        id: "5",
+        label: "Minor Scratch",
+        value: "Minor Scratch",
+        color: colors.purple,
+      },
+      {
+        id: "6",
+        label: "Major Scratch",
+        value: "Major Scratch",
+        color: colors.purple,
+      },
     ],
   };
 
   useEffect(() => {
+    // Check if any problem is checked and has a selected value
     const isAnyProblemChecked = Object.values(problems).some(
       (problem) => problem.checked && problem.selectedValue
     );
-    setIsSaveDisabled(!isAnyProblemChecked && !selectedImage);
+
+    // The button will only be enabled if there's an image AND at least one problem is selected
+    setIsSaveDisabled(!(isAnyProblemChecked && selectedImage));
   }, [problems, selectedImage]);
 
   const handleProblemToggle = (problem) => {
@@ -124,9 +157,9 @@ const CarBodyModal = ({
 
   const resetFields = () => {
     setProblems({
-      color: { checked: false, selectedId: null, selectedValue: null },
-      dent: { checked: false, selectedId: null, selectedValue: null },
-      scratch: { checked: false, selectedId: null, selectedValue: null },
+      "Paint Marked": { checked: false, selectedId: null, selectedValue: null },
+      Dent: { checked: false, selectedId: null, selectedValue: null },
+      Scratch: { checked: false, selectedId: null, selectedValue: null },
     });
     setSelectedImage(null);
     setSelectedImageName(null);
@@ -151,10 +184,14 @@ const CarBodyModal = ({
           <View style={styles.FiltersInputs}>
             <View style={styles.Content}>
               <AppText fontSize={mainStyles.h2FontSize}>
-                Describe Problem
+                {activeProblem}
               </AppText>
-              <AppText fontSize={mainStyles.h3FontSize}>
-                Select the Problems in the Car Body
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                textAlign={"center"}
+                marginBottom={10}
+              >
+                Select the Problems in the Area.
               </AppText>
             </View>
           </View>
@@ -272,5 +309,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     flexDirection: "row",
     alignItems: "flex-start",
+    flexWrap: "wrap",
   },
 });

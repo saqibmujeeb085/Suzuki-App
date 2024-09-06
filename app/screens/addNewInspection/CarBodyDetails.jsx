@@ -5,13 +5,14 @@ import GradientButton from "../../components/buttons/GradientButton";
 import AppTextInput from "../../components/formFields/TextInput";
 import InspectionHeader from "../../components/header/InspectionHeader";
 import Dropdown from "../../components/formFields/Dropdown";
-import axios from "axios";
 import { InspecteCarContext } from "../../context/newInspectionContext";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { colors } from "../../constants/colors";
 import { FormDataContext } from "../../context/formDataContext";
 
-const CarBodyDetails = ({ navigation }) => {
+const CarBodyDetails = ({ navigation, route }) => {
+  const { id } = route.params || {};
+
   const [carData, setCarData] = useContext(InspecteCarContext);
 
   const [
@@ -35,9 +36,8 @@ const CarBodyDetails = ({ navigation }) => {
     setCitiesData,
   ] = useContext(FormDataContext);
 
-  console.log(fuelsData);
-
   const [allSelected, setAllSelected] = useState(false);
+  const [carInfo, setCarInfo] = useState(null);
 
   const [fuelType, setFuelType] = useState("");
   const [transmissionsType, setTransmissionsType] = useState("");
@@ -91,13 +91,6 @@ const CarBodyDetails = ({ navigation }) => {
     setRegistrationCity(selected);
   };
 
-  // useEffect(() => {
-  //   fetchFuelTypes();
-  //   fetchTransmissionsTypes();
-  //   fetchEngineCapacity();
-  //   fetchRegistrationCity();
-  // }, []);
-
   useEffect(() => {
     if (
       chasisNo !== "" &&
@@ -146,97 +139,58 @@ const CarBodyDetails = ({ navigation }) => {
     };
   }, []);
 
-  // const fetchFuelTypes = async () => {
-  //   const config = {
-  //     method: "get",
-  //     maxBodyLength: Infinity,
-  //     url: "/auth/get_fuelType.php",
-  //     headers: {},
-  //   };
+  useEffect(() => {
+    getCarDataByTempID(`${id}`);
+  }, []);
 
-  //   try {
-  //     const response = await axios.request(config);
+  const getCarDataByTempID = async (tempID) => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carformdata");
 
-  //     const FuelTypes = response.data;
-  //     setFuelData(
-  //       FuelTypes.map((object) => ({
-  //         key: object.did,
-  //         value: object.type,
-  //       }))
-  //     );
-  //   } catch (error) {
-  //     console.error("Error fetching FuelTypes:", error);
-  //   }
-  // };
+      if (storedData !== null) {
+        const carFormDataArray = JSON.parse(storedData);
+        const carData = carFormDataArray.find((item) => item.tempID == tempID);
+        if (carData) {
+          setCarInfo(carData);
+          return carData;
+        } else {
+          console.log("No data found with tempID:", tempID);
+          return null;
+        }
+      } else {
+        console.log("No car data found in AsyncStorage");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error retrieving car data:", error);
+      return null;
+    }
+  };
 
-  // const fetchTransmissionsTypes = async () => {
-  //   const config = {
-  //     method: "get",
-  //     maxBodyLength: Infinity,
-  //     url: "/auth/get_cartrans.php",
-  //     headers: {},
-  //   };
+  const getManufacturer = (manufacturerId) => {
+    if (manufacturersData) {
+      const m = manufacturersData.find((item) => item.key == manufacturerId);
+      return m ? m.value : "Unknown Manufacturer";
+    }
+  };
 
-  //   try {
-  //     const response = await axios.request(config);
+  const getCarModel = (carId, manufacturerId) => {
+    const models = modelsData[manufacturerId];
+    if (models) {
+      const model = models.find((item) => item.key == carId);
+      return model ? model.value : "Unknown Model";
+    }
+    return "Unknown Model";
+  };
 
-  //     const TransmissionsTypes = response.data;
-  //     setTransmissionData(
-  //       TransmissionsTypes.map((object) => ({
-  //         key: object.did,
-  //         value: object.type,
-  //       }))
-  //     );
-  //   } catch (error) {
-  //     console.error("Error fetching FuelTypes:", error);
-  //   }
-  // };
-
-  // const fetchEngineCapacity = async () => {
-  //   const config = {
-  //     method: "get",
-  //     maxBodyLength: Infinity,
-  //     url: "/auth/get_engdis.php",
-  //     headers: {},
-  //   };
-
-  //   try {
-  //     const response = await axios.request(config);
-
-  //     const EngineCapacity = response.data;
-  //     setCapacityData(
-  //       EngineCapacity.map((object) => ({
-  //         key: object.id,
-  //         value: object.displacement,
-  //       }))
-  //     );
-  //   } catch (error) {
-  //     console.error("Error fetching FuelTypes:", error);
-  //   }
-  // };
-
-  // const fetchRegistrationCity = async () => {
-  //   const config = {
-  //     method: "get",
-  //     maxBodyLength: Infinity,
-  //     url: "/auth/get_cities.php",
-  //     headers: {},
-  //   };
-
-  //   try {
-  //     const response = await axios.request(config);
-
-  //     const RegistrationCity = response.data;
-  //     setCitiesData(
-  //       RegistrationCity.map((object) => ({
-  //         key: object.id,
-  //         value: object.city,
-  //       }))
-  //     );
-  //   } catch (error) {
-  //     console.error("Error fetching FuelTypes:", error);
-  //   }
-  // };
+  const getCarVarient = (varientId, carId) => {
+    const v = varientsData[carId];
+    if (v) {
+      const varient = v.find((item) => item.key == varientId);
+      return varient ? varient.value : "Unknown Varient";
+    }
+    return "Unknown Model";
+  };
 
   const addCarDetails = () => {
     if (

@@ -18,21 +18,21 @@ const CarBody = ({ tempID }) => {
   const [disabledButtons, setDisabledButtons] = useState({});
 
   const problemAreas = [
-    { name: "Front Left Door", position: { top: 30, left: 135 } },
-    { name: "Front Left Fender", position: { top: 100, left: 100 } },
-    { name: "Front Right Fender", position: { top: 100, right: 110 } },
-    { name: "Hood", position: { top: 250, left: 135 } },
-    { name: "Rear Left Door", position: { top: 350, left: 100 } },
-    { name: "Rear Right Door", position: { top: 350, right: 110 } },
-    { name: "Trunk", position: { top: 410, left: 135 } },
-    { name: "Rear Left Fender", position: { top: 350, left: 50 } },
-    { name: "Rear Left Bumper", position: { top: 270, left: 30 } },
-    { name: "Left Rocker Panel", position: { top: 200, left: 30 } },
-    { name: "Front Left Bumper", position: { top: 140, left: 45 } },
-    { name: "Front Right Bumper", position: { top: 140, right: 52 } },
-    { name: "Right Rocker Panel", position: { top: 200, right: 45 } },
-    { name: "Rear Right Bumper", position: { top: 270, right: 45 } },
-    { name: "Rear Right Fender", position: { top: 350, right: 60 } },
+    { name: "Front Bumper", position: { top: 30, left: 135 } },
+    { name: "Bonnet Left Side", position: { top: 100, left: 100 } },
+    { name: "Bonnet Right Side", position: { top: 100, right: 110 } },
+    { name: "Roof", position: { top: 250, left: 135 } },
+    { name: "Tailgate Left Side", position: { top: 350, left: 100 } },
+    { name: "Tailgate Right Side", position: { top: 350, right: 110 } },
+    { name: "Rear Bumper", position: { top: 410, left: 135 } },
+    { name: "Back Left Fender", position: { top: 350, left: 50 } },
+    { name: "Back Left Door", position: { top: 270, left: 30 } },
+    { name: "Front Left Door", position: { top: 200, left: 30 } },
+    { name: "Front Left Fender", position: { top: 140, left: 45 } },
+    { name: "Front Right Fender", position: { top: 140, right: 52 } },
+    { name: "Front Right Door", position: { top: 200, right: 45 } },
+    { name: "Back Right Door", position: { top: 270, right: 45 } },
+    { name: "Back Right Fender", position: { top: 350, right: 60 } },
   ];
 
   const checkButtonStatus = async () => {

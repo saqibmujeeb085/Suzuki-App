@@ -229,6 +229,11 @@ const ViewReport = ({ navigation, route }) => {
   const ShowModal = useCallback(() => {
     setShow((prevShow) => !prevShow);
   }, []);
+
+  const editInfo = () => {
+    navigation.navigate("EditCarInfo", { id: `${id}` });
+  };
+
   return (
     <AppScreen>
       {show && (
@@ -270,6 +275,7 @@ const ViewReport = ({ navigation, route }) => {
                 padding: 10,
                 borderRadius: 5,
               }}
+              onPress={editInfo}
             >
               <Feather name="edit" size={20} color={colors.whiteBg} />
             </TouchableOpacity>
