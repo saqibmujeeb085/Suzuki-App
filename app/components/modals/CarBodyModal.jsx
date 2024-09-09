@@ -132,8 +132,6 @@ const CarBodyModal = ({
         : undefined,
     };
 
-    console.log("Data to Save: ", dataToSave);
-
     try {
       const storedData = await AsyncStorage.getItem("@carBodyQuestionsdata");
       const existingData = storedData ? JSON.parse(storedData) : [];

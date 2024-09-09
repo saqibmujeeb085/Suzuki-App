@@ -16,6 +16,8 @@ import UploadingProgress from "../screens/settingsPages/UploadingProcess";
 import Customerform from "../screens/carSelling/Customerform";
 import ViewReport from "../screens/updateCarData/ViewReport";
 import EditCarInfo from "../screens/updateCarData/EditCarInfo";
+import EditProblems from "../screens/updateCarData/EditProblems";
+import EditIndicatorsRating from "../screens/updateCarData/EditIndicatorsRating";
 
 const FeedNavigation = () => {
   const authContext = useContext(AuthContext);
@@ -85,6 +87,11 @@ const FeedNavigation = () => {
           <Stack.Screen name="CustomerForm" component={Customerform} />
           <Stack.Screen name="ViewReport" component={ViewReport} />
           <Stack.Screen name="EditCarInfo" component={EditCarInfo} />
+          <Stack.Screen name="EditProblems" component={EditProblems} />
+          <Stack.Screen
+            name="EditIndicatorsRating"
+            component={EditIndicatorsRating}
+          />
         </>
       ) : (
         <Stack.Screen name="Auth" component={AuthNavigator} />

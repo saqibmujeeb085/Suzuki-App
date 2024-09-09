@@ -14,6 +14,7 @@ const Dropdown = ({
   selectedItem,
   Search = false,
   onChange,
+  defaultOption = { key: "", value: DropItems },
 }) => {
   const [selected, setSelected] = useState("");
   const [key, setKey] = useState(Date.now()); // Unique key for rerender
@@ -71,7 +72,7 @@ const Dropdown = ({
           data={Data}
           save={save}
           search={Search}
-          defaultOption={{ key: "", value: DropItems }} // Ensure the placeholder is reset
+          defaultOption={defaultOption} // Ensure the placeholder is reset
           value={selected}
         />
         {selected && (

@@ -47,6 +47,7 @@ const ViewReport = ({ navigation, route }) => {
   const [carBodyProblems, setCarBodyProblems] = useState(null);
   const [carIndicatorsRating, setCarIndicatorsRating] = useState(null);
 
+  // This useFocusEffect ensures the data reloads every time the screen comes into focus
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -57,18 +58,17 @@ const ViewReport = ({ navigation, route }) => {
       // Add event listener for the hardware back button
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
+      // Fetch all car data, car body problems, and car indicator ratings when the screen comes into focus
+      getCarDataByTempID(`${id}`);
+      getCarProblemsDataByTempID(`${id}`);
+      getCarIndicatorsRating(`${id}`);
+
       return () => {
         // Clean up the event listener
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
       };
     }, [ShowModal]) // Add ShowModal as a dependency
   );
-
-  useEffect(() => {
-    getCarDataByTempID(`${id}`);
-    getCarProblemsDataByTempID(`${id}`);
-    getCarIndicatorsRating(`${id}`);
-  }, []);
 
   const getCarDataByTempID = async (tempID) => {
     try {
@@ -232,6 +232,14 @@ const ViewReport = ({ navigation, route }) => {
 
   const editInfo = () => {
     navigation.navigate("EditCarInfo", { id: `${id}` });
+  };
+
+  const editProblems = (location) => {
+    navigation.navigate("EditProblems", { id: `${id}`, location: location });
+  };
+
+  const editIndicator = () => {
+    navigation.navigate("EditIndicatorsRating");
   };
 
   return (
@@ -570,6 +578,7 @@ const ViewReport = ({ navigation, route }) => {
                         padding: 10,
                         borderRadius: 5,
                       }}
+                      onPress={() => editProblems(item.problemLocation)}
                     >
                       <Feather name="edit" size={20} color={colors.purple} />
                     </TouchableOpacity>
@@ -690,6 +699,7 @@ const ViewReport = ({ navigation, route }) => {
                                 padding: 10,
                                 borderRadius: 5,
                               }}
+                              onPress={editIndicator}
                             >
                               <Feather
                                 name="edit"
@@ -747,63 +757,6 @@ const ViewReport = ({ navigation, route }) => {
                       ))}
                     </View>
                   ))}
-                  {/* <View style={styles.headingContainer}>
-                      <AppText
-                        fontSize={mainStyles.h2FontSize}
-                        fontFamily={mainStyles.appFontBold}
-                      >
-                        {item.IndID}. {item.IndQuestion}
-                      </AppText>
-                      <TouchableOpacity
-                        style={{
-                          padding: 10,
-                          borderRadius: 5,
-                        }}
-                      >
-                        <Feather name="edit" size={20} color={colors.purple} />
-                      </TouchableOpacity>
-                    </View>
-                    <View>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          gap: 10,
-                          padding: 5,
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <AppText>Value</AppText>
-                        <AppText>{item.value}</AppText>
-                      </View>
-
-                      {item.point && (
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            gap: 10,
-                            padding: 5,
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <AppText>Problem</AppText>
-                          <AppText>{item.point}</AppText>
-                        </View>
-                      )}
-
-                      {item.reason && (
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            gap: 10,
-                            padding: 5,
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <AppText>Problem</AppText>
-                          <AppText>{item.reason}</AppText>
-                        </View>
-                      )}
-                    </View> */}
                 </View>
               ))}
           </View>
