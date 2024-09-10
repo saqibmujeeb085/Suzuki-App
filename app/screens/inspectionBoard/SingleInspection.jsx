@@ -46,6 +46,7 @@ const SingleInspection = ({ navigation, route }) => {
         subCat.subCatData.map((question) => ({
           QtempID: `${tempID}`,
           carID: "",
+          type: question.type,
           catID: catid,
           catName: `${catName}`,
           subCatName: subCat.subCatName, // Add subCatName here
@@ -137,6 +138,7 @@ const SingleInspection = ({ navigation, route }) => {
       QtempID: item.QtempID,
       carID: item.carID,
       catID: item.catID,
+      type: item.type,
       catName: item.catName,
       subCatName: item.subCatName,
       IndID: item.IndID,

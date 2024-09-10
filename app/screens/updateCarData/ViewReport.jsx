@@ -147,6 +147,7 @@ const ViewReport = ({ navigation, route }) => {
 
           if (!category) {
             category = {
+              QtempID: `${tempID}`,
               mainCat: catName,
               mainCatData: [],
             };
@@ -238,9 +239,16 @@ const ViewReport = ({ navigation, route }) => {
     navigation.navigate("EditProblems", { id: `${id}`, location: location });
   };
 
-  const editIndicator = () => {
-    navigation.navigate("EditIndicatorsRating");
+  const editIndicator = (id, mainCat, subCatName, indQuestion) => {
+    navigation.navigate("EditIndicatorsRating", {
+      id: id,
+      mainCat: mainCat,
+      subCatName: subCatName,
+      indQuestion: indQuestion,
+    });
   };
+
+  console.log(carIndicatorsRating);
 
   return (
     <AppScreen>
@@ -699,7 +707,16 @@ const ViewReport = ({ navigation, route }) => {
                                 padding: 10,
                                 borderRadius: 5,
                               }}
-                              onPress={editIndicator}
+                              onPress={() =>
+                                editIndicator(
+                                  item.QtempID,
+                                  item.mainCat,
+                                  subItem.subCatName,
+                                  i.IndQuestion,
+                                  i.point,
+                                  i.reason
+                                )
+                              }
                             >
                               <Feather
                                 name="edit"
