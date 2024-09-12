@@ -89,9 +89,8 @@ const SingleCarInfo = ({ route, navigation }) => {
   }
 
   const saleToCustomer = () => {
-    navigation.navigate("CustomerForm");
+    navigation.navigate("CustomerForm", { carId: `${id}` });
   };
-
   return (
     <AppScreen>
       <InspectionHeader onPress={() => navigation.goBack()}>

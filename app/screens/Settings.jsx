@@ -12,6 +12,7 @@ import { mainStyles } from "../constants/style";
 import { colors } from "../constants/colors";
 import InspectionHeader from "../components/header/InspectionHeader";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 const Settings = ({ navigation }) => {
   return (
@@ -33,6 +34,22 @@ const Settings = ({ navigation }) => {
                 color={colors.purple}
               />
               <AppText>Uploading Inspections</AppText>
+            </View>
+            <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btn}
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate("CustomersProfile")}
+          >
+            <View style={styles.btnDesign}>
+              <FontAwesome5
+                name="address-card"
+                size={30}
+                color={colors.purple}
+              />
+
+              <AppText>Customers Profile</AppText>
             </View>
             <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
           </TouchableOpacity>

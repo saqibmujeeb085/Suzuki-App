@@ -40,14 +40,13 @@ const TextCard = ({
     setTyreSize(formattedValue);
     onValueChange(formattedValue); // Call the parent function with the formatted value
   };
-
   return (
     <View style={styles.inspectionBox}>
       <AppText
         fontSize={mainStyles.h1FontSize}
         color={colors.fontBlack}
         fontFamily={mainStyles.appFontBold}
-        flex={1}
+        zIndex={999}
       >
         {num}. {indicator}
       </AppText>
@@ -90,6 +89,5 @@ const styles = StyleSheet.create({
     minHeight: 10,
     padding: 20,
     gap: 20,
-    flex: 1,
   },
 });

@@ -18,9 +18,9 @@ const EditIndicatorsRating = ({ navigation, route }) => {
   const [questionData, setQuestionData] = useState(null);
   const [originalValue, setOriginalValue] = useState(""); // Lock the original value for display
 
-  console.log("Question Data:", questionData);
+  console.log(question);
 
-  // Load initial question data
+  // Fetch question data
   useEffect(() => {
     if (id && mainCat && subCatName && indQuestion) {
       getSingleQuestion(id, mainCat, subCatName, indQuestion);
@@ -29,7 +29,6 @@ const EditIndicatorsRating = ({ navigation, route }) => {
     }
   }, [id, mainCat, subCatName, indQuestion]);
 
-  // Sync `questionData` with `question` after question is set
   useEffect(() => {
     if (question && question.catID) {
       getQuestion(question.catID, subCatName, indQuestion);
@@ -44,7 +43,6 @@ const EditIndicatorsRating = ({ navigation, route }) => {
   ) => {
     try {
       const storedData = await AsyncStorage.getItem("@carQuestionsdata");
-
       if (storedData !== null) {
         const carFormDataArray = JSON.parse(storedData);
 
@@ -57,7 +55,7 @@ const EditIndicatorsRating = ({ navigation, route }) => {
         );
 
         if (carData) {
-          setQuestion(carData); // Update `question`
+          setQuestion(carData);
           setOriginalValue(carData?.value);
           return carData;
         } else {
@@ -89,7 +87,7 @@ const EditIndicatorsRating = ({ navigation, route }) => {
       );
 
       if (questionData) {
-        setQuestionData(questionData); // Set `questionData`
+        setQuestionData(questionData);
         return questionData;
       } else {
         console.log("Question not found");
@@ -101,11 +99,50 @@ const EditIndicatorsRating = ({ navigation, route }) => {
     }
   };
 
-  // Function to handle Save
+  const handleImageSelected = (id, imageUri) => {
+    setQuestion((prevQuestion) =>
+      prevQuestion.IndID === id
+        ? {
+            ...prevQuestion,
+            image: {
+              ...prevQuestion.image,
+              uri: imageUri,
+            },
+          }
+        : prevQuestion
+    );
+  };
+
+  const handleImageNameSelected = (id, imageName) => {
+    setQuestion((prevQuestion) =>
+      prevQuestion.IndID === id
+        ? {
+            ...prevQuestion,
+            image: {
+              ...prevQuestion.image,
+              name: imageName,
+            },
+          }
+        : prevQuestion
+    );
+  };
+
+  const handleRemoveImage = (id) => {
+    setQuestion((prevQuestion) =>
+      prevQuestion.IndID === id
+        ? {
+            ...prevQuestion,
+            image: {
+              uri: null,
+              name: null,
+            },
+          }
+        : prevQuestion
+    );
+  };
+
   const handleSave = async () => {
     try {
-      console.log("Before saving, question data is:", question); // Debugging line
-
       const storedData = await AsyncStorage.getItem("@carQuestionsdata");
       if (storedData !== null) {
         const carFormDataArray = JSON.parse(storedData);
@@ -118,16 +155,33 @@ const EditIndicatorsRating = ({ navigation, route }) => {
             item.subCatName === subCatName &&
             item.IndQuestion === indQuestion
           ) {
-            return {
+            const updatedItem = {
               ...item,
               value: question.value, // Save the selected value
               reason:
-                question.value != "No Error" && question.value != "No Noise"
+                question.value !== "No Error" && question.value !== "No Noise"
                   ? question.reason
-                  : "" || "", // Save the reason if available
-              point:
-                question.value != "Not Present" ? question.point : "" || "", // Save points if available
+                  : "", // Save the reason if available
+              point: question.value !== "Not Present" ? question.point : "", // Save points if available
             };
+
+            // Set image as an empty string if the value is "Perfect"
+            if (
+              question.value == "Perfect" ||
+              question.value == "ok" ||
+              question.value == "No Error"
+            ) {
+              updatedItem.image = ""; // Set image to an empty string
+            } else if (question.image && question.image.uri) {
+              // Otherwise, retain the image data
+              updatedItem.image = {
+                uri: question.image.uri || "",
+                name: question.image.name || "",
+                type: question.image.type || "image/jpeg", // Ensure to use correct image type if available
+              };
+            }
+
+            return updatedItem;
           }
           return item;
         });
@@ -138,10 +192,6 @@ const EditIndicatorsRating = ({ navigation, route }) => {
           JSON.stringify(updatedFormDataArray)
         );
         console.log("Data successfully saved!");
-
-        // Reading data back for confirmation
-        const newStoredData = await AsyncStorage.getItem("@carQuestionsdata");
-        console.log("After saving, stored data is:", JSON.parse(newStoredData));
 
         navigation.navigate("ViewReport", {
           id: `${id}`,
@@ -164,6 +214,7 @@ const EditIndicatorsRating = ({ navigation, route }) => {
           padding: 10,
           elevation: 2,
           borderRadius: 5,
+          minHeight: 200,
         }}
       >
         <View
@@ -175,7 +226,7 @@ const EditIndicatorsRating = ({ navigation, route }) => {
         >
           <AppText fontSize={mainStyles.h2FontSize}>
             Previous {questionData?.type === "r" ? "Rating" : "Value"} is "
-            {originalValue}" {/* Display the original value */}
+            {originalValue}"
           </AppText>
         </View>
         {questionData?.type === "b" && (
@@ -183,9 +234,9 @@ const EditIndicatorsRating = ({ navigation, route }) => {
             key={questionData.id}
             indicator={questionData.question}
             options={questionData.options}
-            img={false}
+            img={questionData.imgCondition ? true : false}
             condition={questionData.condition}
-            imgCondition={false}
+            imgCondition={questionData.imgCondition}
             textCondition={questionData.textCondition}
             pointsCondition={questionData.pointsCondition}
             points={questionData.points}
@@ -200,9 +251,11 @@ const EditIndicatorsRating = ({ navigation, route }) => {
             onReasonValueChange={(reason) => {
               setQuestion((prev) => ({ ...prev, reason }));
             }}
+            onImageSelected={handleImageSelected}
+            onSelectedImageName={handleImageNameSelected}
+            onRemoveImage={handleRemoveImage}
           />
         )}
-
         {questionData?.type === "r" && (
           <RangeCard
             key={questionData.id}
@@ -216,7 +269,6 @@ const EditIndicatorsRating = ({ navigation, route }) => {
             questionId={questionData.id}
           />
         )}
-
         {questionData?.type === "t" && (
           <TextCard
             key={questionData.id}

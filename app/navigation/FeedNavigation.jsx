@@ -18,6 +18,7 @@ import ViewReport from "../screens/updateCarData/ViewReport";
 import EditCarInfo from "../screens/updateCarData/EditCarInfo";
 import EditProblems from "../screens/updateCarData/EditProblems";
 import EditIndicatorsRating from "../screens/updateCarData/EditIndicatorsRating";
+import CustomersProfile from "../screens/settingsPages/CustomersProfile";
 
 const FeedNavigation = () => {
   const authContext = useContext(AuthContext);
@@ -84,6 +85,7 @@ const FeedNavigation = () => {
           <Stack.Screen name="SingleInspection" component={SingleInspection} />
           <Stack.Screen name="SettingsPage" component={SettingsNavigation} />
           <Stack.Screen name="UploadProgress" component={UploadingProgress} />
+          <Stack.Screen name="CustomersProfile" component={CustomersProfile} />
           <Stack.Screen name="CustomerForm" component={Customerform} />
           <Stack.Screen name="ViewReport" component={ViewReport} />
           <Stack.Screen name="EditCarInfo" component={EditCarInfo} />

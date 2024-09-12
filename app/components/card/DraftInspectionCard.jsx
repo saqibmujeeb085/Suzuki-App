@@ -68,7 +68,7 @@ const DraftInspectionCard = ({
           <MaterialCommunityIcons
             name={"eye-outline"}
             size={25}
-            color={colors.blueColor}
+            color={colors.purple}
           />
         </TouchableOpacity>
       </View>
