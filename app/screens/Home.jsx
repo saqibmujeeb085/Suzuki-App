@@ -55,13 +55,13 @@ const Home = ({ navigation }) => {
     const config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `/auth/get_carinfos.php?duserId=${userData.user.duserid}`,
+      url: `auth/get_carinspectionbasicInfo.php?startRecord=1&endRecord=10&duser_id=${userData.user.duserid}`,
       headers: {},
     };
 
     try {
       const response = await axios.request(config);
-      setInspectedCar(response.data.slice(0, 10));
+      setInspectedCar(response.data);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching inspected car data:", error);
@@ -197,16 +197,16 @@ const Home = ({ navigation }) => {
                 style={{ marginTop: 20, marginBottom: 190 }}
                 data={inspectedCar}
                 extraData={inspectedCar}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.inpsectionid.toString()}
                 renderItem={({ item }) => (
                   <InspectionCard
-                    carId={item?.id}
-                    car={item?.car}
+                    carId={item?.inpsectionid}
+                    car={item?.carName}
                     varient={item?.varientId}
                     mileage={item?.mileage}
-                    date={item?.inspectionDate}
-                    carImage={item?.images[0]?.path}
-                    rank={item?.rank}
+                    date={item?.inspection_date}
+                    carImage={item?.carimage}
+                    rank={item?.rating}
                     onPress={() =>
                       navigation.navigate("SingleCar", { id: item?.id })
                     }

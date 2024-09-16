@@ -15,9 +15,9 @@ const InspectionCard = ({
   onPress,
 }) => {
   const getColorByRank = (rank) => {
-    if (rank <= 5.9) return colors.red;
-    if (rank <= 7.9) return colors.yellow;
-    if (rank <= 8.9) return colors.blue;
+    if (rank <= 1.9) return colors.red;
+    if (rank <= 2.9) return colors.yellow;
+    if (rank <= 3.9) return colors.blue;
     return colors.green;
   };
 
@@ -26,7 +26,7 @@ const InspectionCard = ({
       <TouchableOpacity onPress={onPress} style={styles.Container}>
         <View style={styles.inspectionDestailsContainer}>
           <Image
-            source={{ uri: `${process.env.IMAGE_URL}/${carImage}` }}
+            source={{ uri: `${process.env.IMAGE_URL}${carImage}` }}
             style={styles.image}
           />
           <View style={styles.contentContainer}>
@@ -62,12 +62,12 @@ const InspectionCard = ({
           <AnimatedCircularProgress
             size={65}
             width={9}
-            fill={rank * 10} // This should be a number
+            fill={rank * 20} // This should be a number
             tintColor={getColorByRank(rank)}
             backgroundColor={colors.ligtGreyBg} // Call the function with rank
             duration={1000}
           >
-            {() => <AppText fontSize={mainStyles.RatingFont}>{rank}</AppText>}
+            {() => <AppText fontSize={mainStyles.RatingFont}>{rank}/5</AppText>}
           </AnimatedCircularProgress>
         </View>
       </TouchableOpacity>
