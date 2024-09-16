@@ -14,7 +14,6 @@ import {
 } from "@expo-google-fonts/poppins";
 import { LoginDataProvider } from "./app/context/loginDataContext";
 import { FormDataProvider } from "./app/context/formDataContext";
-import { QuesAndAnsProvider } from "./app/context/questionAndCategories";
 import { DataPostProvider } from "./app/context/dataPostContext";
 
 SplashScreen.preventAutoHideAsync();
@@ -50,21 +49,19 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <QuesAndAnsProvider>
-        <DataPostProvider>
-          <LoginDataProvider>
-            <FormDataProvider>
-              <NavigationContainer onLayout={onLayoutRootView}>
-                <SafeAreaProvider>
-                  <InspecteCarProvider>
-                    <FeedNavigation />
-                  </InspecteCarProvider>
-                </SafeAreaProvider>
-              </NavigationContainer>
-            </FormDataProvider>
-          </LoginDataProvider>
-        </DataPostProvider>
-      </QuesAndAnsProvider>
+      <DataPostProvider>
+        <LoginDataProvider>
+          <FormDataProvider>
+            <NavigationContainer onLayout={onLayoutRootView}>
+              <SafeAreaProvider>
+                <InspecteCarProvider>
+                  <FeedNavigation />
+                </InspecteCarProvider>
+              </SafeAreaProvider>
+            </NavigationContainer>
+          </FormDataProvider>
+        </LoginDataProvider>
+      </DataPostProvider>
     </AuthProvider>
   );
 }

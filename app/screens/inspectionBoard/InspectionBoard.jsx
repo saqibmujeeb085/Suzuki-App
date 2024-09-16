@@ -14,14 +14,12 @@ import IconButton from "../../components/buttons/IconButton";
 import GradientButton from "../../components/buttons/GradientButton";
 import ProcessModal from "../../components/modals/ProcessModal";
 import InspectionBoardCard from "../../components/card/InspectionBoardCard";
-import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import InspectionSkeletonPreloader from "../../components/skeletonLoader/InspectionSkeletonPreloader";
 import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
 import InspectionHeader from "../../components/header/InspectionHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { QuesAndAnsContext } from "../../context/questionAndCategories";
 import { FormDataContext } from "../../context/formDataContext";
 import { categories } from "../../data/categoriesdata";
 
@@ -55,8 +53,6 @@ const InspectionBoard = ({ navigation, route }) => {
   const [allInspectionsDone, setAllInspectionsDone] = useState(false);
   const [loading, setLoading] = useState(true); // Initialize loading to true
   const [carInfo, setCarInfo] = useState(null);
-  const [setCategories, questions, setQuestions] =
-    useContext(QuesAndAnsContext);
 
   useEffect(() => {}, []);
 

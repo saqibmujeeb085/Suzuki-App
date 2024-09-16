@@ -208,7 +208,9 @@ const Home = ({ navigation }) => {
                     carImage={item?.carimage}
                     rank={item?.rating}
                     onPress={() =>
-                      navigation.navigate("SingleCar", { id: item?.id })
+                      navigation.navigate("SingleCar", {
+                        id: item?.inpsectionid,
+                      })
                     }
                   />
                 )}

@@ -44,12 +44,12 @@ const CarImagesCarousel = ({ images }) => {
           renderItem={({ item }) => (
             <View style={styles.imageContainer}>
               <Image
-                source={{ uri: `${process.env.IMAGE_URL}/${item.path}` }}
+                source={{ uri: `${process.env.IMAGE_URL}/${item.image_uri}` }}
                 style={styles.carouselImage}
               />
             </View>
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => index}
           onViewableItemsChanged={onViewRef.current}
           viewabilityConfig={viewConfigRef.current}
         />
@@ -57,12 +57,9 @@ const CarImagesCarousel = ({ images }) => {
       {/* {images.length > 1 && ( */}
       <ScrollView horizontal contentContainerStyle={styles.thumbnailContainer}>
         {images.map((image, index) => (
-          <TouchableOpacity
-            key={image.id}
-            onPress={() => onThumbnailPress(index)}
-          >
+          <TouchableOpacity key={index} onPress={() => onThumbnailPress(index)}>
             <Image
-              source={{ uri: `${process.env.IMAGE_URL}/${image.path}` }}
+              source={{ uri: `${process.env.IMAGE_URL}/${image.image_uri}` }}
               style={[
                 styles.thumbnail,
                 index === currentIndex && styles.activeThumbnail,

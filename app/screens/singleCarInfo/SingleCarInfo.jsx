@@ -22,12 +22,11 @@ import GradientButton from "../../components/buttons/GradientButton";
 const SingleCarInfo = ({ route, navigation }) => {
   const { id } = route.params || {};
 
-  console.log(id);
-
   const [carInfo, setCarInfo] = useState(null);
-  const [carRatingInfo, setCarRatingInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  console.log(carInfo);
 
   useEffect(() => {
     if (!id) {
@@ -37,14 +36,13 @@ const SingleCarInfo = ({ route, navigation }) => {
     }
 
     fetchCarData();
-    fetchCarRatingData();
   }, [id]);
 
   const fetchCarData = async () => {
     const config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `/auth/get_singlecarinfos.php?id=${id}`,
+      url: `/auth/get_carinspectionsnew.php?id=${id}`,
       headers: {},
     };
 
@@ -55,25 +53,7 @@ const SingleCarInfo = ({ route, navigation }) => {
       setError(error);
       setLoading(false);
     }
-  };
-
-  const fetchCarRatingData = async () => {
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `/auth/get_singlecarratinginfos.php?id=${id}`,
-      headers: {},
-    };
-
-    try {
-      const response = await axios.request(config);
-      setCarRatingInfo(response.data);
-      console.log(carRatingInfo);
-      setLoading(false);
-    } catch (error) {
-      setError(error);
-      setLoading(false);
-    }
+    setLoading(false);
   };
 
   if (loading) {
@@ -128,7 +108,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo?.inspectionDate}
+                {carInfo?.inspection_date}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
@@ -148,7 +128,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo?.car}
+                {carInfo?.carName}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
@@ -208,7 +188,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo?.registrationNo}
+                {carInfo?.registration_no}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
@@ -228,7 +208,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo?.chasisNo}
+                {carInfo?.chasis_no}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
@@ -248,7 +228,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo?.mfgId}
+                {carInfo?.manufacturer_name}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
@@ -288,7 +268,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo?.NoOfOwners}
+                {carInfo?.no_of_owners}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
@@ -308,7 +288,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo?.transmissionType}
+                {carInfo?.transmission_type}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
@@ -348,7 +328,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 maxWidth={120}
                 textAlign={"right"}
               >
-                {carInfo?.registrationCity}
+                {carInfo?.registration_city}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
@@ -374,7 +354,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                   width: 200,
                 }}
               >
-                {carInfo?.FuelType}
+                {carInfo?.fuel_type}
               </AppText>
             </View>
             <View style={styles.infoContainer}>
@@ -397,7 +377,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 {carInfo?.color}
               </AppText>
             </View>
-            <View style={styles.infoContainer}>
+            {/* <View style={styles.infoContainer}>
               <AppText
                 minWidth={120}
                 maxWidth={120}
@@ -416,9 +396,9 @@ const SingleCarInfo = ({ route, navigation }) => {
               >
                 {carInfo?.rank}
               </AppText>
-            </View>
+            </View> */}
           </View>
-          <View style={styles.contentBox}>
+          {/* <View style={styles.contentBox}>
             <AppText textAlign={"center"} fontSize={mainStyles.h1FontSize}>
               Inspection Rating Report
             </AppText>
@@ -429,7 +409,7 @@ const SingleCarInfo = ({ route, navigation }) => {
               category={item?.category}
               indicators={item?.indicators}
             />
-          ))}
+          ))} */}
         </View>
       </ScrollView>
     </AppScreen>
