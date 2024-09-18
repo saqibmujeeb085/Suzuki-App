@@ -210,6 +210,7 @@ const Home = ({ navigation }) => {
                     onPress={() =>
                       navigation.navigate("SingleCar", {
                         id: item?.inpsectionid,
+                        rating: item?.rating,
                       })
                     }
                   />

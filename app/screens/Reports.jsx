@@ -177,110 +177,111 @@ const Reports = ({ navigation }) => {
     searchQuery.trim().length > 0 ? searchResults : inspectedCar;
 
   return (
-    <AppScreen>
-      {show && (
-        <FilterModal show={show} setShow={setShow} onFilter={onFilter} />
-      )}
-      {/* <View style={styles.reportSearchBox}>
-        <AppText textAlign={"center"} fontSize={12} color={"#1d1d1d"}>
-          Inspection Reports
-        </AppText>
-      </View> */}
-      <InspectionHeader backIcon={false} borderBottom={true}>
-        Inspection Reports
-      </InspectionHeader>
-      <View style={styles.reportSearchBox}>
-        <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      </View>
+    <AppText>hello world</AppText>
+    // <AppScreen>
+    //   {show && (
+    //     <FilterModal show={show} setShow={setShow} onFilter={onFilter} />
+    //   )}
+    //   {/* <View style={styles.reportSearchBox}>
+    //     <AppText textAlign={"center"} fontSize={12} color={"#1d1d1d"}>
+    //       Inspection Reports
+    //     </AppText>
+    //   </View> */}
+    //   <InspectionHeader backIcon={false} borderBottom={true}>
+    //     Inspection Reports
+    //   </InspectionHeader>
+    //   <View style={styles.reportSearchBox}>
+    //     <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+    //   </View>
 
-      <View style={styles.filterChips}>
-        {selectedFilters.map((filter) => (
-          <TouchableOpacity
-            key={filter.key}
-            style={styles.filterChip}
-            onPress={() => clearFilter(filter.key)}
-          >
-            <AppText>{`${filter.value}`}</AppText>
-            <MaterialCommunityIcons name="close" size={14} />
-          </TouchableOpacity>
-        ))}
-      </View>
-      {isConnected ? (
-        <View style={styles.searchDataContainer}>
-          <View style={styles.headingAndButton}>
-            <AppText fontSize={12} color={"#323232"}>
-              {searchQuery.trim().length > 0 ? "Search Result" : "All Reports"}
-            </AppText>
-            <IconButton
-              icon={"filter-outline"}
-              color={"#323232"}
-              fontSize={12}
-              onPress={ShowModal}
-            >
-              Filter
-            </IconButton>
-          </View>
+    //   <View style={styles.filterChips}>
+    //     {selectedFilters.map((filter) => (
+    //       <TouchableOpacity
+    //         key={filter.key}
+    //         style={styles.filterChip}
+    //         onPress={() => clearFilter(filter.key)}
+    //       >
+    //         <AppText>{`${filter.value}`}</AppText>
+    //         <MaterialCommunityIcons name="close" size={14} />
+    //       </TouchableOpacity>
+    //     ))}
+    //   </View>
+    //   {isConnected ? (
+    //     <View style={styles.searchDataContainer}>
+    //       <View style={styles.headingAndButton}>
+    //         <AppText fontSize={12} color={"#323232"}>
+    //           {searchQuery.trim().length > 0 ? "Search Result" : "All Reports"}
+    //         </AppText>
+    //         <IconButton
+    //           icon={"filter-outline"}
+    //           color={"#323232"}
+    //           fontSize={12}
+    //           onPress={ShowModal}
+    //         >
+    //           Filter
+    //         </IconButton>
+    //       </View>
 
-          {loading ? (
-            <FlatList
-              data={Array(10).fill(0)}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={() => <SkeletonLoader />}
-              contentContainerStyle={{
-                paddingBottom: 30,
-              }}
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              style={{ marginTop: 20, marginBottom: 170 }}
-            />
-          ) : dataToDisplay.length === 0 && Object.keys(filters).length > 0 ? (
-            <View style={styles.noDataContainer}>
-              <AppText>No Data Found With This Filter</AppText>
-            </View>
-          ) : (
-            <FlatList
-              contentContainerStyle={{
-                paddingBottom: 30,
-              }}
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              style={{ marginTop: 20, marginBottom: 180 }}
-              data={dataToDisplay}
-              extraData={dataToDisplay}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <InspectionCard
-                  carId={item?.id}
-                  car={item?.car}
-                  varient={item?.varientId}
-                  mileage={item?.mileage}
-                  date={item?.inspectionDate}
-                  carImage={item?.images[0]?.path}
-                  rank={item?.rank}
-                  onPress={() =>
-                    navigation.navigate("SingleCar", { id: item?.id })
-                  }
-                />
-              )}
-              refreshing={refreshing}
-              onRefresh={inspectedCarsData}
-            />
-          )}
-        </View>
-      ) : (
-        <View
-          style={{
-            height: 400,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <AppText maxWidth={350}>
-            You Don't Have Internet Connection To See Data.
-          </AppText>
-        </View>
-      )}
-    </AppScreen>
+    //       {loading ? (
+    //         <FlatList
+    //           data={Array(10).fill(0)}
+    //           keyExtractor={(item, index) => index.toString()}
+    //           renderItem={() => <SkeletonLoader />}
+    //           contentContainerStyle={{
+    //             paddingBottom: 30,
+    //           }}
+    //           showsVerticalScrollIndicator={false}
+    //           showsHorizontalScrollIndicator={false}
+    //           style={{ marginTop: 20, marginBottom: 170 }}
+    //         />
+    //       ) : dataToDisplay.length === 0 && Object.keys(filters).length > 0 ? (
+    //         <View style={styles.noDataContainer}>
+    //           <AppText>No Data Found With This Filter</AppText>
+    //         </View>
+    //       ) : (
+    //         <FlatList
+    //           contentContainerStyle={{
+    //             paddingBottom: 30,
+    //           }}
+    //           showsVerticalScrollIndicator={false}
+    //           showsHorizontalScrollIndicator={false}
+    //           style={{ marginTop: 20, marginBottom: 180 }}
+    //           data={dataToDisplay}
+    //           extraData={dataToDisplay}
+    //           keyExtractor={(item) => item.id.toString()}
+    //           renderItem={({ item }) => (
+    //             <InspectionCard
+    //               carId={item?.id}
+    //               car={item?.car}
+    //               varient={item?.varientId}
+    //               mileage={item?.mileage}
+    //               date={item?.inspectionDate}
+    //               carImage={item?.images[0]?.path}
+    //               rank={item?.rank}
+    //               onPress={() =>
+    //                 navigation.navigate("SingleCar", { id: item?.id })
+    //               }
+    //             />
+    //           )}
+    //           refreshing={refreshing}
+    //           onRefresh={inspectedCarsData}
+    //         />
+    //       )}
+    //     </View>
+    //   ) : (
+    //     <View
+    //       style={{
+    //         height: 400,
+    //         justifyContent: "center",
+    //         alignItems: "center",
+    //       }}
+    //     >
+    //       <AppText maxWidth={350}>
+    //         You Don't Have Internet Connection To See Data.
+    //       </AppText>
+    //     </View>
+    //   )}
+    // </AppScreen>
   );
 };
 

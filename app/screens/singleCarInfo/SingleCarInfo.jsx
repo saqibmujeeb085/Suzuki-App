@@ -1,12 +1,12 @@
 import {
   StyleSheet,
   View,
-  ActivityIndicator,
+  Modal,
   Image,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import AppScreen from "../../components/screen/Screen";
 import AppText from "../../components/text/Text";
@@ -15,18 +15,34 @@ import InspectionHeader from "../../components/header/InspectionHeader";
 import { colors } from "../../constants/colors";
 import CarInfoSkeletonPreloader from "../../components/skeletonLoader/CarInfoSkeletonPreloader";
 import CarImagesCarousel from "../../components/carousel/CarImagesCarousel";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import InspectionRatingCard from "../../components/card/InspectionRatingCard";
-import GradientButton from "../../components/buttons/GradientButton";
+import { AuthContext } from "../../context/authContext";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import {
+  Feather,
+  FontAwesome5,
+  FontAwesome6,
+  MaterialCommunityIcons,
+  Octicons,
+} from "@expo/vector-icons";
+import CarBodyView from "../../components/carBody/CarBodyView";
+import { LinearGradient } from "expo-linear-gradient";
 
 const SingleCarInfo = ({ route, navigation }) => {
-  const { id } = route.params || {};
+  const { id, rating } = route.params || {};
+  const [userData, setUserData] = useContext(AuthContext);
 
   const [carInfo, setCarInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedSections, setExpandedSections] = useState({});
+  const [bodyOpen, setBodyOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [buttonOpen, setButtonOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  console.log(carInfo);
+  // console.log(carInfo);
 
   useEffect(() => {
     if (!id) {
@@ -36,6 +52,14 @@ const SingleCarInfo = ({ route, navigation }) => {
     }
 
     fetchCarData();
+    // Object.keys(carInfo.grouped_problems).forEach((key) => {
+    //   console.log(`Key: ${key}`);
+    //   console.log("Objects:");
+
+    //   carInfo.grouped_problems[key].forEach((item, index) => {
+    //     console.log(`  Object ${index + 1}:`, item); // Prints each object in the array
+    //   });
+    // });
   }, [id]);
 
   const fetchCarData = async () => {
@@ -68,350 +92,935 @@ const SingleCarInfo = ({ route, navigation }) => {
     );
   }
 
+  const getColorByRank = (rank) => {
+    if (rank <= 1.9) return colors.red;
+    if (rank <= 2.9) return colors.yellow;
+    if (rank <= 3.9) return colors.blue;
+    return colors.green;
+  };
+
+  const toggleExpanded = (key) => {
+    setExpandedSections((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key], // Toggle the expanded state for the specific section
+    }));
+  };
   const saleToCustomer = () => {
     navigation.navigate("CustomerForm", { carId: `${id}` });
   };
+
+  const openImageModal = (imageUri) => {
+    setSelectedImage(imageUri);
+    console.log(imageUri);
+    setModalVisible(true);
+  };
+
+  let questionNumber = 1;
+
   return (
     <AppScreen>
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)} // Close modal when back is pressed
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              position: "relative",
+              height: "60%",
+              width: "90%",
+              borderRadius: 15,
+              overflow: "hidden",
+            }}
+          >
+            <View style={styles.closeButton}>
+              <MaterialCommunityIcons
+                name="close"
+                size={20}
+                color={colors.fontWhite}
+                onPress={() => setModalVisible(false)}
+              />
+            </View>
+            <Image
+              source={{
+                uri: selectedImage,
+              }}
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+            />
+          </View>
+        </View>
+      </Modal>
       <InspectionHeader onPress={() => navigation.goBack()}>
         Car Details
       </InspectionHeader>
       <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.carInfo}>
+          <View>
+            <AppText
+              fontSize={mainStyles.h1FontSize}
+              fontFamily={mainStyles.appFontBold}
+              marginBottom={5}
+            >
+              {carInfo?.manufacturer_name} {carInfo?.carName} {carInfo?.model}
+            </AppText>
+            <AppText fontSize={mainStyles.h3FontSize} color={colors.fontGrey}>
+              {userData?.user?.dname}
+            </AppText>
+          </View>
+          <View style={styles.inspectionRating}>
+            <AnimatedCircularProgress
+              size={60}
+              width={8}
+              fill={rating * 20} // This should be a number
+              tintColor={getColorByRank(rating)}
+              backgroundColor={colors.whiteBg} // Call the function with rank
+              duration={1000}
+            >
+              {() => (
+                <AppText fontSize={mainStyles.RatingFont}>{rating}/5</AppText>
+              )}
+            </AnimatedCircularProgress>
+          </View>
+        </View>
+
         <View style={styles.ImageContainer}>
           <CarImagesCarousel images={carInfo?.images} />
         </View>
-        <View style={{ marginBottom: 10, flexDirection: "row", gap: 10 }}>
-          <GradientButton>Download</GradientButton>
-          <GradientButton onPress={saleToCustomer}>Sale</GradientButton>
-        </View>
-        <View style={styles.ContentContainer}>
-          <View style={styles.contentBox}>
-            <AppText textAlign={"center"} fontSize={mainStyles.h1FontSize}>
-              Inspection Report
-            </AppText>
-          </View>
-          <View style={styles.contentBox}>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Inspection Date:
-              </AppText>
 
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.inspection_date}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Car:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.carName}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Variant:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.varientId}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Model:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.model}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Registration No:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.registration_no}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Chasis No:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.chasis_no}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Manufacturer:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.manufacturer_name}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                CPLC:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.cplc}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                No Of Owners:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.no_of_owners}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Transmission Type:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.transmission_type}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Mileage:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.mileage}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Registration City:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-              >
-                {carInfo?.registration_city}
-              </AppText>
-            </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Fuel Type:
-              </AppText>
-
-              <View style={styles.line} />
-
-              <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
-                textTransform={"uppercase"}
+        <View style={styles.completeInfo}>
+          <AppText
+            fontFamily={mainStyles.appFontBold}
+            fontSize={mainStyles.h2FontSize}
+            marginBottom={10}
+          >
+            Car Summary
+          </AppText>
+          <View style={{ gap: 0 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <MaterialIcons
+                name="access-time"
+                size={24}
                 style={{
-                  fontSize: mainStyles.h3FontSize,
-                  color: colors.fontGrey,
-                  width: 200,
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
                 }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
               >
-                {carInfo?.fuel_type}
+                Inspection Date
               </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.inspection_date}</AppText>
             </View>
-            <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Color:
-              </AppText>
 
-              <View style={styles.line} />
-
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="circle-multiple-outline"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
               <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
               >
-                {carInfo?.color}
+                Car Varient
               </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.varientId}</AppText>
             </View>
-            {/* <View style={styles.infoContainer}>
-              <AppText
-                minWidth={120}
-                maxWidth={120}
-                fontSize={mainStyles.h3FontSize}
-              >
-                Overall Rating:
-              </AppText>
 
-              <View style={styles.line} />
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="steering"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                Transmission Type
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.transmission_type}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <MaterialIcons
+                name="speed"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                Mileage
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.mileage}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <Ionicons
+                name="color-fill-outline"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
 
               <AppText
-                fontSize={mainStyles.h3FontSize}
-                minWidth={120}
-                maxWidth={120}
-                textAlign={"right"}
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
               >
-                {carInfo?.rank}
+                Color
               </AppText>
-            </View> */}
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.color}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="engine-outline"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                Engine Displacement
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.engine_displacement}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="fuel"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                Fuel Type
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.fuel_type}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <FontAwesome6
+                name="wpforms"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                CPLC
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.cplc}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <Octicons
+                name="number"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                Registration No
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.registration_no}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <FontAwesome6
+                name="car-rear"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                Chasis No
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.chasis_no}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="numeric-9-circle-outline"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                Engine No
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.engine_no}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <FontAwesome5
+                name="people-arrows"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                No Of Owners
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.no_of_owners}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                flex: 1,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="city-variant-outline"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={140}
+                flex={1}
+              >
+                Registration City
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.registration_city}</AppText>
+            </View>
           </View>
-          {/* <View style={styles.contentBox}>
-            <AppText textAlign={"center"} fontSize={mainStyles.h1FontSize}>
-              Inspection Rating Report
-            </AppText>
-          </View>
-          {carRatingInfo.map((item) => (
-            <InspectionRatingCard
-              key={item?.id}
-              category={item?.category}
-              indicators={item?.indicators}
-            />
-          ))} */}
+        </View>
+        <View style={styles.carQuestionAccrodians}>
+          <TouchableOpacity
+            style={styles.accordianTap}
+            onPress={() => setBodyOpen(!bodyOpen)} // Toggle the expanded state for this key
+            activeOpacity={0.8}
+          >
+            <View style={styles.accordionHeader}>
+              <AppText>Car Body</AppText>
+              <Feather
+                name={bodyOpen ? "chevron-up" : "chevron-down"}
+                size={24}
+                color="black"
+              />
+            </View>
+          </TouchableOpacity>
+          {bodyOpen && (
+            <View>
+              <CarBodyView carBodyData={carInfo.grouped_problems} />
+              <View style={{ gap: 10, marginTop: 20 }}>
+                <AppText fontFamily={mainStyles.appFontBold}>
+                  Full Description
+                </AppText>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <View>
+                    <AppText>P: Paint</AppText>
+                    <AppText>P1: Shower Paint</AppText>
+                    <AppText>P2: Polycate paint</AppText>
+                  </View>
+                  <View>
+                    <AppText>D: Dent</AppText>
+                    <AppText>D1: Minor Dent</AppText>
+                    <AppText>D2: Major Dent</AppText>
+                  </View>
+                  <View>
+                    <AppText>S: Scratch</AppText>
+                    <AppText>S1: Minor Scratch</AppText>
+                    <AppText>S2: Major Scratch</AppText>
+                  </View>
+                </View>
+              </View>
+              <View style={{ marginTop: 20 }}>
+                <View
+                  style={{
+                    gap: 10,
+                  }}
+                >
+                  {Object.keys(carInfo.grouped_problems).map(
+                    (location, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          borderTopWidth: 0.8,
+                          borderColor: colors.fontGrey,
+                          paddingVertical: 10,
+                        }}
+                      >
+                        {/* Show the problem location (e.g., 'Back Left Door') */}
+                        <AppText
+                          fontSize={mainStyles.h2FontSize}
+                          fontFamily={mainStyles.appFontBold}
+                          marginBottom={10}
+                        >
+                          Location: {location}
+                        </AppText>
+
+                        {/* Show all problems associated with the location */}
+                        {carInfo.grouped_problems[location].map(
+                          (problem, problemIndex) => (
+                            <View
+                              key={problemIndex}
+                              style={{ marginBottom: 10 }}
+                            >
+                              <View style={{ flexDirection: "row", gap: 10 }}>
+                                <AppText color={colors.fontGrey} width={100}>
+                                  {problem.problem_name}:
+                                </AppText>
+                                <AppText>{problem.selected_value}</AppText>
+                              </View>
+                            </View>
+                          )
+                        )}
+
+                        {/* Display the image once for the first problem that contains an image */}
+                        {carInfo.grouped_problems[location].find(
+                          (p) => p.image_uri
+                        ) && (
+                          <TouchableOpacity
+                            style={{
+                              height: 50,
+                              width: 50,
+                              objectFit: "cover",
+                              borderRadius: 5,
+                              overflow: "hidden",
+                              marginTop: 10,
+                            }}
+                            onPress={() =>
+                              openImageModal(
+                                `${process.env.PROBLEMS_IMAGE_URL}${
+                                  carInfo.grouped_problems[location].find(
+                                    (p) => p.image_uri
+                                  ).image_uri
+                                }`
+                              )
+                            }
+                          >
+                            <Image
+                              source={{
+                                uri: `${process.env.PROBLEMS_IMAGE_URL}${
+                                  carInfo.grouped_problems[location].find(
+                                    (p) => p.image_uri
+                                  ).image_uri
+                                }`,
+                              }}
+                              style={{
+                                height: 50,
+                                width: 50,
+                                objectFit: "cover",
+                              }}
+                            />
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    )
+                  )}
+                </View>
+              </View>
+            </View>
+          )}
+
+          {carInfo?.grouped_checkpoints &&
+            Object.keys(carInfo.grouped_checkpoints).map((key, index) => (
+              <View key={index}>
+                <TouchableOpacity
+                  style={styles.accordianTap}
+                  onPress={() => toggleExpanded(key)} // Toggle the expanded state for this key
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.accordionHeader}>
+                    <AppText>{key}</AppText>
+                    <Feather
+                      name={
+                        expandedSections[key] ? "chevron-up" : "chevron-down"
+                      }
+                      size={24}
+                      color="black"
+                    />
+                  </View>
+                </TouchableOpacity>
+
+                {expandedSections[key] && (
+                  <View>
+                    {Object.keys(carInfo.grouped_checkpoints[key]).map(
+                      (subKey, subIndex) => (
+                        <View style={{ gap: 0 }} key={subIndex}>
+                          <View style={{ paddingVertical: 20 }}>
+                            <AppText
+                              fontSize={mainStyles.h3FontSize}
+                              paddingVertical={0}
+                              fontFamily={mainStyles.appFontBold}
+                            >
+                              {subKey}
+                            </AppText>
+                          </View>
+
+                          {carInfo.grouped_checkpoints[key][subKey].map(
+                            (item, itemIndex) => (
+                              <View
+                                key={itemIndex}
+                                style={{
+                                  gap: 10,
+                                  borderTopWidth: 0.8,
+                                  borderColor: colors.fontGrey,
+                                  paddingVertical: 20,
+                                }}
+                              >
+                                <AppText>
+                                  {questionNumber++}. {item.ind_question}
+                                </AppText>
+                                <View style={{ gap: 10 }}>
+                                  <View
+                                    style={{ gap: 10, flexDirection: "row" }}
+                                  >
+                                    <AppText
+                                      color={colors.fontGrey}
+                                      width={60}
+                                      flex={1}
+                                      height={16}
+                                    >
+                                      Condition:
+                                    </AppText>
+                                    <AppText
+                                      fontFamily={mainStyles.appFontBold}
+                                    >
+                                      {item.value}
+                                      {item.value.length === 1 && "/5"}
+                                    </AppText>
+                                  </View>
+                                  {item.reason && (
+                                    <View
+                                      style={{ gap: 10, flexDirection: "row" }}
+                                    >
+                                      <AppText
+                                        color={colors.fontGrey}
+                                        width={60}
+                                        flex={1}
+                                      >
+                                        Reason:
+                                      </AppText>
+                                      <AppText>{item.reason}:</AppText>
+                                    </View>
+                                  )}
+                                  {item.point && (
+                                    <View
+                                      style={{ gap: 10, flexDirection: "row" }}
+                                    >
+                                      <AppText
+                                        color={colors.fontGrey}
+                                        width={60}
+                                        flex={1}
+                                      >
+                                        Point:
+                                      </AppText>
+                                      <AppText>{item.point}:</AppText>
+                                    </View>
+                                  )}
+                                  {item.image_uri && (
+                                    <TouchableOpacity
+                                      style={{
+                                        height: 50,
+                                        width: 50,
+                                        objectFit: "cover",
+                                        borderRadius: 5,
+                                        overflow: "hidden",
+                                      }}
+                                      onPress={() =>
+                                        openImageModal(
+                                          `${process.env.INDICATORS_IMAGE_URL}${item.image_name}`
+                                        )
+                                      }
+                                    >
+                                      <Image
+                                        source={{
+                                          uri: `${process.env.INDICATORS_IMAGE_URL}${item.image_name}`,
+                                        }}
+                                        style={{
+                                          height: 50,
+                                          width: 50,
+                                          objectFit: "cover",
+                                        }}
+                                      />
+                                    </TouchableOpacity>
+                                  )}
+                                </View>
+                              </View>
+                            )
+                          )}
+                        </View>
+                      )
+                    )}
+                  </View>
+                )}
+              </View>
+            ))}
         </View>
       </ScrollView>
+      <View
+        style={{
+          backgroundColor: colors.ligtGreyBg,
+          padding: 20,
+          position: "absolute",
+          left: 0,
+          bottom: 0,
+          width: "100%",
+        }}
+      >
+        <TouchableOpacity
+          style={styles.ButtonContainer}
+          onPress={() => {}}
+          activeOpacity={0.8}
+        >
+          <LinearGradient
+            colors={[
+              colors.buttonGradient1,
+              colors.buttonGradient2,
+              colors.buttonGradient3,
+            ]}
+            start={[0, 0]}
+            end={[0.6, 1]}
+            style={styles.gredientButton}
+          >
+            <AppText color={colors.fontWhite} fontSize={mainStyles.h2FontSize}>
+              Call To Action
+            </AppText>
+            <View style={{}}>
+              <Feather
+                name={buttonOpen ? "chevron-up" : "chevron-down"}
+                size={24}
+                color="white"
+              />
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
     </AppScreen>
   );
 };
@@ -433,6 +1042,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     paddingTop: 0,
+    paddingBottom: 120,
   },
   line: {
     height: 20,
@@ -443,31 +1053,61 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     minHeight: 400,
+    marginBottom: 20,
   },
-  bannerImage: {
-    width: "100%",
-    height: 300,
-    resizeMode: "cover",
-    borderRadius: 5,
-  },
-  infoContainer: {
+  carInfo: {
     flexDirection: "row",
-    paddingVertical: 5,
+    gap: 20,
     justifyContent: "space-between",
-    borderRadius: 5,
-    borderColor: colors.ligtGreyBg,
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    elevation: 2,
+    marginBottom: 20,
+  },
+  completeInfo: {
+    marginBottom: 20,
+  },
+  carQuestionAccrodians: { gap: 10 },
+  accordianTap: {
+    padding: 10,
+    elevation: 3,
     backgroundColor: colors.whiteBg,
-    gap: 5,
+    borderRadius: 5,
   },
-  infoKey: {
-    fontWeight: "bold",
-    marginRight: 8,
+  accordionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  infoValue: {
-    flexShrink: 1,
+  accordionContent: {
+    padding: 20,
+    gap: 7,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    borderRadius: 100,
+    height: 30,
+    width: 30,
+    backgroundColor: colors.red,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 99999,
+  },
+  ButtonContainer: {
+    flex: 1,
+    minHeight: 60,
+  },
+  gredientButton: {
+    shadowColor: "#000000",
+    elevation: 10,
+    borderWidth: 0,
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    elevation: 2,
+    height: 60,
   },
 });
