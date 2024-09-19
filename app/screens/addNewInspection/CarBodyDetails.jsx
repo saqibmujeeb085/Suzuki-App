@@ -162,7 +162,7 @@ const CarBodyDetails = ({ navigation, route }) => {
         return null;
       }
     } catch (error) {
-      console.error("Error retrieving car data:", error);
+      console.log("Error retrieving car data:", error);
       return null;
     }
   };

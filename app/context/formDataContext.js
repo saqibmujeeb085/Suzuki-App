@@ -45,7 +45,7 @@ const FormDataProvider = ({ children }) => {
       setCapacitiesData(JSON.parse(values[7][1]) || []);
       setCitiesData(JSON.parse(values[8][1]) || []);
     } catch (error) {
-      console.error("Failed to load data from AsyncStorage", error);
+      console.log("Failed to load data from AsyncStorage", error);
     }
   };
 
@@ -65,7 +65,7 @@ const FormDataProvider = ({ children }) => {
       ];
       await AsyncStorage.multiSet(data);
     } catch (error) {
-      console.error("Failed to save data to AsyncStorage", error);
+      console.log("Failed to save data to AsyncStorage", error);
     }
   };
 
@@ -85,7 +85,7 @@ const FormDataProvider = ({ children }) => {
       ]);
       await saveDataToLocalStorage(); // Save fetched data after successful fetching
     } catch (error) {
-      console.error("Error fetching data from the server:", error);
+      console.log("Error fetching data from the server:", error);
     }
   };
 
@@ -113,7 +113,7 @@ const FormDataProvider = ({ children }) => {
         JSON.stringify(transformedData)
       );
     } catch (error) {
-      console.error("Error fetching manufacturers:", error);
+      console.log("Error fetching manufacturers:", error);
     }
   };
 
@@ -141,7 +141,7 @@ const FormDataProvider = ({ children }) => {
         JSON.stringify(transformedList)
       );
     } catch (error) {
-      console.error("Error fetching car models:", error);
+      console.log("Error fetching car models:", error);
     }
   };
 
@@ -169,7 +169,7 @@ const FormDataProvider = ({ children }) => {
         JSON.stringify(transformedList)
       );
     } catch (error) {
-      console.error("Error fetching car variants:", error);
+      console.log("Error fetching car variants:", error);
     }
   };
 
@@ -197,7 +197,7 @@ const FormDataProvider = ({ children }) => {
         JSON.stringify(transformedList)
       );
     } catch (error) {
-      console.error("Error fetching car years:", error);
+      console.log("Error fetching car years:", error);
     }
   };
 
@@ -222,7 +222,7 @@ const FormDataProvider = ({ children }) => {
         JSON.stringify(transformedData)
       );
     } catch (error) {
-      console.error("Error fetching car colors:", error);
+      console.log("Error fetching car colors:", error);
     }
   };
 
@@ -247,7 +247,7 @@ const FormDataProvider = ({ children }) => {
         JSON.stringify(transformedData)
       );
     } catch (error) {
-      console.error("Error fetching fuel types:", error);
+      console.log("Error fetching fuel types:", error);
     }
   };
 
@@ -272,7 +272,7 @@ const FormDataProvider = ({ children }) => {
         JSON.stringify(transformedData)
       );
     } catch (error) {
-      console.error("Error fetching transmission types:", error);
+      console.log("Error fetching transmission types:", error);
     }
   };
 
@@ -297,7 +297,7 @@ const FormDataProvider = ({ children }) => {
         JSON.stringify(transformedData)
       );
     } catch (error) {
-      console.error("Error fetching engine capacities:", error);
+      console.log("Error fetching engine capacities:", error);
     }
   };
 
@@ -322,7 +322,7 @@ const FormDataProvider = ({ children }) => {
         JSON.stringify(transformedData)
       );
     } catch (error) {
-      console.error("Error fetching registration cities:", error);
+      console.log("Error fetching registration cities:", error);
     }
   };
 

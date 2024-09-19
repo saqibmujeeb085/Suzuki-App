@@ -99,7 +99,7 @@ const FilterModal = ({ show = false, setShow, onFilter }) => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching manufacturers:", error);
+      console.log("Error fetching manufacturers:", error);
     }
   };
 
@@ -122,7 +122,7 @@ const FilterModal = ({ show = false, setShow, onFilter }) => {
         }))
       );
     } catch (error) {
-      console.error("Error fetching manufacturers:", error);
+      console.log("Error fetching manufacturers:", error);
     }
   };
 
@@ -147,7 +147,7 @@ const FilterModal = ({ show = false, setShow, onFilter }) => {
             }))
           );
         } else {
-          console.error("Unexpected API response format:", ModelNames);
+          console.log("Unexpected API response format:", ModelNames);
         }
       })
       .catch((error) => {

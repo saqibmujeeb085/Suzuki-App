@@ -1,4 +1,3 @@
-// DataPostProvider.js
 import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -38,7 +37,7 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
       }
       return BackgroundFetch.BackgroundFetchResult.NewData;
     } catch (error) {
-      console.error("Error during background fetch task", error);
+      console.log("Error during background fetch task", error);
       return BackgroundFetch.BackgroundFetchResult.Failed;
     }
   } else {
@@ -97,7 +96,7 @@ const DataPostProvider = ({ children }) => {
         const data = await AsyncStorage.getItem("@carformdata");
         setQuestionsInLocal(data);
       } catch (error) {
-        console.error("Error fetching car data from AsyncStorage:", error);
+        console.log("Error fetching car data from AsyncStorage:", error);
       }
     };
 
@@ -125,7 +124,6 @@ const DataPostProvider = ({ children }) => {
       const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
 
       if (carjsonValue && questionjsonValue) {
-        // Parse the JSON string into a JavaScript object
         let carFormData = JSON.parse(carjsonValue);
         let questionsData = JSON.parse(questionjsonValue);
 
@@ -159,11 +157,11 @@ const DataPostProvider = ({ children }) => {
         );
       }
     } catch (error) {
-      console.error("Error removing processed data:", error);
+      console.log("Error removing processed data:", error);
     }
   };
 
-  const triggerManualUpload = async () => {
+  const triggerManualUpload = _.debounce(async () => {
     try {
       const carjsonValue = await AsyncStorage.getItem("@carformdata");
       const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
@@ -240,7 +238,7 @@ const DataPostProvider = ({ children }) => {
             }
           });
         } else {
-          console.error("Data retrieved from AsyncStorage is not an array.");
+          console.log("Data retrieved from AsyncStorage is not an array.");
         }
       } else {
         console.log(
@@ -248,9 +246,9 @@ const DataPostProvider = ({ children }) => {
         );
       }
     } catch (error) {
-      console.error("Error processing data upload:", error);
+      console.log("Error processing data upload:", error);
     }
-  };
+  }, 1000); // Debounce to avoid multiple executions
 
   const postData = async (obj, groupedData, carbodyques) => {
     const formData = new FormData();
@@ -399,7 +397,7 @@ const DataPostProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      console.error("Error posting data:", error);
+      console.log("Error posting data:", error);
     }
   };
 

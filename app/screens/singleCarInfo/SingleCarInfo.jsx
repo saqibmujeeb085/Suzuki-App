@@ -42,8 +42,6 @@ const SingleCarInfo = ({ route, navigation }) => {
   const [buttonOpen, setButtonOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // console.log(carInfo);
-
   useEffect(() => {
     if (!id) {
       setError(new Error("No ID provided"));
@@ -52,14 +50,6 @@ const SingleCarInfo = ({ route, navigation }) => {
     }
 
     fetchCarData();
-    // Object.keys(carInfo.grouped_problems).forEach((key) => {
-    //   console.log(`Key: ${key}`);
-    //   console.log("Objects:");
-
-    //   carInfo.grouped_problems[key].forEach((item, index) => {
-    //     console.log(`  Object ${index + 1}:`, item); // Prints each object in the array
-    //   });
-    // });
   }, [id]);
 
   const fetchCarData = async () => {
@@ -106,6 +96,7 @@ const SingleCarInfo = ({ route, navigation }) => {
     }));
   };
   const saleToCustomer = () => {
+    setButtonOpen(!buttonOpen);
     navigation.navigate("CustomerForm", { carId: `${id}` });
   };
 
@@ -995,7 +986,7 @@ const SingleCarInfo = ({ route, navigation }) => {
       >
         <TouchableOpacity
           style={styles.ButtonContainer}
-          onPress={() => {}}
+          onPress={() => setButtonOpen(!buttonOpen)}
           activeOpacity={0.8}
         >
           <LinearGradient
@@ -1020,6 +1011,116 @@ const SingleCarInfo = ({ route, navigation }) => {
             </View>
           </LinearGradient>
         </TouchableOpacity>
+        <View
+          style={{
+            backgroundColor: colors.whiteBg,
+            padding: buttonOpen ? 10 : 0,
+            height: buttonOpen ? "auto" : 0,
+            marginTop: buttonOpen ? 10 : 0,
+            borderRadius: 5,
+            overflow: "hidden",
+            gap: 10,
+          }}
+        >
+          <TouchableOpacity
+            style={[
+              styles.ButtonContainer,
+              {
+                height: buttonOpen ? 60 : 0, // Apply height based on buttonOpen state
+                overflow: "hidden",
+              },
+            ]}
+            onPress={saleToCustomer}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={[
+                colors.buttonGradient1,
+                colors.buttonGradient2,
+                colors.buttonGradient3,
+              ]}
+              start={[0, 0]}
+              end={[0.6, 1]}
+              style={styles.gredientButton}
+            >
+              <AppText
+                color={colors.fontWhite}
+                fontSize={mainStyles.h2FontSize}
+              >
+                Sell To Customer
+              </AppText>
+              <View style={{}}>
+                <Feather name={"chevron-right"} size={24} color="white" />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.ButtonContainer,
+              {
+                height: buttonOpen ? 60 : 0, // Apply height based on buttonOpen state
+                overflow: "hidden",
+              },
+            ]}
+            onPress={() => {}}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={[
+                colors.buttonGradient1,
+                colors.buttonGradient2,
+                colors.buttonGradient3,
+              ]}
+              start={[0, 0]}
+              end={[0.6, 1]}
+              style={styles.gredientButton}
+            >
+              <AppText
+                color={colors.fontWhite}
+                fontSize={mainStyles.h2FontSize}
+              >
+                Download PDF
+              </AppText>
+              <View style={{}}>
+                <Feather name={"chevron-right"} size={24} color="white" />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.ButtonContainer,
+              {
+                height: buttonOpen ? 60 : 0, // Apply height based on buttonOpen state
+                overflow: "hidden",
+              },
+            ]}
+            onPress={() => {}}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={[
+                colors.buttonGradient1,
+                colors.buttonGradient2,
+                colors.buttonGradient3,
+              ]}
+              start={[0, 0]}
+              end={[0.6, 1]}
+              style={styles.gredientButton}
+            >
+              <AppText
+                color={colors.fontWhite}
+                fontSize={mainStyles.h2FontSize}
+              >
+                Download All Documents
+              </AppText>
+              <View style={{}}>
+                <Feather name={"chevron-right"} size={24} color="white" />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
       </View>
     </AppScreen>
   );
@@ -1094,8 +1195,8 @@ const styles = StyleSheet.create({
     zIndex: 99999,
   },
   ButtonContainer: {
-    flex: 1,
-    minHeight: 60,
+    borderRadius: 5,
+    overflow: "hidden",
   },
   gredientButton: {
     shadowColor: "#000000",

@@ -64,7 +64,7 @@ const Home = ({ navigation }) => {
       setInspectedCar(response.data);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching inspected car data:", error);
+      console.log("Error fetching inspected car data:", error);
       ToastManager.error(
         "Failed to fetch car data. Please Check Your Internet Connection"
       );

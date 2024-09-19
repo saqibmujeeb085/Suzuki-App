@@ -27,12 +27,11 @@ const AuthProvider = ({ children }) => {
             token: loginData?.token || "",
             user: loginData?.user || "",
           });
-          
         } else {
           console.log("No data found in AsyncStorage for @auth");
         }
       } catch (error) {
-        console.error("Failed to load data from local storage:", error);
+        console.log("Failed to load data from local storage:", error);
       }
     };
     loadLocalStorageData();
@@ -45,7 +44,7 @@ const AuthProvider = ({ children }) => {
         await AsyncStorage.setItem("@auth", JSON.stringify(userData));
         console.log("Data saved to AsyncStorage:", userData);
       } catch (error) {
-        console.error("Failed to save data to local storage:", error);
+        console.log("Failed to save data to local storage:", error);
       }
     };
     saveToLocalStorage();

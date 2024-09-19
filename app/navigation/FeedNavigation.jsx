@@ -1,4 +1,3 @@
-// FeedNavigation.js
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react";
 import BottomTabNavigation from "./BottonTabNavigation";
@@ -18,13 +17,14 @@ import ViewReport from "../screens/updateCarData/ViewReport";
 import EditCarInfo from "../screens/updateCarData/EditCarInfo";
 import EditProblems from "../screens/updateCarData/EditProblems";
 import EditIndicatorsRating from "../screens/updateCarData/EditIndicatorsRating";
-import CustomersProfile from "../screens/settingsPages/CustomersProfile";
+import CustomersProfile from "../screens/settingsPages/CustomersProfile"; // Assume these are all imported from one file
 
 const FeedNavigation = () => {
   const authContext = useContext(AuthContext);
   const { triggerManualUpload } = useContext(DataPostContext);
   const [isConnected, setIsConnected] = useState(false);
   const [questionsInLocal, setQuestionsInLocal] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const Stack = createStackNavigator();
 
@@ -34,7 +34,6 @@ const FeedNavigation = () => {
       setIsConnected(state.isConnected);
     });
 
-    // Clean up the subscription on component unmount
     return () => unsubscribe();
   }, []);
 
@@ -45,29 +44,37 @@ const FeedNavigation = () => {
         const data = await AsyncStorage.getItem("@carformdata");
         setQuestionsInLocal(data);
       } catch (error) {
-        console.error("Error fetching car data from AsyncStorage:", error);
+        console.log("Error fetching car data from AsyncStorage:", error);
       }
     };
 
     // Initial fetch
     fetchCarData();
 
-    // Set up interval to periodically check for updates in AsyncStorage
+    // Optional: Debounce or throttle this interval to avoid multiple uploads
     const intervalId = setInterval(fetchCarData, 300000); // Check every 5 minutes
 
-    // Clean up the interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
   // Trigger upload when internet is connected and data is available
   useEffect(() => {
-    if (isConnected && questionsInLocal) {
-      triggerManualUpload();
+    if (isConnected && questionsInLocal && !isUploading) {
+      console.log("Starting upload...");
+      setIsUploading(true); // Mark as uploading
+      triggerManualUpload(); // Since this is debounced, no need for .then()
+      console.log("Upload triggered");
+
+      // Optionally add a delay to simulate waiting for upload to finish
+      setTimeout(() => {
+        console.log("Upload finished");
+        setIsUploading(false); // Mark as upload finished
+      }, 300000); // You can adjust the delay based on how long uploads take
     }
-  }, [isConnected, questionsInLocal]);
+  }, [isConnected, questionsInLocal, isUploading]);
 
   if (!authContext) {
-    console.error("AuthContext is not available");
+    console.log("AuthContext is not available");
     return null;
   }
 

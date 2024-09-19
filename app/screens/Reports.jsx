@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import AppScreen from "../components/screen/Screen";
 import Search from "../components/search/Search";
@@ -26,12 +26,16 @@ const Reports = ({ navigation }) => {
   const [filters, setFilters] = useState({});
   const [selectedFilters, setSelectedFilters] = useState([]);
 
+  // New states for pagination
+  const [startRecord, setStartRecord] = useState(1);
+  const [endRecord, setEndRecord] = useState(20); // Initially fetch 1 to 20 records
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isSearching, setIsSearching] = useState(false); // Track if search is active
+
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected);
     });
-
-    // Clean up the subscription on component unmount
     return () => unsubscribe();
   }, []);
 
@@ -40,103 +44,144 @@ const Reports = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (userData && userData.user && userData.user.duserid) {
+    if (userData && userData.user && userData.user.duserid && !isSearching) {
       inspectedCarsData();
     }
-  }, [userData.user.duserid]);
+  }, [userData.user.duserid, startRecord, endRecord]);
 
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
       fetchSearchResults();
     } else {
       setSearchResults([]);
+      setIsSearching(false); // Reset search status when query is cleared
     }
-  }, [searchQuery]);
+  }, [searchQuery, startRecord, endRecord]);
 
   useEffect(() => {
     if (Object.keys(filters).length > 0) {
       fetchFilteredData();
-    } else {
-      <AppText>No Data Found</AppText>;
     }
   }, [filters]);
 
   const inspectedCarsData = async () => {
     setRefreshing(true);
+    setLoading(true);
+
     let config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `/auth/get_carinfos.php?duserId=${userData.user.duserid}`,
+      url: `auth/get_carinspectionbasicInfo.php?startRecord=${startRecord}&endRecord=${endRecord}&duser_id=${userData.user.duserid}`,
       headers: {},
     };
 
     try {
       const response = await axios.request(config);
-      setInspectedCar(response.data.slice(0, 20));
+      const newCars = response.data;
+
+      // Check if response contains an error message
+      if (newCars?.message) {
+        console.log("Error fetching inspected car data:", newCars.message);
+        setInspectedCar([]); // Set empty array if there's an error message
+      } else if (Array.isArray(newCars)) {
+        // Ensure the response is an array
+        if (startRecord === 1) {
+          setInspectedCar(newCars); // Set initial data
+        } else {
+          setInspectedCar((prevCars) => [...prevCars, ...newCars]); // Append new data
+        }
+      } else {
+        console.log("Unexpected data format:", newCars);
+        setInspectedCar([]); // Set empty array if the response is not an array
+      }
+
       setLoading(false);
+      setIsLoadingMore(false);
     } catch (error) {
-      console.error("Error fetching inspected car data:", error);
+      console.log("Error fetching inspected car data:", error);
       Toast.error(
         "Failed to fetch car data. Please Check Your Internet Connection"
       );
       setLoading(false);
+      setInspectedCar([]); // Set empty array to prevent map error
     } finally {
       setRefreshing(false);
     }
   };
 
   const fetchSearchResults = async () => {
+    setIsSearching(true);
     setLoading(true);
+
     let config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `/auth/get_search.php?query=${searchQuery}`,
+      url: `auth/get_search.php?query=${searchQuery}&startRecord=${startRecord}&endRecord=${endRecord}&duser_id=${userData.user.duserid}`,
       headers: {},
     };
 
     try {
       const response = await axios.request(config);
-      setSearchResults(response.data);
+      const newSearchResults = response.data;
+
+      // Check if response contains an error message
+      if (newSearchResults?.message) {
+        setSearchResults([]); // Set empty array if there's an error message
+      } else if (Array.isArray(newSearchResults)) {
+        if (startRecord === 1) {
+          setSearchResults(newSearchResults); // Set search data
+        } else {
+          setSearchResults((prevResults) => [
+            ...prevResults,
+            ...newSearchResults,
+          ]);
+        }
+      } else {
+        setSearchResults([]);
+      }
+
       setLoading(false);
+      setIsLoadingMore(false);
     } catch (error) {
-      console.error("Error fetching search results:", error);
-      Toast.error(
-        "Failed to fetch search results. Please Check Your Internet Connection"
-      );
       setLoading(false);
+      setSearchResults([]); // Set empty array to prevent map error
     }
   };
 
   const fetchFilteredData = async () => {
     setLoading(true);
+
     const { carYear, carColor, startDate, endDate, manufacturer, carModel } =
       filters;
-    let url = `/auth/get_filters.php?`;
-    if (carYear) url += `model=${carYear}&`;
-    if (carColor) url += `color=${carColor}&`;
-    if (startDate)
-      url += `start_date=${startDate.toISOString().split("T")[0]}&`;
-    if (endDate) url += `end_date=${endDate.toISOString().split("T")[0]}&`;
-    if (manufacturer) url += `manufacturer=${manufacturer}&`;
-    if (carModel) url += `car_name=${carModel}&`;
 
-    let config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url,
-      headers: {},
-    };
+    let url = `/auth/get_filters.php?duser_id=${userData.user.duserid}&startRecord=${startRecord}&endRecord=${endRecord}`;
+
+    // Add filters to the URL
+    if (carYear) url += `&model=${carYear}`;
+    if (carColor) url += `&color=${carColor}`;
+    if (startDate)
+      url += `&start_date=${startDate.toISOString().split("T")[0]}`;
+    if (endDate) url += `&end_date=${endDate.toISOString().split("T")[0]}`;
+    if (manufacturer) url += `&manufacturer=${manufacturer}`;
+    if (carModel) url += `&car_name=${carModel}`;
 
     try {
-      const response = await axios.request(config);
-      setInspectedCar(response.data);
+      const response = await axios.get(url);
+
+      const filteredData = response.data;
+
+      // Check for any error message in the response and handle it
+      if (filteredData?.message) {
+        setInspectedCar([]);
+      } else {
+        setInspectedCar(Array.isArray(filteredData) ? filteredData : []);
+      }
+
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching filtered data:", error);
-      Toast.error(
-        "Failed to fetch filtered data. Please Check Your Internet Connection"
-      );
+      console.log("Error fetching filtered data:", error);
       setLoading(false);
+      setInspectedCar([]); // Set empty array to prevent map error
     }
   };
 
@@ -173,115 +218,127 @@ const Reports = ({ navigation }) => {
     return `${month}/${day}/${year}`;
   };
 
+  const loadMoreCars = () => {
+    const dataLength = isSearching ? searchResults.length : inspectedCar.length;
+    if (!isLoadingMore && dataLength >= endRecord) {
+      setIsLoadingMore(true);
+      setStartRecord((prev) => prev + 20);
+      setEndRecord((prev) => prev + 20);
+    }
+  };
+
+  const onScroll = ({ nativeEvent }) => {
+    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+    const isCloseToBottom =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 50;
+
+    if (isCloseToBottom && !isLoadingMore) {
+      loadMoreCars(); // Load more data when reaching the bottom
+    }
+  };
+
   const dataToDisplay =
     searchQuery.trim().length > 0 ? searchResults : inspectedCar;
 
   return (
-    <AppText>hello world</AppText>
-    // <AppScreen>
-    //   {show && (
-    //     <FilterModal show={show} setShow={setShow} onFilter={onFilter} />
-    //   )}
-    //   {/* <View style={styles.reportSearchBox}>
-    //     <AppText textAlign={"center"} fontSize={12} color={"#1d1d1d"}>
-    //       Inspection Reports
-    //     </AppText>
-    //   </View> */}
-    //   <InspectionHeader backIcon={false} borderBottom={true}>
-    //     Inspection Reports
-    //   </InspectionHeader>
-    //   <View style={styles.reportSearchBox}>
-    //     <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-    //   </View>
+    <AppScreen>
+      {show && (
+        <FilterModal show={show} setShow={setShow} onFilter={onFilter} />
+      )}
+      {isConnected ? (
+        <View style={styles.searchDataContainer}>
+          <InspectionHeader backIcon={false} borderBottom={true}>
+            Inspection Reports
+          </InspectionHeader>
 
-    //   <View style={styles.filterChips}>
-    //     {selectedFilters.map((filter) => (
-    //       <TouchableOpacity
-    //         key={filter.key}
-    //         style={styles.filterChip}
-    //         onPress={() => clearFilter(filter.key)}
-    //       >
-    //         <AppText>{`${filter.value}`}</AppText>
-    //         <MaterialCommunityIcons name="close" size={14} />
-    //       </TouchableOpacity>
-    //     ))}
-    //   </View>
-    //   {isConnected ? (
-    //     <View style={styles.searchDataContainer}>
-    //       <View style={styles.headingAndButton}>
-    //         <AppText fontSize={12} color={"#323232"}>
-    //           {searchQuery.trim().length > 0 ? "Search Result" : "All Reports"}
-    //         </AppText>
-    //         <IconButton
-    //           icon={"filter-outline"}
-    //           color={"#323232"}
-    //           fontSize={12}
-    //           onPress={ShowModal}
-    //         >
-    //           Filter
-    //         </IconButton>
-    //       </View>
+          <View style={styles.reportSearchBox}>
+            <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          </View>
 
-    //       {loading ? (
-    //         <FlatList
-    //           data={Array(10).fill(0)}
-    //           keyExtractor={(item, index) => index.toString()}
-    //           renderItem={() => <SkeletonLoader />}
-    //           contentContainerStyle={{
-    //             paddingBottom: 30,
-    //           }}
-    //           showsVerticalScrollIndicator={false}
-    //           showsHorizontalScrollIndicator={false}
-    //           style={{ marginTop: 20, marginBottom: 170 }}
-    //         />
-    //       ) : dataToDisplay.length === 0 && Object.keys(filters).length > 0 ? (
-    //         <View style={styles.noDataContainer}>
-    //           <AppText>No Data Found With This Filter</AppText>
-    //         </View>
-    //       ) : (
-    //         <FlatList
-    //           contentContainerStyle={{
-    //             paddingBottom: 30,
-    //           }}
-    //           showsVerticalScrollIndicator={false}
-    //           showsHorizontalScrollIndicator={false}
-    //           style={{ marginTop: 20, marginBottom: 180 }}
-    //           data={dataToDisplay}
-    //           extraData={dataToDisplay}
-    //           keyExtractor={(item) => item.id.toString()}
-    //           renderItem={({ item }) => (
-    //             <InspectionCard
-    //               carId={item?.id}
-    //               car={item?.car}
-    //               varient={item?.varientId}
-    //               mileage={item?.mileage}
-    //               date={item?.inspectionDate}
-    //               carImage={item?.images[0]?.path}
-    //               rank={item?.rank}
-    //               onPress={() =>
-    //                 navigation.navigate("SingleCar", { id: item?.id })
-    //               }
-    //             />
-    //           )}
-    //           refreshing={refreshing}
-    //           onRefresh={inspectedCarsData}
-    //         />
-    //       )}
-    //     </View>
-    //   ) : (
-    //     <View
-    //       style={{
-    //         height: 400,
-    //         justifyContent: "center",
-    //         alignItems: "center",
-    //       }}
-    //     >
-    //       <AppText maxWidth={350}>
-    //         You Don't Have Internet Connection To See Data.
-    //       </AppText>
-    //     </View>
-    //   )}
-    // </AppScreen>
+          <View style={styles.filterChips}>
+            {selectedFilters.map((filter) => (
+              <TouchableOpacity
+                key={filter.key}
+                style={styles.filterChip}
+                onPress={() => clearFilter(filter.key)}
+              >
+                <AppText>{`${filter.value}`}</AppText>
+                <MaterialCommunityIcons name="close" size={14} />
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={styles.headingAndButton}>
+            <AppText fontSize={12} color={"#323232"}>
+              {searchQuery.trim().length > 0 ? "Search Result" : "All Reports"}
+            </AppText>
+            <IconButton
+              icon={"filter-outline"}
+              color={"#323232"}
+              fontSize={12}
+              onPress={ShowModal}
+            >
+              Filter
+            </IconButton>
+          </View>
+
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 30, minHeight: 700 }}
+            showsVerticalScrollIndicator={false}
+            onScroll={onScroll}
+            scrollEventThrottle={400}
+          >
+            {/* Ensure that `dataToDisplay` is always an array before using .map */}
+            {loading && startRecord === 1 ? (
+              Array(10)
+                .fill(0)
+                .map((_, index) => <SkeletonLoader key={index} />)
+            ) : Array.isArray(dataToDisplay) && dataToDisplay.length > 0 ? (
+              dataToDisplay.map((item, index) => (
+                <InspectionCard
+                  key={index}
+                  carId={item?.inpsectionid}
+                  car={item?.carName}
+                  varient={item?.varientId}
+                  mileage={item?.mileage}
+                  date={item?.inspection_date}
+                  carImage={item?.carimage}
+                  rank={item?.rating}
+                  onPress={() =>
+                    navigation.navigate("SingleCar", {
+                      id: item?.inpsectionid,
+                      rating: item?.rating,
+                    })
+                  }
+                />
+              ))
+            ) : (
+              <View style={styles.noDataContainer}>
+                <AppText>No Data Found</AppText>
+              </View>
+            )}
+
+            {isLoadingMore && (
+              <View style={styles.loadingContainer}>
+                <AppText>LOADING...</AppText>
+              </View>
+            )}
+          </ScrollView>
+        </View>
+      ) : (
+        <View
+          style={{
+            height: 400,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <AppText maxWidth={350}>
+            You Don't Have Internet Connection To See Data.
+          </AppText>
+        </View>
+      )}
+    </AppScreen>
   );
 };
 
@@ -292,6 +349,9 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 0,
     gap: 20,
+  },
+  searchDataContainer: {
+    marginTop: 5,
   },
   filterChips: {
     flexDirection: "row",
@@ -309,18 +369,21 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     gap: 5,
   },
-  searchDataContainer: {
-    marginTop: 5,
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  noDataContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
   headingAndButton: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-  },
-  noDataContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    height: "50%",
+    marginBottom: 10,
   },
 });
