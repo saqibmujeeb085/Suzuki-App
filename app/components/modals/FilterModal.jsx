@@ -32,12 +32,12 @@ const FilterModal = ({ show = false, setShow, onFilter }) => {
   const [carModel, setCarModel] = useState("");
 
   const handleConfirmStartDate = (date) => {
-    setStartDate(date);
+    setStartDate(date); // Make sure 'date' is a valid Date object
     setStartDatePickerVisibility(false);
   };
 
   const handleConfirmEndDate = (date) => {
-    setEndDate(date);
+    setEndDate(date); // Make sure 'date' is a valid Date object
     setEndDatePickerVisibility(false);
   };
 
@@ -122,7 +122,7 @@ const FilterModal = ({ show = false, setShow, onFilter }) => {
         }))
       );
     } catch (error) {
-      console.log("Error fetching manufacturers:", error);
+      console.log("Error fetching car colors:", error);
     }
   };
 

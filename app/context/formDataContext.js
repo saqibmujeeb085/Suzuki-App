@@ -334,7 +334,7 @@ const FormDataProvider = ({ children }) => {
       if (!state.isConnected) {
         await loadLocalStorageData();
       } else {
-        await fetchDataFromServer();
+        fetchDataFromServer();
       }
     };
 

@@ -5,8 +5,10 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Animated,
+  Easing,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import AppScreen from "../../components/screen/Screen";
 import AppText from "../../components/text/Text";
@@ -25,6 +27,7 @@ import {
   FontAwesome6,
   MaterialCommunityIcons,
   Octicons,
+  SimpleLineIcons,
 } from "@expo/vector-icons";
 import CarBodyView from "../../components/carBody/CarBodyView";
 import { LinearGradient } from "expo-linear-gradient";
@@ -41,6 +44,57 @@ const SingleCarInfo = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [buttonOpen, setButtonOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const heightAnim = useRef(new Animated.Value(0)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const heightAnimOpacity = useRef(new Animated.Value(0)).current;
+
+  // Animate height and opacity when buttonOpen changes
+  useEffect(() => {
+    if (buttonOpen) {
+      // Animate to open (expand height and fade in)
+      Animated.parallel([
+        Animated.timing(heightAnim, {
+          toValue: 180, // Total height based on number of items
+          duration: 300,
+          easing: Easing.ease,
+          useNativeDriver: false, // For height animations, native driver must be false
+        }),
+        Animated.timing(heightAnimOpacity, {
+          toValue: 1, // Total height based on number of items
+          duration: 100,
+          easing: Easing.ease,
+          useNativeDriver: false, // For height animations, native driver must be false
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      // Animate to close (collapse height and fade out)
+      Animated.parallel([
+        Animated.timing(heightAnim, {
+          toValue: 0,
+          duration: 300,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }),
+        Animated.timing(heightAnimOpacity, {
+          toValue: 0,
+          duration: 100,
+          easing: Easing.ease,
+          useNativeDriver: false, // For height animations, native driver must be false
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [buttonOpen]);
 
   useEffect(() => {
     if (!id) {
@@ -984,6 +1038,113 @@ const SingleCarInfo = ({ route, navigation }) => {
           width: "100%",
         }}
       >
+        <Animated.View
+          style={{
+            backgroundColor: colors.ligtGreyBg,
+            height: heightAnim,
+            paddingBottom: 20,
+            overflow: "hidden",
+            position: "absolute",
+            left: 20,
+            bottom: 80,
+            alignContent: "flex-start",
+            opacity: heightAnimOpacity,
+          }}
+        >
+          {/* First Item */}
+          <Animated.View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.whiteBg,
+                height: 60,
+                opacity: opacityAnim, // Animate opacity
+                overflow: "hidden",
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingHorizontal: 20,
+                borderBottomWidth: 1,
+                borderColor: colors.ligtGreyBg,
+              }}
+              onPress={saleToCustomer}
+            >
+              <AppText
+                color={colors.fontBlack}
+                fontSize={mainStyles.h2FontSize}
+              >
+                Sell To Customer
+              </AppText>
+              <MaterialCommunityIcons
+                name="brightness-percent"
+                size={24}
+                color={colors.fontBlack}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+
+          {/* Second Item */}
+          <Animated.View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.whiteBg,
+                height: 60,
+                opacity: opacityAnim, // Animate opacity
+                overflow: "hidden",
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingHorizontal: 20,
+                borderBottomWidth: 1,
+                borderColor: colors.ligtGreyBg,
+              }}
+            >
+              <AppText
+                color={colors.fontBlack}
+                fontSize={mainStyles.h2FontSize}
+              >
+                Download Documents
+              </AppText>
+
+              <MaterialCommunityIcons
+                name="folder-download-outline"
+                size={24}
+                color={colors.fontBlack}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+
+          {/* Third Item */}
+          <Animated.View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.whiteBg,
+                height: 70,
+                opacity: opacityAnim, // Animate opacity
+                overflow: "hidden",
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingHorizontal: 20,
+              }}
+            >
+              <AppText
+                color={colors.fontBlack}
+                fontSize={mainStyles.h2FontSize}
+              >
+                Download Pdf
+              </AppText>
+              <SimpleLineIcons
+                name="cloud-download"
+                size={24}
+                color={colors.fontBlack}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+        </Animated.View>
+
         <TouchableOpacity
           style={styles.ButtonContainer}
           onPress={() => setButtonOpen(!buttonOpen)}
@@ -1011,116 +1172,6 @@ const SingleCarInfo = ({ route, navigation }) => {
             </View>
           </LinearGradient>
         </TouchableOpacity>
-        <View
-          style={{
-            backgroundColor: colors.whiteBg,
-            padding: buttonOpen ? 10 : 0,
-            height: buttonOpen ? "auto" : 0,
-            marginTop: buttonOpen ? 10 : 0,
-            borderRadius: 5,
-            overflow: "hidden",
-            gap: 10,
-          }}
-        >
-          <TouchableOpacity
-            style={[
-              styles.ButtonContainer,
-              {
-                height: buttonOpen ? 60 : 0, // Apply height based on buttonOpen state
-                overflow: "hidden",
-              },
-            ]}
-            onPress={saleToCustomer}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={[
-                colors.buttonGradient1,
-                colors.buttonGradient2,
-                colors.buttonGradient3,
-              ]}
-              start={[0, 0]}
-              end={[0.6, 1]}
-              style={styles.gredientButton}
-            >
-              <AppText
-                color={colors.fontWhite}
-                fontSize={mainStyles.h2FontSize}
-              >
-                Sell To Customer
-              </AppText>
-              <View style={{}}>
-                <Feather name={"chevron-right"} size={24} color="white" />
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.ButtonContainer,
-              {
-                height: buttonOpen ? 60 : 0, // Apply height based on buttonOpen state
-                overflow: "hidden",
-              },
-            ]}
-            onPress={() => {}}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={[
-                colors.buttonGradient1,
-                colors.buttonGradient2,
-                colors.buttonGradient3,
-              ]}
-              start={[0, 0]}
-              end={[0.6, 1]}
-              style={styles.gredientButton}
-            >
-              <AppText
-                color={colors.fontWhite}
-                fontSize={mainStyles.h2FontSize}
-              >
-                Download PDF
-              </AppText>
-              <View style={{}}>
-                <Feather name={"chevron-right"} size={24} color="white" />
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.ButtonContainer,
-              {
-                height: buttonOpen ? 60 : 0, // Apply height based on buttonOpen state
-                overflow: "hidden",
-              },
-            ]}
-            onPress={() => {}}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={[
-                colors.buttonGradient1,
-                colors.buttonGradient2,
-                colors.buttonGradient3,
-              ]}
-              start={[0, 0]}
-              end={[0.6, 1]}
-              style={styles.gredientButton}
-            >
-              <AppText
-                color={colors.fontWhite}
-                fontSize={mainStyles.h2FontSize}
-              >
-                Download All Documents
-              </AppText>
-              <View style={{}}>
-                <Feather name={"chevron-right"} size={24} color="white" />
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
       </View>
     </AppScreen>
   );

@@ -32,7 +32,7 @@ export default AppTextInput;
 
 const styles = StyleSheet.create({
   inputField: {
-    fontSize: mainStyles.h3FontSize.fontSize,
+    fontSize: mainStyles.h3FontSize,
     color: colors.fontBlack,
     backgroundColor: colors.whiteBg,
     paddingHorizontal: 20,
