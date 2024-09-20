@@ -49,19 +49,19 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <DataPostProvider>
-        <LoginDataProvider>
-          <FormDataProvider>
-            <NavigationContainer onLayout={onLayoutRootView}>
-              <SafeAreaProvider>
-                <InspecteCarProvider>
+      <LoginDataProvider>
+        <FormDataProvider>
+          <NavigationContainer onLayout={onLayoutRootView}>
+            <SafeAreaProvider>
+              <InspecteCarProvider>
+                <DataPostProvider>
                   <FeedNavigation />
-                </InspecteCarProvider>
-              </SafeAreaProvider>
-            </NavigationContainer>
-          </FormDataProvider>
-        </LoginDataProvider>
-      </DataPostProvider>
+                </DataPostProvider>
+              </InspecteCarProvider>
+            </SafeAreaProvider>
+          </NavigationContainer>
+        </FormDataProvider>
+      </LoginDataProvider>
     </AuthProvider>
   );
 }

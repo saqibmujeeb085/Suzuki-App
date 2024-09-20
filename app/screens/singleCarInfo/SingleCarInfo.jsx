@@ -31,13 +31,6 @@ import {
 } from "@expo/vector-icons";
 import CarBodyView from "../../components/carBody/CarBodyView";
 import { LinearGradient } from "expo-linear-gradient";
-import * as FileSystem from "expo-file-system";
-import * as Notifications from "expo-notifications";
-import * as Permissions from "expo-permissions";
-import * as IntentLauncher from "expo-intent-launcher";
-import * as DocumentPicker from "expo-document-picker";
-import * as MediaLibrary from "expo-media-library";
-import * as StorageAccessFramework from "expo-file-system";
 
 const SingleCarInfo = ({ route, navigation }) => {
   const { id, rating } = route.params || {};
@@ -55,127 +48,6 @@ const SingleCarInfo = ({ route, navigation }) => {
   const heightAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const heightAnimOpacity = useRef(new Animated.Value(0)).current;
-  const [zipUri, setZipUri] = useState(null);
-
-  // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  useEffect(() => {
-    // Request notification permissions
-    requestPermissionsAsync();
-
-    // Listener for notification actions
-    const responseListener =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        const { fileUri } = response.notification.request.content.data;
-        if (fileUri) {
-          // Open the downloaded file using Linking
-          Linking.openURL(fileUri).catch((err) =>
-            console.error("An error occurred while opening the file", err)
-          );
-        }
-      });
-
-    return () => {
-      Notifications.removeNotificationSubscription(responseListener);
-    };
-  }, []);
-
-  // Function to request notification permissions
-  const requestPermissionsAsync = async () => {
-    const { status } = await Notifications.requestPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Notification permissions are required to notify you.");
-    }
-  };
-
-  // Function to request storage permission for Android using StorageAccessFramework
-  const requestFolderPermission = async () => {
-    try {
-      const permissions =
-        await StorageAccessFramework.requestDirectoryPermissionsAsync();
-      if (!permissions.granted) {
-        Alert.alert("You need to grant access to a folder to save the file.");
-        return null;
-      }
-      return permissions.directoryUri;
-    } catch (error) {
-      console.error("Error requesting folder permissions:", error);
-      return null;
-    }
-  };
-
-  // Function to download ZIP file and save it to the Downloads folder using StorageAccessFramework
-  const downloadZip = async (id) => {
-    const downloadUri = `https://clients.echodigital.net/inspectionapp/apis/auth/get_document.php?id=${id}`; // Replace with your API endpoint
-    const fileName = `Attachments_${id}.zip`; // File name
-
-    try {
-      // Request access to the Downloads folder or another user-specified folder
-      const folderUri = await requestFolderPermission();
-      if (!folderUri) return;
-
-      // Download the ZIP file to a temporary location
-      const { uri, status } = await FileSystem.downloadAsync(
-        downloadUri,
-        FileSystem.cacheDirectory + fileName
-      );
-
-      if (status !== 200) {
-        console.error("Failed to download file");
-        return;
-      }
-
-      // Read the contents of the downloaded file
-      const fileContents = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      // Save the file to the selected folder using StorageAccessFramework
-      const fileUri = await StorageAccessFramework.createFileAsync(
-        folderUri,
-        fileName,
-        "application/zip"
-      );
-      await FileSystem.writeAsStringAsync(fileUri, fileContents, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      console.log("File saved successfully to:", fileUri);
-
-      // Trigger notification with "View" action
-      triggerNotification(
-        `Document Downloaded`,
-        `File is saved to ${fileUri}`,
-        fileUri
-      );
-    } catch (error) {
-      console.error("Error downloading file", error);
-    }
-  };
-
-  // Function to trigger a notification with a "View" action
-  const triggerNotification = async (title, body, fileUri) => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title,
-        body,
-        data: { fileUri }, // Pass the fileUri so it can be accessed on notification tap
-        categoryIdentifier: "view-zip", // Category for actionable button
-      },
-      trigger: null, // Immediately show the notification
-    });
-  };
-
-  // Register a notification category with a "View ZIP" action
-  useEffect(() => {
-    Notifications.setNotificationCategoryAsync("view-zip", [
-      {
-        identifier: "view-zip-button",
-        buttonTitle: "View ZIP",
-        options: { opensAppToForeground: true }, // Bring the app to the foreground when the button is pressed
-      },
-    ]);
-  }, []);
-  // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Animate height and opacity when buttonOpen changes
   useEffect(() => {
@@ -282,11 +154,11 @@ const SingleCarInfo = ({ route, navigation }) => {
     navigation.navigate("CustomerForm", { carId: `${id}` });
   };
 
-  const openImageModal = (imageUri) => {
-    setSelectedImage(imageUri);
-    console.log(imageUri);
-    setModalVisible(true);
-  };
+  // const openImageModal = (imageUri) => {
+  //   setSelectedImage(imageUri);
+  //   console.log(imageUri);
+  //   setModalVisible(true);
+  // };
 
   let questionNumber = 1;
 
@@ -1156,7 +1028,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 borderBottomWidth: 1,
                 borderColor: colors.ligtGreyBg,
               }}
-              onPress={saleToCustomer}
+              onPress={() => {}}
             >
               <AppText
                 color={colors.fontBlack}
@@ -1188,7 +1060,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 borderBottomWidth: 1,
                 borderColor: colors.ligtGreyBg,
               }}
-              onPress={downloadZip}
+              onPress={() => {}}
             >
               <AppText
                 color={colors.fontBlack}
@@ -1219,6 +1091,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 alignItems: "center",
                 paddingHorizontal: 20,
               }}
+              onPress={() => {}}
             >
               <AppText
                 color={colors.fontBlack}

@@ -247,7 +247,6 @@ const styles = StyleSheet.create({
   customerSummarycontainerbackgroundImage: {
     marginLeft: 20,
     marginRight: 20,
-    marginTop: 10,
     borderRadius: 10,
     overflow: "hidden",
   },

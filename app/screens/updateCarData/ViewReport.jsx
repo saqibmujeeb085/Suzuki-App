@@ -248,7 +248,40 @@ const ViewReport = ({ navigation, route }) => {
     });
   };
 
-  console.log(carIndicatorsRating);
+  const changeStatus = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carformdata");
+      if (storedData !== null) {
+        const carFormDataArray = JSON.parse(storedData);
+        const updatedCarFormDataArray = carFormDataArray.map((item) => {
+          if (item.tempID === id) {
+            return {
+              ...item,
+              status: "inspected",
+            };
+          }
+          return item;
+        });
+
+        await AsyncStorage.setItem(
+          "@carformdata",
+          JSON.stringify(updatedCarFormDataArray)
+        );
+
+        // Update local state as well
+        setCarInfo((prevCarInfo) => ({
+          ...prevCarInfo,
+          status: "inspected",
+        }));
+
+        navigation.navigate("Draft");
+      } else {
+        console.log("No car data found in AsyncStorage");
+      }
+    } catch (error) {
+      console.error("Error updating car status:", error);
+    }
+  };
 
   return (
     <AppScreen>
@@ -780,7 +813,9 @@ const ViewReport = ({ navigation, route }) => {
         </View>
       </ScrollView>
       <View style={styles.formButton}>
-        <GradientButton>Submit Inspection Report</GradientButton>
+        <GradientButton onPress={changeStatus}>
+          Submit Inspection Report
+        </GradientButton>
       </View>
     </AppScreen>
   );

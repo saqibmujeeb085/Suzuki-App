@@ -33,17 +33,29 @@ const FormDataProvider = ({ children }) => {
         "@formDataCapacity",
         "@formDataCities",
       ];
+
+      // Fetch all AsyncStorage values for the given keys
       const values = await AsyncStorage.multiGet(keys);
 
-      setManufacturersData(JSON.parse(values[0][1]) || []);
-      setModelsData(JSON.parse(values[1][1]) || []);
-      setVarientsData(JSON.parse(values[2][1]) || []);
-      setYearsData(JSON.parse(values[3][1]) || []);
-      setColorsData(JSON.parse(values[4][1]) || []);
-      setFuelsData(JSON.parse(values[5][1]) || []);
-      setTransmissionsData(JSON.parse(values[6][1]) || []);
-      setCapacitiesData(JSON.parse(values[7][1]) || []);
-      setCitiesData(JSON.parse(values[8][1]) || []);
+      // Check if any value exists for each key and set state, else set an empty array
+      const dataMapping = {
+        setManufacturersData: JSON.parse(values[0][1]) || [],
+        setModelsData: JSON.parse(values[1][1]) || [],
+        setVarientsData: JSON.parse(values[2][1]) || [],
+        setYearsData: JSON.parse(values[3][1]) || [],
+        setColorsData: JSON.parse(values[4][1]) || [],
+        setFuelsData: JSON.parse(values[5][1]) || [],
+        setTransmissionsData: JSON.parse(values[6][1]) || [],
+        setCapacitiesData: JSON.parse(values[7][1]) || [],
+        setCitiesData: JSON.parse(values[8][1]) || [],
+      };
+
+      // Map over the object and apply the state setters
+      Object.entries(dataMapping).forEach(([setState, value]) => {
+        if (value.length > 0) {
+          window[setState](value);
+        }
+      });
     } catch (error) {
       console.log("Failed to load data from AsyncStorage", error);
     }
@@ -328,29 +340,28 @@ const FormDataProvider = ({ children }) => {
 
   ///////////////////////////////////////////////////////////////
 
-  // Check network status and load data accordingly
   useEffect(() => {
-    const handleNetworkChange = async (state) => {
-      if (!state.isConnected) {
-        await loadLocalStorageData();
-      } else {
-        fetchDataFromServer();
-      }
-    };
-
     const checkNetworkAndLoadData = async () => {
       const state = await NetInfo.fetch();
-      handleNetworkChange(state);
+      if (state.isConnected) {
+        await fetchDataFromServer();
+      } else {
+        loadLocalStorageData(); // Ensure this is called immediately if offline
+      }
     };
 
     checkNetworkAndLoadData();
 
     // Subscribe to network status changes
-    const unsubscribe = NetInfo.addEventListener(handleNetworkChange);
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      if (state.isConnected) {
+        fetchDataFromServer();
+      } else {
+        loadLocalStorageData();
+      }
+    });
 
-    // Cleanup function to save current state to AsyncStorage and unsubscribe
     return () => {
-      saveDataToLocalStorage();
       unsubscribe();
     };
   }, []);

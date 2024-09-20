@@ -99,7 +99,7 @@ const Reports = ({ navigation }) => {
       setIsLoadingMore(false);
     } catch (error) {
       console.log("Error fetching inspected car data:", error);
-      Toast.error(
+      console.log(
         "Failed to fetch car data. Please Check Your Internet Connection"
       );
       setLoading(false);
@@ -242,9 +242,6 @@ const Reports = ({ navigation }) => {
 
   return (
     <AppScreen>
-      {show && (
-        <FilterModal show={show} setShow={setShow} onFilter={onFilter} />
-      )}
       {isConnected ? (
         <View style={styles.searchDataContainer}>
           <InspectionHeader backIcon={false} borderBottom={true}>
@@ -338,6 +335,10 @@ const Reports = ({ navigation }) => {
           </AppText>
         </View>
       )}
+
+      {show && (
+        <FilterModal show={show} setShow={setShow} onFilter={onFilter} />
+      )}
     </AppScreen>
   );
 };
@@ -349,9 +350,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 0,
     gap: 20,
-  },
-  searchDataContainer: {
-    marginTop: 5,
   },
   filterChips: {
     flexDirection: "row",
