@@ -11,11 +11,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": ["fetch", "processing"]  
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +26,9 @@
       "permissions": [
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.WAKE_LOCK",  
+        "android.permission.RECEIVE_BOOT_COMPLETED"  
       ],
       "package": "com.saqibmujeeb.app"
     },
@@ -33,6 +36,9 @@
       "favicon": "./app/assets/favicon.png"
     },
     "plugins": [
+      "expo-task-manager",
+      "expo-notifications",
+      "expo-background-fetch",
       [
         "expo-font",
         {

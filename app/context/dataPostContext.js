@@ -1,128 +1,194 @@
-import React, { Children, useEffect } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
+import * as TaskManager from "expo-task-manager";
+import * as BackgroundFetch from "expo-background-fetch";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import { Platform } from "react-native";
-import * as TaskManager from "expo-task-manager";
-import * as BackgroundFetch from "expo-background-fetch";
-import NetInfo from "@react-native-community/netinfo";
-import _ from "lodash";
 
-// Set up notification handler
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
+const DataPostContext = createContext();
 
-// Background fetch task name
+// Task name for Background Fetch
 const BACKGROUND_FETCH_TASK = "background-fetch-task";
 
-// Define background task
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
-  const { isConnected } = await NetInfo.fetch();
+// Flag to track whether a post is already being processed
+let isPosting = false;
 
-  if (isConnected) {
-    try {
-      const data = await AsyncStorage.getItem("@carformdata");
-      if (data) {
-        const parsedData = JSON.parse(data);
-        const inspectedItems = parsedData.filter(
+// Function to post data
+const postData = async () => {
+  if (isPosting) {
+    // Prevent duplicate posts if another post is already happening
+    console.log("Post in progress, skipping...");
+    return;
+  }
+
+  try {
+    isPosting = true; // Set flag to prevent duplicates
+
+    // Fetch network info
+    const netInfo = await NetInfo.fetch();
+
+    // Fetch stored data from AsyncStorage
+    const storedData = await AsyncStorage.getItem("@carformdata");
+
+    if (storedData) {
+      // Parse the stored data
+      const parsedData = JSON.parse(storedData);
+
+      if (Array.isArray(parsedData)) {
+        // Check if any data has status "inspected"
+        const hasInspected = parsedData.some(
           (item) => item.status === "inspected"
         );
 
-        if (inspectedItems.length > 0) {
-          await triggerManualUpload(inspectedItems);
+        // Check both conditions: data with 'inspected' status and network connectivity
+        if (hasInspected && netInfo.isConnected) {
+          console.log(
+            "Connected to the internet and found data with status 'inspected'. Proceeding with post..."
+          );
+          getAllData();
+        } else if (!hasInspected) {
+          console.log("No data with status 'inspected'. Skipping post...");
+        } else if (!netInfo.isConnected) {
+          console.log("No internet connection. Skipping post...");
         }
+      } else {
+        console.log("Stored data is not an array.");
       }
-      return BackgroundFetch.BackgroundFetchResult.NewData;
-    } catch (error) {
-      console.log("Error during background fetch task:", error);
-      return BackgroundFetch.BackgroundFetchResult.Failed;
-    }
-  } else {
-    return BackgroundFetch.BackgroundFetchResult.NoData;
-  }
-});
-
-// Register background fetch task
-const registerBackgroundFetchAsync = async () => {
-  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-    minimumInterval: 15 * 60, // 15 minutes
-    stopOnTerminate: false, // Continue running when app is closed
-    startOnBoot: true, // Start task when device is rebooted
-  });
-};
-
-// Unregister background task (optional)
-const unregisterBackgroundFetchAsync = async () => {
-  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
-};
-
-// Trigger the manual upload of data
-const triggerManualUpload = _.debounce(async (itemsToUpload) => {
-  try {
-    for (let item of itemsToUpload) {
-      const groupedData = await getGroupedData(item);
-      await postData(item, groupedData);
+    } else {
+      console.log("No stored data found.");
     }
   } catch (error) {
-    console.log("Error triggering manual upload:", error);
+    console.error("Error posting data:", error);
+  } finally {
+    isPosting = false; // Reset flag after post is done
   }
-}, 1000);
-
-// Group questions data
-const getGroupedData = async (obj) => {
-  const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
-  const carbodyjsonValue = await AsyncStorage.getItem("@carBodyQuestionsdata");
-  const questionsData = questionjsonValue ? JSON.parse(questionjsonValue) : [];
-  const carbodyData = carbodyjsonValue ? JSON.parse(carbodyjsonValue) : [];
-
-  const ques = questionsData.filter((item) => item.QtempID == obj.tempID);
-  const carbodyques = carbodyData.filter((item) => item.tempID == obj.tempID);
-
-  const groupedData = ques.reduce((acc, item) => {
-    const {
-      catName,
-      subCatName,
-      IndID,
-      IndQuestion,
-      value,
-      point,
-      reason,
-      image,
-    } = item;
-
-    let category = acc.find((cat) => cat.mainCat == catName);
-
-    if (!category) {
-      category = { mainCat: catName, mainCatData: [] };
-      acc.push(category);
-    }
-
-    let subCategory = category.mainCatData.find(
-      (subCat) => subCat.subCatName == subCatName
-    );
-
-    if (!subCategory) {
-      subCategory = { subCatName: subCatName, subCatData: [] };
-      category.mainCatData.push(subCategory);
-    }
-
-    const dataItem = { IndID, IndQuestion, value, point, reason, image };
-    subCategory.subCatData.push(dataItem);
-
-    return acc;
-  }, []);
-
-  return { groupedData, carbodyques };
 };
 
-// Post data to the server
-const postData = async (obj, { groupedData, carbodyques }) => {
+const registerForPushNotificationsAsync = async () => {
+  let token;
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log("Expo Push Token:", token); // Log or save this token
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
+};
+
+// my code running here
+
+const getAllData = async () => {
+  try {
+    const carjsonValue = await AsyncStorage.getItem("@carformdata");
+    const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
+    const carbodyjsonValue = await AsyncStorage.getItem(
+      "@carBodyQuestionsdata"
+    );
+
+    if (carjsonValue && questionjsonValue && carbodyjsonValue) {
+      const carFormData = JSON.parse(carjsonValue);
+      const questionsData = JSON.parse(questionjsonValue);
+      const carbodyData = carbodyjsonValue ? JSON.parse(carbodyjsonValue) : [];
+
+      if (Array.isArray(carFormData) && Array.isArray(questionsData)) {
+        carFormData.forEach((obj) => {
+          const ques = questionsData.filter(
+            (item) => item.QtempID == obj.tempID
+          );
+          const carbodyques = carbodyData.filter(
+            (item) => item.tempID == obj.tempID
+          );
+
+          const groupedData = ques.reduce((acc, item) => {
+            const {
+              catName,
+              subCatName,
+              IndID,
+              IndQuestion,
+              value,
+              point,
+              reason,
+              image,
+            } = item;
+
+            let category = acc.find((cat) => cat.mainCat == catName);
+
+            if (!category) {
+              category = {
+                mainCat: catName,
+                mainCatData: [],
+              };
+              acc.push(category);
+            }
+
+            let subCategory = category.mainCatData.find(
+              (subCat) => subCat.subCatName == subCatName
+            );
+
+            if (!subCategory) {
+              subCategory = {
+                subCatName: subCatName,
+                subCatData: [],
+              };
+              category.mainCatData.push(subCategory);
+            }
+
+            const dataItem = {
+              IndID: IndID,
+              IndQuestion: IndQuestion,
+              value: value,
+              point: point,
+              reason: reason,
+              image: image,
+            };
+
+            subCategory.subCatData.push(dataItem);
+
+            return acc;
+          }, []);
+
+          if (obj.status === "inspected") {
+            startPosting(obj, groupedData, carbodyques);
+          }
+        });
+      } else {
+        console.log("Data retrieved from AsyncStorage is not an array.");
+      }
+    } else {
+      console.log(
+        "No data found in AsyncStorage for @carformdata or @carQuestionsdata."
+      );
+    }
+  } catch (error) {
+    console.log("Error processing data upload:", error);
+  }
+};
+
+const startPosting = async (obj, groupedData, carbodyques) => {
   const formData = new FormData();
 
   formData.append("dealershipId", obj.dealershipId);
@@ -147,6 +213,32 @@ const postData = async (obj, { groupedData, carbodyques }) => {
   formData.append("color", obj.color);
   formData.append("status", obj.status);
 
+  if (obj.images && Array.isArray(obj.images)) {
+    for (const image of obj.images) {
+      if (image.uri) {
+        const file = {
+          uri: image.uri,
+          type: image.type,
+          name: image.name,
+        };
+        formData.append("images[]", file);
+      }
+    }
+  }
+
+  if (obj.documents && Array.isArray(obj.documents)) {
+    for (const doc of obj.documents) {
+      if (doc.uri) {
+        const file = {
+          uri: doc.uri,
+          type: doc.type,
+          name: doc.name,
+        };
+        formData.append("documents[]", file);
+      }
+    }
+  }
+
   groupedData.forEach((category, catIndex) => {
     formData.append(`data[${catIndex}][mainCat]`, category.mainCat);
 
@@ -161,8 +253,15 @@ const postData = async (obj, { groupedData, carbodyques }) => {
 
         formData.append(`${baseIndex}[IndQuestion]`, item.IndQuestion);
         formData.append(`${baseIndex}[value]`, item.value);
-        if (item.point) formData.append(`${baseIndex}[point]`, item.point);
-        if (item.reason) formData.append(`${baseIndex}[reason]`, item.reason);
+
+        if (item.point) {
+          formData.append(`${baseIndex}[point]`, item.point);
+        }
+
+        if (item.reason) {
+          formData.append(`${baseIndex}[reason]`, item.reason);
+        }
+
         if (item.image && item.image.uri) {
           const file = {
             uri: item.image.uri,
@@ -180,6 +279,7 @@ const postData = async (obj, { groupedData, carbodyques }) => {
       `problems[${problemIndex}][problemLocation]`,
       problemItem.problemLocation
     );
+
     problemItem.problems.forEach((problem, index) => {
       formData.append(
         `problems[${problemIndex}][problems][${index}][problemName]`,
@@ -190,6 +290,7 @@ const postData = async (obj, { groupedData, carbodyques }) => {
         problem.selectedValue
       );
     });
+
     if (problemItem.image && problemItem.image.uri) {
       const file = {
         uri: problemItem.image.uri,
@@ -201,130 +302,172 @@ const postData = async (obj, { groupedData, carbodyques }) => {
   });
 
   try {
-    const headers = { "Content-Type": "multipart/form-data" };
+    const headers = {
+      "Content-Type": "multipart/form-data",
+    };
+
     const response = await axios.post(
       "auth/add_carinspectionsnew.php",
       formData,
-      { headers }
+      {
+        headers: headers,
+      }
     );
 
+    const expoPushToken = await registerForPushNotificationsAsync(); // Ensure to call this to get the Expo Push Token
+
     if (response.data.success) {
-      await removeProcessedData(obj.tempID);
-      const expoPushToken = await registerForPushNotificationsAsync();
+      removeProcessedData(obj.tempID);
       if (expoPushToken) {
+        // Send success notification
         sendPushNotification(
           expoPushToken,
           "Car Uploaded Successfully",
-          `Car With Registration No ${response.data.registration_no} Uploaded.`
+          `Car with Registration No ${response.data.registration_no} has been uploaded.`
         );
       }
     } else {
-      const expoPushToken = await registerForPushNotificationsAsync();
       if (expoPushToken) {
+        // Send failure notification
         sendPushNotification(
           expoPushToken,
           "Car Upload Failed",
-          response.data.message
+          "Failed To Upload Data Trying Again"
         );
       }
     }
   } catch (error) {
     console.log("Error posting data:", error);
+    const expoPushToken = await registerForPushNotificationsAsync();
+    if (expoPushToken) {
+      // Send error notification
+      sendPushNotification(
+        expoPushToken,
+        "Car Upload Failed",
+        "There was an error posting the data."
+      );
+    }
   }
 };
 
-// Remove processed data from AsyncStorage
 const removeProcessedData = async (processedTempID) => {
   try {
+    // Retrieve stored data from AsyncStorage
     const carjsonValue = await AsyncStorage.getItem("@carformdata");
-    if (carjsonValue) {
-      let carFormData = JSON.parse(carjsonValue);
-      carFormData = carFormData.filter((obj) => obj.tempID !== processedTempID);
+    const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
+    const carbodyjsonValue = await AsyncStorage.getItem(
+      "@carBodyQuestionsdata"
+    ); // Retrieve car body questions
 
-      // Update AsyncStorage with the remaining unprocessed data
+    if (carjsonValue && questionjsonValue && carbodyjsonValue) {
+      let carFormData = JSON.parse(carjsonValue);
+      let questionsData = JSON.parse(questionjsonValue);
+      let carBodyData = JSON.parse(carbodyjsonValue); // Parse car body data
+
+      // Ensure the data is an array
+      if (!Array.isArray(carFormData)) {
+        carFormData = [];
+      }
+      if (!Array.isArray(questionsData)) {
+        questionsData = [];
+      }
+      if (!Array.isArray(carBodyData)) {
+        carBodyData = [];
+      }
+
+      // Filter out the processed data for each data set
+      carFormData = carFormData.filter((obj) => obj.tempID !== processedTempID);
+      questionsData = questionsData.filter(
+        (q) => q.QtempID !== processedTempID
+      );
+      carBodyData = carBodyData.filter(
+        (item) => item.tempID !== processedTempID
+      ); // Filter car body data
+
+      // Update AsyncStorage with the new data
       await AsyncStorage.setItem("@carformdata", JSON.stringify(carFormData));
+      await AsyncStorage.setItem(
+        "@carQuestionsdata",
+        JSON.stringify(questionsData)
+      );
+      await AsyncStorage.setItem(
+        "@carBodyQuestionsdata",
+        JSON.stringify(carBodyData)
+      ); // Update car body questions data
 
       console.log("Processed data removed successfully.");
     } else {
-      console.log("No data found in AsyncStorage for @carformdata.");
+      console.log(
+        "No data found in AsyncStorage for @carformdata, @carQuestionsdata, or @carBodyQuestionsdata."
+      );
     }
   } catch (error) {
     console.log("Error removing processed data:", error);
   }
 };
 
-// Send push notification
-const sendPushNotification = _.debounce(
-  async (expoPushToken, title, message) => {
-    const messageToSend = {
-      to: expoPushToken,
-      sound: "default",
-      title: title,
-      body: message,
-      data: { message },
-    };
+const sendPushNotification = async (expoPushToken, title, message) => {
+  const messageToSend = {
+    to: expoPushToken,
+    sound: "default",
+    title: title,
+    body: message,
+    data: { message },
+  };
 
+  try {
     await axios.post("https://exp.host/--/api/v2/push/send", messageToSend);
-  },
-  100
-);
-
-// Register for push notifications
-const registerForPushNotificationsAsync = async () => {
-  let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-  } else {
-    alert("Must use physical device for Push Notifications");
+    console.log("Push notification sent successfully");
+  } catch (error) {
+    console.error("Error sending push notification:", error);
   }
-
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
-  return token;
 };
 
-// Main app entry
-const DataPostProvider = ({ children }) => {
+// my code running here end
+
+// Define the Background Fetch task that runs continuously
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+  const now = Date.now();
+  console.log(`Background fetch executed at: ${new Date(now).toISOString()}`);
+
+  // Post data in background fetch task
+  await postData();
+
+  // Return the successful result type to indicate task completion
+  return BackgroundFetch.BackgroundFetchResult.NewData;
+});
+
+// Register the Background Fetch task
+async function registerBackgroundFetchAsync() {
+  try {
+    await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+      minimumInterval: 60 * 5,
+      stopOnTerminate: false,
+      startOnBoot: true,
+    });
+    console.log("Background fetch task registered.");
+  } catch (error) {
+    console.error("Error registering background fetch task:", error);
+  }
+}
+
+// Context Provider component
+export const DataPostProvider = ({ children }) => {
   useEffect(() => {
-    const initializeBackgroundTask = async () => {
-      const status = await BackgroundFetch.getStatusAsync();
-      if (
-        status !== BackgroundFetch.Status.Restricted &&
-        status !== BackgroundFetch.Status.Denied
-      ) {
-        await registerBackgroundFetchAsync();
-      } else {
-        console.log("Background fetch is disabled or restricted.");
-      }
-    };
+    // Register background task for continuous operation
+    registerBackgroundFetchAsync();
 
-    initializeBackgroundTask();
+    // Check data and post every 5 seconds while the app is in the foreground
+    const intervalId = setInterval(postData, 30000);
 
-    // Cleanup function (unregister task if needed)
     return () => {
-      unregisterBackgroundFetchAsync();
+      clearInterval(intervalId); // Cleanup interval when component unmounts
     };
   }, []);
 
-  return <>{children}</>; // No UI needed for this task, so return null.
+  return (
+    <DataPostContext.Provider value={{}}>{children}</DataPostContext.Provider>
+  );
 };
 
-export default DataPostProvider;
+export default DataPostContext;

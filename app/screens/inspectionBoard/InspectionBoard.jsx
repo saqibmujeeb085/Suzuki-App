@@ -197,12 +197,6 @@ const InspectionBoard = ({ navigation, route }) => {
           JSON.stringify(updatedCarFormDataArray)
         );
 
-        // Update local state as well
-        setCarInfo((prevCarInfo) => ({
-          ...prevCarInfo,
-          status: "inspected",
-        }));
-
         navigation.navigate("Draft");
       } else {
         console.log("No car data found in AsyncStorage");

@@ -250,31 +250,53 @@ const ViewReport = ({ navigation, route }) => {
 
   const changeStatus = async () => {
     try {
+      // Retrieve the data from AsyncStorage
       const storedData = await AsyncStorage.getItem("@carformdata");
-      if (storedData !== null) {
-        const carFormDataArray = JSON.parse(storedData);
-        const updatedCarFormDataArray = carFormDataArray.map((item) => {
-          if (item.tempID === id) {
-            return {
-              ...item,
-              status: "inspected",
-            };
-          }
-          return item;
-        });
 
-        await AsyncStorage.setItem(
-          "@carformdata",
-          JSON.stringify(updatedCarFormDataArray)
+      if (storedData !== null) {
+        // Parse the stored data
+        const carFormDataArray = JSON.parse(storedData);
+
+        // Log the carFormDataArray to see if it has valid data
+        console.log("Stored carFormDataArray:", carFormDataArray);
+
+        // Convert id to a number for comparison with tempID
+        const tempIDAsNumber = Number(id);
+
+        // Check if the array contains the car with the matching tempID
+        const carData = carFormDataArray.find(
+          (item) => item.tempID === tempIDAsNumber
         );
 
-        // Update local state as well
-        setCarInfo((prevCarInfo) => ({
-          ...prevCarInfo,
-          status: "inspected",
-        }));
+        if (carData) {
+          console.log("Found car data:", carData);
 
-        navigation.navigate("Draft");
+          // Map through the array and update the status of the matching car
+          const updatedCarFormDataArray = carFormDataArray.map((item) => {
+            if (item.tempID === tempIDAsNumber) {
+              return {
+                ...item,
+                status: "inspected", // Update status to "inspected"
+              };
+            }
+            return item;
+          });
+
+          // Save the updated data back to AsyncStorage
+          await AsyncStorage.setItem(
+            "@carformdata",
+            JSON.stringify(updatedCarFormDataArray)
+          );
+
+          console.log("Status changed successfully");
+          // Navigate back to "Draft" or any other screen
+          navigation.navigate("Draft");
+        } else {
+          console.log(
+            "No car data found with the given tempID:",
+            tempIDAsNumber
+          );
+        }
       } else {
         console.log("No car data found in AsyncStorage");
       }

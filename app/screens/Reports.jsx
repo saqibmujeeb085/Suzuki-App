@@ -1,4 +1,10 @@
-import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  RefreshControl, // Import RefreshControl
+} from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import AppScreen from "../components/screen/Screen";
 import Search from "../components/search/Search";
@@ -18,7 +24,7 @@ const Reports = ({ navigation }) => {
   const [inspectedCar, setInspectedCar] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // State to track refreshing
   const [loading, setLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -105,7 +111,7 @@ const Reports = ({ navigation }) => {
       setLoading(false);
       setInspectedCar([]); // Set empty array to prevent map error
     } finally {
-      setRefreshing(false);
+      setRefreshing(false); // Stop refreshing after data is fetched
     }
   };
 
@@ -237,6 +243,15 @@ const Reports = ({ navigation }) => {
     }
   };
 
+  // Pull-to-refresh handler
+  const onRefresh = async () => {
+    setRefreshing(true); // Show refresh loader
+    setStartRecord(1); // Reset start record for fresh data
+    setEndRecord(20); // Reset end record
+    await inspectedCarsData(); // Re-fetch data
+    setRefreshing(false); // Stop refresh loader
+  };
+
   const dataToDisplay =
     searchQuery.trim().length > 0 ? searchResults : inspectedCar;
 
@@ -282,8 +297,11 @@ const Reports = ({ navigation }) => {
           <ScrollView
             contentContainerStyle={{ paddingBottom: 30, minHeight: 700 }}
             showsVerticalScrollIndicator={false}
-            onScroll={onScroll}
+            onScroll={onScroll} // Load more on scroll
             scrollEventThrottle={400}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> // Pull-to-refresh control
+            }
           >
             {/* Ensure that `dataToDisplay` is always an array before using .map */}
             {loading && startRecord === 1 ? (
