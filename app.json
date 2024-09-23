@@ -39,6 +39,8 @@
       "expo-task-manager",
       "expo-notifications",
       "expo-background-fetch",
+      "@config-plugins/react-native-pdf",
+      "@config-plugins/react-native-blob-util",
       [
         "expo-font",
         {

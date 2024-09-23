@@ -22,6 +22,7 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
+  AntDesign,
   Feather,
   FontAwesome5,
   FontAwesome6,
@@ -154,13 +155,14 @@ const SingleCarInfo = ({ route, navigation }) => {
     navigation.navigate("CustomerForm", { carId: `${id}` });
   };
 
-  // const openImageModal = (imageUri) => {
-  //   setSelectedImage(imageUri);
-  //   console.log(imageUri);
-  //   setModalVisible(true);
-  // };
+  const openImageModal = (imageUri) => {
+    setSelectedImage(imageUri);
+    console.log(imageUri);
+    setModalVisible(true);
+  };
 
   let questionNumber = 1;
+  console.log(carInfo.documents);
 
   return (
     <AppScreen>
@@ -199,6 +201,80 @@ const SingleCarInfo = ({ route, navigation }) => {
 
         <View style={styles.ImageContainer}>
           <CarImagesCarousel images={carInfo?.images} />
+        </View>
+        <View
+          style={{
+            gap: 20,
+            marginBottom: 40,
+          }}
+        >
+          <AppText
+            fontSize={mainStyles.h2FontSize}
+            fontFamily={mainStyles.appFontBold}
+          >
+            Documents
+          </AppText>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 13,
+              flexWrap: "wrap",
+            }}
+          >
+            {carInfo.documents.map((item, index) => (
+              <View key={index}>
+                {item.document_type == "image/jpeg" && (
+                  <TouchableOpacity
+                    style={{
+                      borderRadius: 5,
+                      overflow: "hidden",
+                      width: 60,
+                      height: 60,
+                      elevation: 1,
+                      backgroundColor: colors.whiteBg,
+                    }}
+                    onPress={() =>
+                      openImageModal(
+                        `${process.env.DOCUMENT_URL}${item.document_name}`
+                      )
+                    }
+                  >
+                    <Image
+                      source={{
+                        uri: `${process.env.DOCUMENT_URL}${item.document_name}`,
+                      }}
+                      style={{ justifyContent: "cover", height: 60, width: 60 }}
+                    />
+                  </TouchableOpacity>
+                )}
+                {item.document_type == "application/pdf" && (
+                  <TouchableOpacity
+                    style={{
+                      borderRadius: 5,
+                      overflow: "hidden",
+                      width: 60,
+                      height: 60,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      elevation: 1,
+                      backgroundColor: colors.whiteBg,
+                    }}
+                    onPress={() =>
+                      navigation.navigate("PDF", {
+                        link: `${process.env.DOCUMENT_URL}${item.document_name}`,
+                      })
+                    }
+                  >
+                    <AntDesign
+                      name="pdffile1"
+                      size={24}
+                      color={colors.purple}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))}
+          </View>
         </View>
 
         <View style={styles.completeInfo}>
@@ -1155,7 +1231,10 @@ const SingleCarInfo = ({ route, navigation }) => {
               height: "60%",
               width: "90%",
               borderRadius: 15,
-              overflow: "hidden",
+              padding: 10,
+              backgroundColor: "#FFFFFF",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
             <View style={styles.closeButton}>
@@ -1170,7 +1249,13 @@ const SingleCarInfo = ({ route, navigation }) => {
               source={{
                 uri: selectedImage,
               }}
-              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+              style={{
+                objectFit: "contain",
+                flex: 1,
+                width: "100%",
+                borderRadius: 5,
+                overflow: "hidden",
+              }}
             />
           </View>
         </View>
@@ -1237,8 +1322,8 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: 10,
-    right: 10,
+    top: -10,
+    right: -10,
     borderRadius: 100,
     height: 30,
     width: 30,

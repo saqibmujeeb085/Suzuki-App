@@ -1,4 +1,4 @@
-import { Keyboard, StyleSheet, Text, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import AppScreen from "../../components/screen/Screen";
 import GradientButton from "../../components/buttons/GradientButton";
@@ -37,7 +37,6 @@ const CarBodyDetails = ({ navigation, route }) => {
   ] = useContext(FormDataContext);
 
   const [allSelected, setAllSelected] = useState(false);
-  const [carInfo, setCarInfo] = useState(null);
 
   const [fuelType, setFuelType] = useState("");
   const [transmissionsType, setTransmissionsType] = useState("");
@@ -138,59 +137,6 @@ const CarBodyDetails = ({ navigation, route }) => {
       keyboardDidShowListener.remove();
     };
   }, []);
-
-  useEffect(() => {
-    getCarDataByTempID(`${id}`);
-  }, []);
-
-  const getCarDataByTempID = async (tempID) => {
-    try {
-      const storedData = await AsyncStorage.getItem("@carformdata");
-
-      if (storedData !== null) {
-        const carFormDataArray = JSON.parse(storedData);
-        const carData = carFormDataArray.find((item) => item.tempID == tempID);
-        if (carData) {
-          setCarInfo(carData);
-          return carData;
-        } else {
-          console.log("No data found with tempID:", tempID);
-          return null;
-        }
-      } else {
-        console.log("No car data found in AsyncStorage");
-        return null;
-      }
-    } catch (error) {
-      console.log("Error retrieving car data:", error);
-      return null;
-    }
-  };
-
-  const getManufacturer = (manufacturerId) => {
-    if (manufacturersData) {
-      const m = manufacturersData.find((item) => item.key == manufacturerId);
-      return m ? m.value : "Unknown Manufacturer";
-    }
-  };
-
-  const getCarModel = (carId, manufacturerId) => {
-    const models = modelsData[manufacturerId];
-    if (models) {
-      const model = models.find((item) => item.key == carId);
-      return model ? model.value : "Unknown Model";
-    }
-    return "Unknown Model";
-  };
-
-  const getCarVarient = (varientId, carId) => {
-    const v = varientsData[carId];
-    if (v) {
-      const varient = v.find((item) => item.key == varientId);
-      return varient ? varient.value : "Unknown Varient";
-    }
-    return "Unknown Model";
-  };
 
   const addCarDetails = () => {
     if (

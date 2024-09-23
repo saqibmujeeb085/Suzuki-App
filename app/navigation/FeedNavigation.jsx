@@ -15,6 +15,7 @@ import EditCarInfo from "../screens/updateCarData/EditCarInfo";
 import EditProblems from "../screens/updateCarData/EditProblems";
 import EditIndicatorsRating from "../screens/updateCarData/EditIndicatorsRating";
 import CustomersProfile from "../screens/settingsPages/CustomersProfile"; // Assume these are all imported from one file
+import PdfView from "../screens/singleCarInfo/PdfView";
 
 const FeedNavigation = () => {
   const authContext = useContext(AuthContext);
@@ -44,6 +45,7 @@ const FeedNavigation = () => {
           <Stack.Screen name="CustomerForm" component={Customerform} />
           <Stack.Screen name="ViewReport" component={ViewReport} />
           <Stack.Screen name="EditCarInfo" component={EditCarInfo} />
+          <Stack.Screen name="PDF" component={PdfView} />
           <Stack.Screen name="EditProblems" component={EditProblems} />
           <Stack.Screen
             name="EditIndicatorsRating"
