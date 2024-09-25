@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Animated,
   Easing,
+  Linking,
 } from "react-native";
 import React, { useContext, useEffect, useState, useRef } from "react";
 import axios from "axios";
@@ -56,7 +57,7 @@ const SingleCarInfo = ({ route, navigation }) => {
       // Animate to open (expand height and fade in)
       Animated.parallel([
         Animated.timing(heightAnim, {
-          toValue: 180, // Total height based on number of items
+          toValue: 120, // Total height based on number of items
           duration: 300,
           easing: Easing.ease,
           useNativeDriver: false, // For height animations, native driver must be false
@@ -164,6 +165,14 @@ const SingleCarInfo = ({ route, navigation }) => {
   let questionNumber = 1;
   console.log(carInfo.documents);
 
+  const openPDFInBrowser = (pdfUrl) => {
+    Linking.openURL(pdfUrl).catch((err) => {
+      console.error("Failed to open PDF:", err);
+    });
+  };
+
+  console.log(carInfo);
+
   return (
     <AppScreen>
       <InspectionHeader onPress={() => navigation.goBack()}>
@@ -260,9 +269,9 @@ const SingleCarInfo = ({ route, navigation }) => {
                       backgroundColor: colors.whiteBg,
                     }}
                     onPress={() =>
-                      navigation.navigate("PDF", {
-                        link: `${process.env.DOCUMENT_URL}${item.document_name}`,
-                      })
+                      openPDFInBrowser(
+                        `${process.env.DOCUMENT_URL}${item.document_name}`
+                      )
                     }
                   >
                     <AntDesign
@@ -1083,9 +1092,10 @@ const SingleCarInfo = ({ route, navigation }) => {
             overflow: "hidden",
             position: "absolute",
             left: 20,
-            bottom: 80,
+            bottom: 78,
             alignContent: "flex-start",
             opacity: heightAnimOpacity,
+            elevation: 3,
           }}
         >
           {/* First Item */}
@@ -1104,7 +1114,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 borderBottomWidth: 1,
                 borderColor: colors.ligtGreyBg,
               }}
-              onPress={() => {}}
+              onPress={() => saleToCustomer()}
             >
               <AppText
                 color={colors.fontBlack}
@@ -1121,7 +1131,7 @@ const SingleCarInfo = ({ route, navigation }) => {
           </Animated.View>
 
           {/* Second Item */}
-          <Animated.View>
+          {/* <Animated.View>
             <TouchableOpacity
               style={{
                 backgroundColor: colors.whiteBg,
@@ -1151,7 +1161,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontBlack}
               />
             </TouchableOpacity>
-          </Animated.View>
+          </Animated.View> */}
 
           {/* Third Item */}
           <Animated.View>

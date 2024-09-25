@@ -5,8 +5,6 @@ import * as TaskManager from "expo-task-manager";
 import * as BackgroundFetch from "expo-background-fetch";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
-import * as Device from "expo-device";
-import { Platform } from "react-native";
 
 const DataPostContext = createContext();
 
@@ -15,6 +13,14 @@ const BACKGROUND_FETCH_TASK = "background-fetch-task";
 
 // Flag to track whether a post is already being processed
 let isPosting = false;
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 // Function to post data
 const postData = async () => {
@@ -67,39 +73,34 @@ const postData = async () => {
   }
 };
 
-const registerForPushNotificationsAsync = async () => {
-  let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log("Expo Push Token:", token); // Log or save this token
-  } else {
-    alert("Must use physical device for Push Notifications");
+// Request notification permissions for local notifications
+async function registerForLocalNotificationsAsync() {
+  const { status } = await Notifications.requestPermissionsAsync();
+  if (status !== "granted") {
+    alert("Permission for notifications not granted");
+    return;
   }
 
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
+  console.log("Local Notifications Permission granted");
+}
 
-  return token;
+// Function to schedule a local notification
+const scheduleLocalNotification = async () => {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Car Upload Notification",
+      body: "Car inspection data uploaded successfully!",
+    },
+    trigger: {
+      seconds: 1, // triggers after 1 second
+    },
+  });
 };
 
-// my code running here
+// Call this instead of sending a push notification
+const notifyCarUploadSuccess = () => {
+  scheduleLocalNotification();
+};
 
 const getAllData = async () => {
   try {
@@ -314,31 +315,22 @@ const startPosting = async (obj, groupedData, carbodyques) => {
       }
     );
 
-    const expoPushToken = await registerForPushNotificationsAsync(); // Ensure to call this to get the Expo Push Token
-
     if (response.data.success) {
       removeProcessedData(obj.tempID);
-      if (expoPushToken) {
-        // Send success notification
-        sendPushNotification(
-          expoPushToken,
-          "Car Uploaded Successfully",
-          `Car with Registration No ${response.data.registration_no} has been uploaded.`
-        );
-      }
+      notifyCarUploadSuccess(); // Local notification for successful upload
     } else {
+      const expoPushToken = await registerForLocalNotificationsAsync();
       if (expoPushToken) {
-        // Send failure notification
         sendPushNotification(
           expoPushToken,
           "Car Upload Failed",
-          "Failed To Upload Data Trying Again"
+          response.data.message
         );
       }
     }
   } catch (error) {
     console.log("Error posting data:", error);
-    const expoPushToken = await registerForPushNotificationsAsync();
+    const expoPushToken = await registerForLocalNotificationsAsync();
     if (expoPushToken) {
       // Send error notification
       sendPushNotification(
@@ -376,12 +368,10 @@ const removeProcessedData = async (processedTempID) => {
       }
 
       // Filter out the processed data for each data set
-      carFormData = carFormData.filter((obj) => obj.tempID !== processedTempID);
-      questionsData = questionsData.filter(
-        (q) => q.QtempID !== processedTempID
-      );
+      carFormData = carFormData.filter((obj) => obj.tempID != processedTempID);
+      questionsData = questionsData.filter((q) => q.QtempID != processedTempID);
       carBodyData = carBodyData.filter(
-        (item) => item.tempID !== processedTempID
+        (item) => item.tempID != processedTempID
       ); // Filter car body data
 
       // Update AsyncStorage with the new data
@@ -423,8 +413,6 @@ const sendPushNotification = async (expoPushToken, title, message) => {
   }
 };
 
-// my code running here end
-
 // Define the Background Fetch task that runs continuously
 TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
   const now = Date.now();
@@ -457,7 +445,7 @@ export const DataPostProvider = ({ children }) => {
     // Register background task for continuous operation
     registerBackgroundFetchAsync();
 
-    // Check data and post every 5 seconds while the app is in the foreground
+    // Check data and post every 30 seconds while the app is in the foreground
     const intervalId = setInterval(postData, 30000);
 
     return () => {
