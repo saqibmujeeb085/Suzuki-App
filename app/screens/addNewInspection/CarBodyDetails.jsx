@@ -225,7 +225,7 @@ const CarBodyDetails = ({ navigation, route }) => {
               selectedItem={TransmissionsTypeSelected}
             />
             <AppTextInput
-              placeholder="Milage"
+              placeholder="Mileage"
               onChangeText={(value) => setMilage(value)}
               inputMode={"numeric"}
             />

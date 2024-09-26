@@ -109,9 +109,7 @@ const CarBody = ({ tempID }) => {
                   name="dot-fill"
                   size={30}
                   color={
-                    disabledButtons[area.name]
-                      ? colors.purple
-                      : colors.fontBlack
+                    disabledButtons[area.name] ? colors.red : colors.fontBlack
                   }
                 />
               </TouchableOpacity>

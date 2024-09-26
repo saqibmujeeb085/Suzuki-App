@@ -128,7 +128,7 @@ const CarDetails = ({ navigation }) => {
         />
 
         <Dropdown
-          DropItems="Car Varient"
+          DropItems="Car Variant"
           Data={varientsData[carModel] || []}
           save={"key"}
           selectedItem={CarVarientSelected}

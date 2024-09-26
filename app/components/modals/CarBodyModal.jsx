@@ -18,7 +18,7 @@ const CarBodyModal = ({
   onSave,
 }) => {
   const [problems, setProblems] = useState({
-    "Paint Marked": { checked: false, selectedId: null, selectedValue: null },
+    repaint: { checked: false, selectedId: null, selectedValue: null },
     Dent: { checked: false, selectedId: null, selectedValue: null },
     Scratch: { checked: false, selectedId: null, selectedValue: null },
   });
@@ -29,7 +29,7 @@ const CarBodyModal = ({
   const [loading, setLoading] = useState(false);
 
   const points = {
-    "Paint Marked": [
+    repaint: [
       {
         id: "1",
         label: "Shower Paint",
@@ -155,7 +155,7 @@ const CarBodyModal = ({
 
   const resetFields = () => {
     setProblems({
-      "Paint Marked": { checked: false, selectedId: null, selectedValue: null },
+      repaint: { checked: false, selectedId: null, selectedValue: null },
       Dent: { checked: false, selectedId: null, selectedValue: null },
       Scratch: { checked: false, selectedId: null, selectedValue: null },
     });

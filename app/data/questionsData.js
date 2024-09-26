@@ -1544,6 +1544,12 @@ export const questions = [
                 label: "12",
                 color: colors.blue,
               },
+              {
+                id: 2,
+                value: "bad",
+                label: "Weak",
+                color: colors.blue,
+              },
             ],
             condition: false,
             image: true,
