@@ -211,81 +211,86 @@ const SingleCarInfo = ({ route, navigation }) => {
         <View style={styles.ImageContainer}>
           <CarImagesCarousel images={carInfo?.images} />
         </View>
-        <View
-          style={{
-            gap: 20,
-            marginBottom: 40,
-          }}
-        >
-          <AppText
-            fontSize={mainStyles.h2FontSize}
-            fontFamily={mainStyles.appFontBold}
-          >
-            Documents
-          </AppText>
+        {carInfo.documents == [] && (
           <View
             style={{
-              flexDirection: "row",
-              gap: 13,
-              flexWrap: "wrap",
+              gap: 20,
+              marginBottom: 40,
             }}
           >
-            {carInfo.documents.map((item, index) => (
-              <View key={index}>
-                {item.document_type == "image/jpeg" && (
-                  <TouchableOpacity
-                    style={{
-                      borderRadius: 5,
-                      overflow: "hidden",
-                      width: 60,
-                      height: 60,
-                      elevation: 1,
-                      backgroundColor: colors.whiteBg,
-                    }}
-                    onPress={() =>
-                      openImageModal(
-                        `${process.env.DOCUMENT_URL}${item.document_name}`
-                      )
-                    }
-                  >
-                    <Image
-                      source={{
-                        uri: `${process.env.DOCUMENT_URL}${item.document_name}`,
+            <AppText
+              fontSize={mainStyles.h2FontSize}
+              fontFamily={mainStyles.appFontBold}
+            >
+              Documents
+            </AppText>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 13,
+                flexWrap: "wrap",
+              }}
+            >
+              {carInfo.documents.map((item, index) => (
+                <View key={index}>
+                  {item.document_type == "image/jpeg" && (
+                    <TouchableOpacity
+                      style={{
+                        borderRadius: 5,
+                        overflow: "hidden",
+                        width: 60,
+                        height: 60,
+                        elevation: 1,
+                        backgroundColor: colors.whiteBg,
                       }}
-                      style={{ justifyContent: "cover", height: 60, width: 60 }}
-                    />
-                  </TouchableOpacity>
-                )}
-                {item.document_type == "application/pdf" && (
-                  <TouchableOpacity
-                    style={{
-                      borderRadius: 5,
-                      overflow: "hidden",
-                      width: 60,
-                      height: 60,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      elevation: 1,
-                      backgroundColor: colors.whiteBg,
-                    }}
-                    onPress={() =>
-                      openPDFInBrowser(
-                        `${process.env.DOCUMENT_URL}${item.document_name}`
-                      )
-                    }
-                  >
-                    <AntDesign
-                      name="pdffile1"
-                      size={24}
-                      color={colors.purple}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-            ))}
+                      onPress={() =>
+                        openImageModal(
+                          `${process.env.DOCUMENT_URL}${item.document_name}`
+                        )
+                      }
+                    >
+                      <Image
+                        source={{
+                          uri: `${process.env.DOCUMENT_URL}${item.document_name}`,
+                        }}
+                        style={{
+                          justifyContent: "cover",
+                          height: 60,
+                          width: 60,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  )}
+                  {item.document_type == "application/pdf" && (
+                    <TouchableOpacity
+                      style={{
+                        borderRadius: 5,
+                        overflow: "hidden",
+                        width: 60,
+                        height: 60,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        elevation: 1,
+                        backgroundColor: colors.whiteBg,
+                      }}
+                      onPress={() =>
+                        openPDFInBrowser(
+                          `${process.env.DOCUMENT_URL}${item.document_name}`
+                        )
+                      }
+                    >
+                      <AntDesign
+                        name="pdffile1"
+                        size={24}
+                        color={colors.purple}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
-
+        )}
         <View style={styles.completeInfo}>
           <AppText
             fontFamily={mainStyles.appFontBold}

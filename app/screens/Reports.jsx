@@ -295,7 +295,7 @@ const Reports = ({ navigation }) => {
           </View>
 
           <ScrollView
-            contentContainerStyle={{ paddingBottom: 30, minHeight: 700 }}
+            contentContainerStyle={{ paddingBottom: 180 }}
             showsVerticalScrollIndicator={false}
             onScroll={onScroll} // Load more on scroll
             scrollEventThrottle={400}

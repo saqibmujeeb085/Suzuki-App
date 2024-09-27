@@ -1,9 +1,11 @@
 import {
   Alert,
   Keyboard,
+  Modal,
   StyleSheet,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import AppScreen from "../../components/screen/Screen";
@@ -18,14 +20,16 @@ import Dropdown from "../../components/formFields/Dropdown";
 import AppText from "../../components/text/Text";
 import { mainStyles } from "../../constants/style";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Image } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 const Customerform = ({ navigation, route }) => {
   const { carId } = route.params || {};
   const [userData, setUserData] = useContext(AuthContext);
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-
+  const [sending, setSending] = useState(false);
   // Define state variables for all input fields
   const [customerName, setCustomerName] = useState("");
   const [cnicNumber, setCnicNumber] = useState("");
@@ -40,6 +44,14 @@ const Customerform = ({ navigation, route }) => {
   const [sfs, setSFS] = useState("");
   const [tfs, setTFS] = useState("");
   const [warrantyClaim, setWarrantyClaim] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // States to hold image URIs
+  const [transferSlipImage, setTransferSlipImage] = useState(null);
+  const [ffsImage, setFfsImage] = useState(null);
+  const [sfsImage, setSfsImage] = useState(null);
+  const [tfsImage, setTfsImage] = useState(null);
 
   // Date picker visibility states
   const [isFfs, setFfs] = useState(false);
@@ -62,9 +74,15 @@ const Customerform = ({ navigation, route }) => {
       ffs &&
       sfs &&
       tfs &&
-      warrantyClaim
+      warrantyClaim &&
+      transferSlipImage &&
+      ffsImage &&
+      sfsImage &&
+      tfsImage
     );
   };
+
+  console.log(ffsImage);
 
   const resetForm = () => {
     setCustomerName("");
@@ -80,12 +98,17 @@ const Customerform = ({ navigation, route }) => {
     setSFS("");
     setTFS("");
     setWarrantyClaim("");
+    setTransferSlipImage(null);
+    setFfsImage(null);
+    setSfsImage(null);
+    setTfsImage(null);
   };
 
   // Handle form submission
   const handleSubmit = async () => {
+    setSending(true);
     if (!isFormValid()) {
-      Alert.alert("Error", "Please fill in all fields.");
+      console.log("Error", "Please fill in all fields.");
       return;
     }
 
@@ -107,6 +130,27 @@ const Customerform = ({ navigation, route }) => {
     formData.append("tfs", tfs);
     formData.append("warranty_claim", warrantyClaim);
 
+    formData.append("transfer_slip_image", {
+      uri: transferSlipImage.uri,
+      name: transferSlipImage.fileName,
+      type: "image/jpeg",
+    });
+    formData.append("ffs_image", {
+      uri: ffsImage.uri,
+      name: ffsImage.fileName,
+      type: "image/jpeg",
+    });
+    formData.append("sfs_image", {
+      uri: sfsImage.uri,
+      name: sfsImage.fileName,
+      type: "image/jpeg",
+    });
+    formData.append("tfs_image", {
+      uri: tfsImage.uri,
+      name: tfsImage.fileName,
+      type: "image/jpeg",
+    });
+
     try {
       // Use axios to send the POST request
       const response = await axios.post("/auth/add_customers.php", formData, {
@@ -116,19 +160,37 @@ const Customerform = ({ navigation, route }) => {
       });
 
       if (response.data.code == 200) {
+        setSending(false);
         Alert.alert("Success", `Car Assigned To ${customerName} Successfully`, [
           {
             text: "OK",
             onPress: () => navigation.navigate("Home"),
           },
         ]);
+
         resetForm();
       } else {
         // Handle errors
-        Alert.alert("Error", "Form submission failed. Please try again.");
+        console.log("Error", "Form submission failed. Please try again.");
       }
     } catch (error) {
-      Alert.alert("Error", "An error occurred. Please try again later.");
+      console.log("Error", "An error occurred. Please try again later.");
+    }
+  };
+
+  const openCamera = async (setImageFunction) => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert("You've refused to allow this app to access your camera!");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      setImageFunction(result.assets[0]);
     }
   };
 
@@ -210,35 +272,9 @@ const Customerform = ({ navigation, route }) => {
     setTfsVisible(false);
   };
 
-  // Keyboard event listener for adjusting button positioning
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardVisible(false);
-      }
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
-
-  const warrantyData = [
-    { key: 1, value: "A" },
-    { key: 2, value: "B" },
-    { key: 3, value: "C" },
-    { key: 4, value: "D" },
-  ];
-  const WarrantySelected = (selected) => {
-    setWarrantyCategory(selected);
+  const openImageModal = (imageUri) => {
+    setSelectedImage(imageUri);
+    setModalVisible(true);
   };
 
   return (
@@ -285,9 +321,14 @@ const Customerform = ({ navigation, route }) => {
             />
             <Dropdown
               DropItems="Warranty Category"
-              Data={warrantyData}
+              Data={[
+                { key: 1, value: "A" },
+                { key: 2, value: "B" },
+                { key: 3, value: "C" },
+                { key: 4, value: "D" },
+              ]}
               save={"value"}
-              selectedItem={WarrantySelected}
+              selectedItem={(selected) => setWarrantyCategory(selected)}
             />
             <AppTextInput
               placeholder="DMIS sales entry (00/00000)"
@@ -302,19 +343,16 @@ const Customerform = ({ navigation, route }) => {
               onChangeText={setWarrantyBookletNumber}
               maxLength={4}
             />
-            {/* Transfer Slip Date Picker */}
+
+            {/* Transfer Slip Date Picker and Camera */}
             <View style={styles.datePickerContainer}>
               <View style={styles.datePickerButton}>
                 <TouchableOpacity
                   onPress={() => setTransferSlipVisible(true)}
-                  style={{
-                    width: "80%",
-                    borderRightWidth: 1,
-                    borderColor: colors.ligtGreyBg,
-                  }}
+                  style={styles.datePickerTouchable}
                 >
                   <AppText
-                    color={colors.fontGrey}
+                    color={transferSlip ? colors.fontBlack : colors.fontGrey}
                     padding={10}
                     textAlign={"start"}
                     fontSize={mainStyles.h2FontSize}
@@ -325,18 +363,25 @@ const Customerform = ({ navigation, route }) => {
                   </AppText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => {}}
-                  style={{
-                    backgroundColor: colors.ligtGreyBg,
-                    height: 40,
-                    width: "17%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: 5,
-                    overflow: "hidden",
-                  }}
+                  onPress={
+                    transferSlipImage
+                      ? () => openImageModal(transferSlipImage.uri)
+                      : () => openCamera(setTransferSlipImage)
+                  }
+                  style={styles.cameraButton}
                 >
-                  <AntDesign name="camerao" size={24} color={colors.fontGrey} />
+                  {transferSlipImage ? (
+                    <Image
+                      source={{ uri: transferSlipImage.uri }}
+                      style={styles.imageThumbnail}
+                    />
+                  ) : (
+                    <AntDesign
+                      name="camerao"
+                      size={24}
+                      color={colors.fontGrey}
+                    />
+                  )}
                 </TouchableOpacity>
               </View>
               <DateTimePickerModal
@@ -347,19 +392,15 @@ const Customerform = ({ navigation, route }) => {
               />
             </View>
 
-            {/* SFS Date Picker */}
+            {/* SFS Date Picker and Camera */}
             <View style={styles.datePickerContainer}>
               <View style={styles.datePickerButton}>
                 <TouchableOpacity
                   onPress={() => setSfsVisible(true)}
-                  style={{
-                    width: "80%",
-                    borderRightWidth: 1,
-                    borderColor: colors.ligtGreyBg,
-                  }}
+                  style={styles.datePickerTouchable}
                 >
                   <AppText
-                    color={colors.fontGrey}
+                    color={sfs ? colors.fontBlack : colors.fontGrey}
                     padding={10}
                     textAlign={"start"}
                     fontSize={mainStyles.h2FontSize}
@@ -368,18 +409,25 @@ const Customerform = ({ navigation, route }) => {
                   </AppText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => {}}
-                  style={{
-                    backgroundColor: colors.ligtGreyBg,
-                    height: 40,
-                    width: "17%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: 5,
-                    overflow: "hidden",
-                  }}
+                  onPress={
+                    sfsImage
+                      ? () => openImageModal(sfsImage.uri)
+                      : () => openCamera(setSfsImage)
+                  }
+                  style={styles.cameraButton}
                 >
-                  <AntDesign name="camerao" size={24} color={colors.fontGrey} />
+                  {sfsImage ? (
+                    <Image
+                      source={{ uri: sfsImage.uri }}
+                      style={styles.imageThumbnail}
+                    />
+                  ) : (
+                    <AntDesign
+                      name="camerao"
+                      size={24}
+                      color={colors.fontGrey}
+                    />
+                  )}
                 </TouchableOpacity>
               </View>
               <DateTimePickerModal
@@ -390,19 +438,15 @@ const Customerform = ({ navigation, route }) => {
               />
             </View>
 
-            {/* TFS Date Picker */}
+            {/* TFS Date Picker and Camera */}
             <View style={styles.datePickerContainer}>
               <View style={styles.datePickerButton}>
                 <TouchableOpacity
                   onPress={() => setTfsVisible(true)}
-                  style={{
-                    width: "80%",
-                    borderRightWidth: 1,
-                    borderColor: colors.ligtGreyBg,
-                  }}
+                  style={styles.datePickerTouchable}
                 >
                   <AppText
-                    color={colors.fontGrey}
+                    color={tfs ? colors.fontBlack : colors.fontGrey}
                     padding={10}
                     textAlign={"start"}
                     fontSize={mainStyles.h2FontSize}
@@ -411,18 +455,25 @@ const Customerform = ({ navigation, route }) => {
                   </AppText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => {}}
-                  style={{
-                    backgroundColor: colors.ligtGreyBg,
-                    height: 40,
-                    width: "17%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: 5,
-                    overflow: "hidden",
-                  }}
+                  onPress={
+                    tfsImage
+                      ? () => openImageModal(tfsImage.uri)
+                      : () => openCamera(setTfsImage)
+                  }
+                  style={styles.cameraButton}
                 >
-                  <AntDesign name="camerao" size={24} color={colors.fontGrey} />
+                  {tfsImage ? (
+                    <Image
+                      source={{ uri: tfsImage.uri }}
+                      style={styles.imageThumbnail}
+                    />
+                  ) : (
+                    <AntDesign
+                      name="camerao"
+                      size={24}
+                      color={colors.fontGrey}
+                    />
+                  )}
                 </TouchableOpacity>
               </View>
               <DateTimePickerModal
@@ -433,19 +484,15 @@ const Customerform = ({ navigation, route }) => {
               />
             </View>
 
-            {/* FFS Date Picker */}
+            {/* FFS Date Picker and Camera */}
             <View style={styles.datePickerContainer}>
               <View style={styles.datePickerButton}>
                 <TouchableOpacity
                   onPress={() => setFfs(true)}
-                  style={{
-                    width: "80%",
-                    borderRightWidth: 1,
-                    borderColor: colors.ligtGreyBg,
-                  }}
+                  style={styles.datePickerTouchable}
                 >
                   <AppText
-                    color={colors.fontGrey}
+                    color={ffs ? colors.fontBlack : colors.fontGrey}
                     padding={10}
                     textAlign={"start"}
                     fontSize={mainStyles.h2FontSize}
@@ -454,18 +501,25 @@ const Customerform = ({ navigation, route }) => {
                   </AppText>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => {}}
-                  style={{
-                    backgroundColor: colors.ligtGreyBg,
-                    height: 40,
-                    width: "17%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: 5,
-                    overflow: "hidden",
-                  }}
+                  onPress={
+                    ffsImage
+                      ? () => openImageModal(ffsImage.uri)
+                      : () => openCamera(setFfsImage)
+                  }
+                  style={styles.cameraButton}
                 >
-                  <AntDesign name="camerao" size={24} color={colors.fontGrey} />
+                  {ffsImage ? (
+                    <Image
+                      source={{ uri: ffsImage.uri }}
+                      style={styles.imageThumbnail}
+                    />
+                  ) : (
+                    <AntDesign
+                      name="camerao"
+                      size={24}
+                      color={colors.fontGrey}
+                    />
+                  )}
                 </TouchableOpacity>
               </View>
               <DateTimePickerModal
@@ -487,9 +541,62 @@ const Customerform = ({ navigation, route }) => {
 
       <View style={[styles.formButton, { bottom: keyboardVisible ? -100 : 0 }]}>
         <GradientButton onPress={handleSubmit} disabled={!isFormValid()}>
-          Submit
+          {!sending ? (
+            "Submit"
+          ) : (
+            <ActivityIndicator color={"#FFFFFF"} size={20} />
+          )}
         </GradientButton>
       </View>
+
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)} // Close modal when back is pressed
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              position: "relative",
+              height: "60%",
+              width: "90%",
+              borderRadius: 15,
+              padding: 10,
+              backgroundColor: "#FFFFFF",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View style={styles.closeButton}>
+              <MaterialCommunityIcons
+                name="close"
+                size={20}
+                color={colors.fontWhite}
+                onPress={() => setModalVisible(false)}
+              />
+            </View>
+            <Image
+              source={{
+                uri: selectedImage,
+              }}
+              style={{
+                objectFit: "contain",
+                flex: 1,
+                width: "100%",
+                borderRadius: 5,
+                overflow: "hidden",
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </AppScreen>
   );
 };
@@ -518,10 +625,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  datePickerTouchable: {
+    width: "80%",
+    borderRightWidth: 1,
+    borderColor: colors.ligtGreyBg,
+  },
+
+  cameraButton: {
+    backgroundColor: colors.ligtGreyBg,
+    height: 40,
+    width: "17%",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  imageThumbnail: {
+    width: "100%",
+    height: 40,
+    borderRadius: 5,
+  },
   formButton: {
     position: "absolute",
     padding: 20,
     width: "100%",
     backgroundColor: colors.ligtGreyBg,
+  },
+  closeButton: {
+    position: "absolute",
+    top: -10,
+    right: -10,
+    borderRadius: 100,
+    height: 30,
+    width: 30,
+    backgroundColor: colors.red,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 99999,
   },
 });

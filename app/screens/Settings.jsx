@@ -22,7 +22,7 @@ const Settings = ({ navigation }) => {
         <View
           style={{ gap: 10, paddingHorizontal: 20, flex: 1, paddingBottom: 20 }}
         >
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.btn}
             activeOpacity={0.9}
             onPress={() => navigation.navigate("UploadProgress")}
@@ -36,7 +36,7 @@ const Settings = ({ navigation }) => {
               <AppText>Uploading Inspections</AppText>
             </View>
             <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             style={styles.btn}
             activeOpacity={0.9}
