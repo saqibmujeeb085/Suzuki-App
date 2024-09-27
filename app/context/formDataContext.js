@@ -92,8 +92,8 @@ const FormDataProvider = ({ children }) => {
         fetchCarColors(),
         fetchFuelTypes(),
         fetchTransmissionsTypes(),
-        fetchEngineCapacity(),
         fetchRegistrationCity(),
+        fetchCarCapacity(),
       ]);
       await saveDataToLocalStorage(); // Save fetched data after successful fetching
     } catch (error) {
@@ -154,6 +154,38 @@ const FormDataProvider = ({ children }) => {
       );
     } catch (error) {
       console.log("Error fetching car models:", error);
+    }
+  };
+
+  const fetchCarCapacity = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_carcapacity.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const capacities = response.data;
+      const transformedList = capacities.reduce((acc, capacity) => {
+        acc[capacity.carID] = capacity.cartypeData.map((c) => ({
+          key: c.capacityID,
+          value: c.engineCapacity,
+        }));
+        return acc;
+      }, {});
+
+      // Set the transformed data in the component state
+      setCapacitiesData(transformedList);
+
+      // Store the transformed data in AsyncStorage
+      await AsyncStorage.setItem(
+        "@formDataCapacity",
+        JSON.stringify(transformedList)
+      );
+    } catch (error) {
+      console.log("Error fetching car capacities:", error);
     }
   };
 
@@ -288,30 +320,30 @@ const FormDataProvider = ({ children }) => {
     }
   };
 
-  const fetchEngineCapacity = async () => {
-    const config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: "/auth/get_engdis.php",
-      headers: {},
-    };
+  // const fetchEngineCapacity = async () => {
+  //   const config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: "/auth/get_engdis.php",
+  //     headers: {},
+  //   };
 
-    try {
-      const response = await axios.request(config);
-      const EngineCapacity = response.data;
-      const transformedData = EngineCapacity.map((object) => ({
-        key: object.id,
-        value: object.displacement,
-      }));
-      setCapacitiesData(transformedData);
-      await AsyncStorage.setItem(
-        "@formDataCapacity",
-        JSON.stringify(transformedData)
-      );
-    } catch (error) {
-      console.log("Error fetching engine capacities:", error);
-    }
-  };
+  //   try {
+  //     const response = await axios.request(config);
+  //     const EngineCapacity = response.data;
+  //     const transformedData = EngineCapacity.map((object) => ({
+  //       key: object.id,
+  //       value: object.displacement,
+  //     }));
+  //     setCapacitiesData(transformedData);
+  //     await AsyncStorage.setItem(
+  //       "@formDataCapacity",
+  //       JSON.stringify(transformedData)
+  //     );
+  //   } catch (error) {
+  //     console.log("Error fetching engine capacities:", error);
+  //   }
+  // };
 
   const fetchRegistrationCity = async () => {
     const config = {

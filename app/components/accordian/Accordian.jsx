@@ -6,7 +6,7 @@ import AppText from "../text/Text";
 import { mainStyles } from "../../constants/style";
 
 const Accordion = ({ title, children }) => {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   return (
     <>
@@ -28,7 +28,9 @@ const Accordion = ({ title, children }) => {
           />
         </TouchableOpacity>
       </View>
-      {expanded && <View style={styles.content}>{children}</View>}
+      <View style={[styles.content, { display: expanded ? "flex" : "none" }]}>
+        {children}
+      </View>
     </>
   );
 };

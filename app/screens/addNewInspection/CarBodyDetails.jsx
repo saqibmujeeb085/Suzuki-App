@@ -38,6 +38,8 @@ const CarBodyDetails = ({ navigation, route }) => {
 
   const [allSelected, setAllSelected] = useState(false);
 
+  console.log(capacitiesData);
+
   const [fuelType, setFuelType] = useState("");
   const [transmissionsType, setTransmissionsType] = useState("");
   const [engineCapacity, setEngineCapacity] = useState("");
@@ -232,7 +234,7 @@ const CarBodyDetails = ({ navigation, route }) => {
 
             <Dropdown
               DropItems="Engine Capacity"
-              Data={capacitiesData}
+              Data={capacitiesData[carData.carId] || []}
               save={"value"}
               selectedItem={EngineCapacitySelected}
             />

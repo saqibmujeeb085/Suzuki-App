@@ -18,6 +18,7 @@ import Dropdown from "../../components/formFields/Dropdown";
 import AppText from "../../components/text/Text";
 import { mainStyles } from "../../constants/style";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { AntDesign } from "@expo/vector-icons";
 
 const Customerform = ({ navigation, route }) => {
   const { carId } = route.params || {};
@@ -303,21 +304,41 @@ const Customerform = ({ navigation, route }) => {
             />
             {/* Transfer Slip Date Picker */}
             <View style={styles.datePickerContainer}>
-              <TouchableOpacity
-                onPress={() => setTransferSlipVisible(true)}
-                style={styles.datePickerButton}
-              >
-                <AppText
-                  color={colors.fontGrey}
-                  padding={10}
-                  textAlign={"start"}
-                  fontSize={mainStyles.h2FontSize}
+              <View style={styles.datePickerButton}>
+                <TouchableOpacity
+                  onPress={() => setTransferSlipVisible(true)}
+                  style={{
+                    width: "80%",
+                    borderRightWidth: 1,
+                    borderColor: colors.ligtGreyBg,
+                  }}
                 >
-                  {transferSlip
-                    ? transferSlip
-                    : "Transfer Slip Date (--/--/----)"}
-                </AppText>
-              </TouchableOpacity>
+                  <AppText
+                    color={colors.fontGrey}
+                    padding={10}
+                    textAlign={"start"}
+                    fontSize={mainStyles.h2FontSize}
+                  >
+                    {transferSlip
+                      ? transferSlip
+                      : "Transfer Slip Date (--/--/----)"}
+                  </AppText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {}}
+                  style={{
+                    backgroundColor: colors.ligtGreyBg,
+                    height: 40,
+                    width: "17%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 5,
+                    overflow: "hidden",
+                  }}
+                >
+                  <AntDesign name="camerao" size={24} color={colors.fontGrey} />
+                </TouchableOpacity>
+              </View>
               <DateTimePickerModal
                 isVisible={isTransferSlipVisible}
                 mode="date"
@@ -328,19 +349,39 @@ const Customerform = ({ navigation, route }) => {
 
             {/* SFS Date Picker */}
             <View style={styles.datePickerContainer}>
-              <TouchableOpacity
-                onPress={() => setSfsVisible(true)}
-                style={styles.datePickerButton}
-              >
-                <AppText
-                  color={colors.fontGrey}
-                  padding={10}
-                  textAlign={"start"}
-                  fontSize={mainStyles.h2FontSize}
+              <View style={styles.datePickerButton}>
+                <TouchableOpacity
+                  onPress={() => setSfsVisible(true)}
+                  style={{
+                    width: "80%",
+                    borderRightWidth: 1,
+                    borderColor: colors.ligtGreyBg,
+                  }}
                 >
-                  {sfs ? sfs : "SFS Date (--/--/----)"}
-                </AppText>
-              </TouchableOpacity>
+                  <AppText
+                    color={colors.fontGrey}
+                    padding={10}
+                    textAlign={"start"}
+                    fontSize={mainStyles.h2FontSize}
+                  >
+                    {sfs ? sfs : "SFS Date (--/--/----)"}
+                  </AppText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {}}
+                  style={{
+                    backgroundColor: colors.ligtGreyBg,
+                    height: 40,
+                    width: "17%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 5,
+                    overflow: "hidden",
+                  }}
+                >
+                  <AntDesign name="camerao" size={24} color={colors.fontGrey} />
+                </TouchableOpacity>
+              </View>
               <DateTimePickerModal
                 isVisible={isSfsVisible}
                 mode="date"
@@ -351,19 +392,39 @@ const Customerform = ({ navigation, route }) => {
 
             {/* TFS Date Picker */}
             <View style={styles.datePickerContainer}>
-              <TouchableOpacity
-                onPress={() => setTfsVisible(true)}
-                style={styles.datePickerButton}
-              >
-                <AppText
-                  color={colors.fontGrey}
-                  padding={10}
-                  textAlign={"start"}
-                  fontSize={mainStyles.h2FontSize}
+              <View style={styles.datePickerButton}>
+                <TouchableOpacity
+                  onPress={() => setTfsVisible(true)}
+                  style={{
+                    width: "80%",
+                    borderRightWidth: 1,
+                    borderColor: colors.ligtGreyBg,
+                  }}
                 >
-                  {tfs ? tfs : "TFS Date (--/--/----)"}
-                </AppText>
-              </TouchableOpacity>
+                  <AppText
+                    color={colors.fontGrey}
+                    padding={10}
+                    textAlign={"start"}
+                    fontSize={mainStyles.h2FontSize}
+                  >
+                    {tfs ? tfs : "TFS Date (--/--/----)"}
+                  </AppText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {}}
+                  style={{
+                    backgroundColor: colors.ligtGreyBg,
+                    height: 40,
+                    width: "17%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 5,
+                    overflow: "hidden",
+                  }}
+                >
+                  <AntDesign name="camerao" size={24} color={colors.fontGrey} />
+                </TouchableOpacity>
+              </View>
               <DateTimePickerModal
                 isVisible={isTfsVisible}
                 mode="date"
@@ -374,19 +435,39 @@ const Customerform = ({ navigation, route }) => {
 
             {/* FFS Date Picker */}
             <View style={styles.datePickerContainer}>
-              <TouchableOpacity
-                onPress={() => setFfs(true)}
-                style={styles.datePickerButton}
-              >
-                <AppText
-                  color={colors.fontGrey}
-                  padding={10}
-                  textAlign={"start"}
-                  fontSize={mainStyles.h2FontSize}
+              <View style={styles.datePickerButton}>
+                <TouchableOpacity
+                  onPress={() => setFfs(true)}
+                  style={{
+                    width: "80%",
+                    borderRightWidth: 1,
+                    borderColor: colors.ligtGreyBg,
+                  }}
                 >
-                  {ffs ? ffs : "FFS Date (--/--/----)"}
-                </AppText>
-              </TouchableOpacity>
+                  <AppText
+                    color={colors.fontGrey}
+                    padding={10}
+                    textAlign={"start"}
+                    fontSize={mainStyles.h2FontSize}
+                  >
+                    {ffs ? ffs : "FFS Date (--/--/----)"}
+                  </AppText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {}}
+                  style={{
+                    backgroundColor: colors.ligtGreyBg,
+                    height: 40,
+                    width: "17%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 5,
+                    overflow: "hidden",
+                  }}
+                >
+                  <AntDesign name="camerao" size={24} color={colors.fontGrey} />
+                </TouchableOpacity>
+              </View>
               <DateTimePickerModal
                 isVisible={isFfs}
                 mode="date"
@@ -433,6 +514,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     elevation: 2,
     padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   formButton: {
     position: "absolute",

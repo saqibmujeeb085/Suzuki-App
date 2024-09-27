@@ -33,6 +33,8 @@ const CarDetails = ({ navigation }) => {
     setCitiesData,
   ] = useContext(FormDataContext);
 
+  console.log(varientsData);
+
   const [carData, setCarData] = useContext(InspecteCarContext);
 
   const [allSelected, setAllSelected] = useState(false);

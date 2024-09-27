@@ -204,8 +204,9 @@ const CarBodyModal = ({
                       problems[problem].checked ? colors.purple : undefined
                     }
                     value={problems[problem].checked}
+                    style={{ padding: 10 }}
                   />
-                  <AppText>
+                  <AppText fontSize={mainStyles.h2FontSize}>
                     {problem.charAt(0).toUpperCase() + problem.slice(1)}
                   </AppText>
                 </View>
@@ -295,6 +296,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
+    marginBottom: 10,
   },
   subProblemContainer: {
     padding: 10,
