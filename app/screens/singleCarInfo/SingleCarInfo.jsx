@@ -163,7 +163,6 @@ const SingleCarInfo = ({ route, navigation }) => {
   };
 
   let questionNumber = 1;
-  console.log(carInfo.documents);
 
   const openPDFInBrowser = (pdfUrl) => {
     Linking.openURL(pdfUrl).catch((err) => {
@@ -171,7 +170,7 @@ const SingleCarInfo = ({ route, navigation }) => {
     });
   };
 
-  console.log(carInfo);
+  console.log(carInfo.grouped_problems);
 
   return (
     <AppScreen>
@@ -211,11 +210,16 @@ const SingleCarInfo = ({ route, navigation }) => {
         <View style={styles.ImageContainer}>
           <CarImagesCarousel images={carInfo?.images} />
         </View>
-        {carInfo.documents == [] && (
+
+        {carInfo.documents[0] && (
           <View
             style={{
               gap: 20,
-              marginBottom: 40,
+              marginBottom: 20,
+              paddingVertical: 20,
+              // borderBottomWidth: 0.3,
+              // borderTopWidth: 0.3,
+              borderColor: colors.fontGrey,
             }}
           >
             <AppText
@@ -814,7 +818,12 @@ const SingleCarInfo = ({ route, navigation }) => {
             activeOpacity={0.8}
           >
             <View style={styles.accordionHeader}>
-              <AppText>Car Body</AppText>
+              <AppText
+                fontFamily={mainStyles.appFontBold}
+                fontSize={mainStyles.h2FontSize}
+              >
+                Car Body
+              </AppText>
               <Feather
                 name={bodyOpen ? "chevron-up" : "chevron-down"}
                 size={24}
@@ -838,7 +847,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                   }}
                 >
                   <View>
-                    <AppText>P: Paint</AppText>
+                    <AppText>P: Repaint</AppText>
                     <AppText>P1: Shower Paint</AppText>
                     <AppText>P2: Polycate paint</AppText>
                   </View>
@@ -875,6 +884,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                           fontSize={mainStyles.h2FontSize}
                           fontFamily={mainStyles.appFontBold}
                           marginBottom={10}
+                          paddingVertical={10}
                         >
                           Location: {location}
                         </AppText>
@@ -886,54 +896,69 @@ const SingleCarInfo = ({ route, navigation }) => {
                               key={problemIndex}
                               style={{ marginBottom: 10 }}
                             >
-                              <View style={{ flexDirection: "row", gap: 10 }}>
-                                <AppText color={colors.fontGrey} width={100}>
-                                  {problem.problem_name}:
-                                </AppText>
-                                <AppText>{problem.selected_value}</AppText>
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  gap: 10,
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  borderWidth: 0.5,
+                                  padding: 5,
+                                  borderColor: colors.fontGrey,
+                                  backgroundColor: "#80808010",
+                                }}
+                              >
+                                <View
+                                  style={{
+                                    flexDirection: "row",
+                                    gap: 10,
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <AppText
+                                    color={colors.fontGrey}
+                                    minWidth={70}
+                                    borderRightWidth={0.5}
+                                    paddingVertical={10}
+                                    paddingHorizontal={5}
+                                    borderColor={colors.fontGrey}
+                                    textTransform={"capitalize"}
+                                  >
+                                    {problem.problem_name}
+                                  </AppText>
+                                  <AppText>{problem.selected_value}</AppText>
+                                </View>
+                                {problem.image_uri && (
+                                  <TouchableOpacity
+                                    key={index} // Ensure each item in a loop has a unique key
+                                    style={{
+                                      height: 50,
+                                      width: 50,
+                                      objectFit: "cover",
+                                      borderRadius: 5,
+                                      overflow: "hidden",
+                                    }}
+                                    onPress={() =>
+                                      openImageModal(
+                                        `${process.env.PROBLEMS_IMAGE_URL}${problem.image_uri}`
+                                      )
+                                    }
+                                  >
+                                    <Image
+                                      source={{
+                                        uri: `${process.env.PROBLEMS_IMAGE_URL}${problem.image_uri}`,
+                                      }}
+                                      style={{
+                                        height: 50,
+                                        width: 50,
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  </TouchableOpacity>
+                                )}
                               </View>
                             </View>
                           )
-                        )}
-
-                        {/* Display the image once for the first problem that contains an image */}
-                        {carInfo.grouped_problems[location].find(
-                          (p) => p.image_uri
-                        ) && (
-                          <TouchableOpacity
-                            style={{
-                              height: 50,
-                              width: 50,
-                              objectFit: "cover",
-                              borderRadius: 5,
-                              overflow: "hidden",
-                              marginTop: 10,
-                            }}
-                            onPress={() =>
-                              openImageModal(
-                                `${process.env.PROBLEMS_IMAGE_URL}${
-                                  carInfo.grouped_problems[location].find(
-                                    (p) => p.image_uri
-                                  ).image_uri
-                                }`
-                              )
-                            }
-                          >
-                            <Image
-                              source={{
-                                uri: `${process.env.PROBLEMS_IMAGE_URL}${
-                                  carInfo.grouped_problems[location].find(
-                                    (p) => p.image_uri
-                                  ).image_uri
-                                }`,
-                              }}
-                              style={{
-                                height: 50,
-                                width: 50,
-                                objectFit: "cover",
-                              }}
-                            />
-                          </TouchableOpacity>
                         )}
                       </View>
                     )
@@ -952,7 +977,12 @@ const SingleCarInfo = ({ route, navigation }) => {
                   activeOpacity={0.8}
                 >
                   <View style={styles.accordionHeader}>
-                    <AppText>{key}</AppText>
+                    <AppText
+                      fontFamily={mainStyles.appFontBold}
+                      fontSize={mainStyles.h2FontSize}
+                    >
+                      {key}
+                    </AppText>
                     <Feather
                       name={
                         expandedSections[key] ? "chevron-up" : "chevron-down"
@@ -989,7 +1019,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                                   paddingVertical: 20,
                                 }}
                               >
-                                <AppText>
+                                <AppText paddingBottom={10}>
                                   {questionNumber++}. {item.ind_question}
                                 </AppText>
                                 <View style={{ gap: 10 }}>
@@ -1307,7 +1337,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     minHeight: 400,
-    marginBottom: 20,
   },
   carInfo: {
     flexDirection: "row",
@@ -1322,9 +1351,10 @@ const styles = StyleSheet.create({
   carQuestionAccrodians: { gap: 10 },
   accordianTap: {
     padding: 10,
-    elevation: 3,
+    paddingVertical: 15,
+    elevation: 2,
     backgroundColor: colors.whiteBg,
-    borderRadius: 5,
+    borderRadius: 3,
   },
   accordionHeader: {
     flexDirection: "row",

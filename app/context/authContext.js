@@ -14,7 +14,7 @@ const AuthProvider = ({ children }) => {
   });
 
   // Base URL
-  axios.defaults.baseURL = "https://clients.echodigital.net/inspectionapp/apis";
+  axios.defaults.baseURL = "https://suzukiusedcars.com/apis";
 
   // Load data from AsyncStorage when the component mounts
   useEffect(() => {

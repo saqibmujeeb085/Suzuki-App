@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, StyleSheet, View } from "react-native";
+import { Modal, ScrollView, StyleSheet, View } from "react-native";
 import AppText from "../text/Text";
 import GradientButton from "../buttons/GradientButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -18,13 +18,32 @@ const CarBodyModal = ({
   onSave,
 }) => {
   const [problems, setProblems] = useState({
-    repaint: { checked: false, selectedId: null, selectedValue: null },
-    Dent: { checked: false, selectedId: null, selectedValue: null },
-    Scratch: { checked: false, selectedId: null, selectedValue: null },
+    repaint: {
+      checked: false,
+      selectedId: null,
+      selectedValue: null,
+      image: null,
+      imageName: null,
+      imageType: null,
+    },
+    Dent: {
+      checked: false,
+      selectedId: null,
+      selectedValue: null,
+      image: null,
+      imageName: null,
+      imageType: null,
+    },
+    Scratch: {
+      checked: false,
+      selectedId: null,
+      selectedValue: null,
+      image: null,
+      imageName: null,
+      imageType: null,
+    },
   });
 
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedImageName, setSelectedImageName] = useState(null);
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -74,14 +93,12 @@ const CarBodyModal = ({
   };
 
   useEffect(() => {
-    // Check if any problem is checked and has a selected value
-    const isAnyProblemChecked = Object.values(problems).some(
-      (problem) => problem.checked && problem.selectedValue
+    // Ensure all checked problems have both a selectedValue and an image
+    const areAllValid = Object.values(problems).every(
+      (problem) => !problem.checked || (problem.selectedValue && problem.image)
     );
-
-    // The button will only be enabled if there's an image AND at least one problem is selected
-    setIsSaveDisabled(!(isAnyProblemChecked && selectedImage));
-  }, [problems, selectedImage]);
+    setIsSaveDisabled(!areAllValid);
+  }, [problems]);
 
   const handleProblemToggle = (problem) => {
     setProblems((prev) => ({
@@ -89,10 +106,11 @@ const CarBodyModal = ({
       [problem]: {
         ...prev[problem],
         checked: !prev[problem].checked,
-        selectedId: prev[problem].checked ? null : prev[problem].selectedId,
-        selectedValue: prev[problem].checked
-          ? null
-          : prev[problem].selectedValue,
+        selectedId: null,
+        selectedValue: null,
+        image: null,
+        imageName: null,
+        imageType: null,
       },
     }));
   };
@@ -113,24 +131,55 @@ const CarBodyModal = ({
     }));
   };
 
+  // Separate functions to handle image URI and image name updates
+  const handleImageUriSelect = (problem, uri) => {
+    setProblems((prev) => ({
+      ...prev,
+      [problem]: {
+        ...prev[problem],
+        image: uri,
+        imageType: "image/jpeg", // Explicitly adding image type
+      },
+    }));
+  };
+
+  const handleImageNameSelect = (problem, name) => {
+    setProblems((prev) => ({
+      ...prev,
+      [problem]: {
+        ...prev[problem],
+        imageName: name,
+      },
+    }));
+  };
+
+  console.log(problems);
+
   const handleSave = async () => {
     setLoading(true);
 
+    // Save only checked problems with their corresponding radio value and image
     const filteredProblems = Object.keys(problems)
-      .filter((problem) => problems[problem].checked)
+      .filter((problem) => problems[problem].checked) // Only include checked problems
       .map((problem) => ({
         problemName: problem,
         selectedValue: problems[problem].selectedValue,
+        image: problems[problem].image
+          ? {
+              uri: problems[problem].image,
+              name: problems[problem].imageName,
+              type: problems[problem].imageType, // Include the image type
+            }
+          : undefined,
       }));
 
     const dataToSave = {
       tempID: `${tempID}`,
       problemLocation: activeProblem,
-      problems: filteredProblems,
-      image: selectedImage
-        ? { uri: selectedImage, name: selectedImageName, type: "image/jpeg" }
-        : undefined,
+      problems: filteredProblems, // Only save filtered (checked) problems
     };
+
+    console.log("data to save", dataToSave);
 
     try {
       const storedData = await AsyncStorage.getItem("@carBodyQuestionsdata");
@@ -155,12 +204,31 @@ const CarBodyModal = ({
 
   const resetFields = () => {
     setProblems({
-      repaint: { checked: false, selectedId: null, selectedValue: null },
-      Dent: { checked: false, selectedId: null, selectedValue: null },
-      Scratch: { checked: false, selectedId: null, selectedValue: null },
+      repaint: {
+        checked: false,
+        selectedId: null,
+        selectedValue: null,
+        image: null,
+        imageName: null,
+        imageType: null,
+      },
+      Dent: {
+        checked: false,
+        selectedId: null,
+        selectedValue: null,
+        image: null,
+        imageName: null,
+        imageType: null,
+      },
+      Scratch: {
+        checked: false,
+        selectedId: null,
+        selectedValue: null,
+        image: null,
+        imageName: null,
+        imageType: null,
+      },
     });
-    setSelectedImage(null);
-    setSelectedImageName(null);
   };
 
   return (
@@ -193,47 +261,52 @@ const CarBodyModal = ({
               </AppText>
             </View>
           </View>
-
-          <View style={styles.problemList}>
-            {Object.keys(points).map((problem) => (
-              <View key={problem}>
-                <View style={styles.problemRow}>
-                  <Checkbox
-                    onValueChange={() => handleProblemToggle(problem)}
-                    color={
-                      problems[problem].checked ? colors.purple : undefined
-                    }
-                    value={problems[problem].checked}
-                    style={{ padding: 10 }}
-                  />
-                  <AppText fontSize={mainStyles.h2FontSize}>
-                    {problem.charAt(0).toUpperCase() + problem.slice(1)}
-                  </AppText>
-                </View>
-                {problems[problem].checked && (
-                  <View style={styles.subProblemContainer}>
-                    <RadioGroup
-                      containerStyle={styles.radioGroup}
-                      radioButtons={points[problem]}
-                      onPress={(selectedId) =>
-                        handleSubProblemSelect(problem, selectedId)
+          <ScrollView style={{ maxHeight: 300 }}>
+            <View style={styles.problemList}>
+              {Object.keys(points).map((problem) => (
+                <View key={problem}>
+                  <View style={styles.problemRow}>
+                    <Checkbox
+                      onValueChange={() => handleProblemToggle(problem)}
+                      color={
+                        problems[problem].checked ? colors.purple : undefined
                       }
-                      selectedId={problems[problem].selectedId}
+                      value={problems[problem].checked}
+                      style={{ padding: 10 }}
                     />
+                    <AppText fontSize={mainStyles.h2FontSize}>
+                      {problem.charAt(0).toUpperCase() + problem.slice(1)}
+                    </AppText>
                   </View>
-                )}
-              </View>
-            ))}
-          </View>
-
-          <InspectionImagePicker
-            onImageSelected={(uri) => setSelectedImage(uri)}
-            onSelectedImageName={(name) => setSelectedImageName(name)}
-            onRemoveImage={() => {
-              setSelectedImage(null);
-              setSelectedImageName(null);
-            }}
-          />
+                  {problems[problem].checked && (
+                    <>
+                      <View style={styles.subProblemContainer}>
+                        <RadioGroup
+                          containerStyle={styles.radioGroup}
+                          radioButtons={points[problem]}
+                          onPress={(selectedId) =>
+                            handleSubProblemSelect(problem, selectedId)
+                          }
+                          selectedId={problems[problem].selectedId}
+                        />
+                        <InspectionImagePicker
+                          onImageSelected={(uri) =>
+                            handleImageUriSelect(problem, uri)
+                          }
+                          onSelectedImageName={(name) =>
+                            handleImageNameSelect(problem, name)
+                          }
+                          onRemoveImage={() =>
+                            handleImageUriSelect(problem, null)
+                          }
+                        />
+                      </View>
+                    </>
+                  )}
+                </View>
+              ))}
+            </View>
+          </ScrollView>
 
           <View style={styles.modalButtons}>
             <GradientButton

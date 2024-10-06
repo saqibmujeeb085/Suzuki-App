@@ -9,22 +9,37 @@ import { RadioGroup } from "react-native-radio-buttons-group";
 import Checkbox from "expo-checkbox";
 import { mainStyles } from "../../constants/style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import InspectionImagePicker from "../../components/imagePicker/InspectionImagePicker"; // Import the Image Picker component
 
 const EditProblems = ({ navigation, route }) => {
   const { id, location } = route.params || {};
 
+  // Ensuring the keys match the radio button options in `points`
   const [problems, setProblems] = useState({
-    "Paint Marked": {
+    repaint: {
       checked: false,
       selectedId: null,
       selectedValue: null,
+      image: null,
+      imageName: null,
     },
-    Dent: { checked: false, selectedId: null, selectedValue: null },
-    Scratch: { checked: false, selectedId: null, selectedValue: null },
+    Dent: {
+      checked: false,
+      selectedId: null,
+      selectedValue: null,
+      image: null,
+      imageName: null,
+    },
+    Scratch: {
+      checked: false,
+      selectedId: null,
+      selectedValue: null,
+      image: null,
+      imageName: null,
+    },
   });
-  const [carBodyProblems, setCarBodyProblems] = useState(null);
 
-  console.log(carBodyProblems);
+  const [carBodyProblems, setCarBodyProblems] = useState(null);
 
   useEffect(() => {
     getCarProblemsDataByTempID(id, location);
@@ -44,6 +59,7 @@ const EditProblems = ({ navigation, route }) => {
 
         if (carbodyques) {
           setCarBodyProblems(carbodyques);
+
           // Preselect the values from stored data
           const updatedProblems = { ...problems };
           carbodyques.problems.forEach((problem) => {
@@ -54,6 +70,13 @@ const EditProblems = ({ navigation, route }) => {
               updatedProblems[problem.problemName].selectedId = points[
                 problem.problemName
               ]?.find((p) => p.value === problem.selectedValue)?.id;
+
+              // If image is present in the stored data, add it to the problem
+              if (problem.image) {
+                updatedProblems[problem.problemName].image = problem.image.uri;
+                updatedProblems[problem.problemName].imageName =
+                  problem.image.name;
+              }
             }
           });
           setProblems(updatedProblems);
@@ -63,21 +86,18 @@ const EditProblems = ({ navigation, route }) => {
             tempID,
             location
           );
-          return null;
         }
       } else {
         console.log("No car data found in AsyncStorage");
-        return null;
       }
     } catch (error) {
       console.error("Error retrieving car data:", error);
-      return null;
     }
   };
 
   // Radio button options
   const points = {
-    "Paint Marked": [
+    repaint: [
       {
         id: "1",
         label: "Shower Paint",
@@ -123,27 +143,31 @@ const EditProblems = ({ navigation, route }) => {
 
   // Toggle problem checked/unchecked state
   const handleProblemToggle = (problem) => {
-    setProblems((prev) => {
-      const updatedProblem = {
-        ...prev[problem],
-        checked: !prev[problem].checked,
-        selectedId: prev[problem].checked ? null : prev[problem].selectedId,
-        selectedValue: prev[problem].checked
-          ? null
-          : prev[problem].selectedValue,
-      };
+    // Ensure problem exists in `problems` before accessing it
+    if (problems[problem]) {
+      setProblems((prev) => {
+        const updatedProblem = {
+          ...prev[problem],
+          checked: !prev[problem].checked,
+          selectedId: prev[problem].checked ? null : prev[problem].selectedId,
+          selectedValue: prev[problem].checked
+            ? null
+            : prev[problem].selectedValue,
+        };
 
-      // When unchecked, clear selected values
-      if (!updatedProblem.checked) {
-        updatedProblem.selectedId = null;
-        updatedProblem.selectedValue = null;
-      }
+        if (!updatedProblem.checked) {
+          updatedProblem.selectedId = null;
+          updatedProblem.selectedValue = null;
+          updatedProblem.image = null;
+          updatedProblem.imageName = null;
+        }
 
-      return {
-        ...prev,
-        [problem]: updatedProblem,
-      };
-    });
+        return {
+          ...prev,
+          [problem]: updatedProblem,
+        };
+      });
+    }
   };
 
   // Handle radio button selection
@@ -161,6 +185,31 @@ const EditProblems = ({ navigation, route }) => {
         selectedValue: selectedValue,
       },
     }));
+  };
+
+  // Handle image selection (URI and name)
+  const handleImageUriSelect = (problem, uri) => {
+    if (problems[problem]) {
+      setProblems((prev) => ({
+        ...prev,
+        [problem]: {
+          ...prev[problem],
+          image: uri,
+        },
+      }));
+    }
+  };
+
+  const handleImageNameSelect = (problem, name) => {
+    if (problems[problem]) {
+      setProblems((prev) => ({
+        ...prev,
+        [problem]: {
+          ...prev[problem],
+          imageName: name,
+        },
+      }));
+    }
   };
 
   // Save the updated data back to AsyncStorage
@@ -182,6 +231,13 @@ const EditProblems = ({ navigation, route }) => {
                 .map((key) => ({
                   problemName: key,
                   selectedValue: problems[key].selectedValue,
+                  image: problems[key].image
+                    ? {
+                        uri: problems[key].image,
+                        name: problems[key].imageName,
+                        type: "image/jpeg",
+                      }
+                    : null,
                 })),
             };
           }
@@ -203,6 +259,7 @@ const EditProblems = ({ navigation, route }) => {
       console.error("Error saving car data:", error);
     }
   };
+
   return (
     <AppScreen>
       <InspectionHeader onPress={() => navigation.goBack()}>
@@ -232,15 +289,15 @@ const EditProblems = ({ navigation, route }) => {
             <View style={styles.problemRow}>
               <Checkbox
                 onValueChange={() => handleProblemToggle(problem)}
-                color={problems[problem].checked ? colors.purple : undefined}
-                value={problems[problem].checked}
+                color={problems[problem]?.checked ? colors.purple : undefined}
+                value={problems[problem]?.checked}
                 style={{ height: 25, width: 25 }}
               />
               <AppText fontSize={mainStyles.h2FontSize}>
                 {problem.charAt(0).toUpperCase() + problem.slice(1)}
               </AppText>
             </View>
-            {problems[problem].checked && (
+            {problems[problem]?.checked && (
               <View style={styles.subProblemContainer}>
                 <RadioGroup
                   containerStyle={styles.radioGroup}
@@ -248,7 +305,14 @@ const EditProblems = ({ navigation, route }) => {
                   onPress={(selectedId) =>
                     handleSubProblemSelect(problem, selectedId)
                   }
-                  selectedId={problems[problem].selectedId}
+                  selectedId={problems[problem]?.selectedId}
+                />
+                <InspectionImagePicker
+                  onImageSelected={(uri) => handleImageUriSelect(problem, uri)}
+                  onSelectedImageName={(name) =>
+                    handleImageNameSelect(problem, name)
+                  }
+                  onRemoveImage={() => handleImageUriSelect(problem, null)}
                 />
               </View>
             )}

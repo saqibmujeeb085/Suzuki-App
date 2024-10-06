@@ -276,12 +276,16 @@ const startPosting = async (obj, groupedData, carbodyques) => {
   });
 
   carbodyques.forEach((problemItem, problemIndex) => {
+    // Append problemLocation and tempID
     formData.append(
       `problems[${problemIndex}][problemLocation]`,
       problemItem.problemLocation
     );
+    formData.append(`problems[${problemIndex}][tempID]`, problemItem.tempID);
 
+    // Append problems array (problemName, selectedValue, and image)
     problemItem.problems.forEach((problem, index) => {
+      // Append the problemName and selectedValue for each problem
       formData.append(
         `problems[${problemIndex}][problems][${index}][problemName]`,
         problem.problemName
@@ -290,19 +294,24 @@ const startPosting = async (obj, groupedData, carbodyques) => {
         `problems[${problemIndex}][problems][${index}][selectedValue]`,
         problem.selectedValue
       );
-    });
 
-    if (problemItem.image && problemItem.image.uri) {
-      const file = {
-        uri: problemItem.image.uri,
-        name: problemItem.image.name,
-        type: problemItem.image.type,
-      };
-      formData.append(`problems[${problemIndex}][image]`, file);
-    }
+      // Append the image within each problem object
+      if (problem.image && problem.image.uri) {
+        const file = {
+          uri: problem.image.uri,
+          name: problem.image.name,
+          type: problem.image.type,
+        };
+        formData.append(
+          `problems[${problemIndex}][problems][${index}][image]`,
+          file
+        );
+      }
+    });
   });
 
   try {
+    console.log(formData);
     const headers = {
       "Content-Type": "multipart/form-data",
     };

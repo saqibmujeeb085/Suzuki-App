@@ -20,7 +20,7 @@ const CarBodyView = ({ carBodyData }) => {
     // Add more mappings as needed
   };
   const problemAreas = [
-    { name: "Front Bumper", position: { top: 30, left: 135 } },
+    { name: "Front Bumper", position: { top: 40, left: 135 } },
     { name: "Bonnet Left Side", position: { top: 100, left: 100 } },
     { name: "Bonnet Right Side", position: { top: 100, right: 110 } },
     { name: "Roof", position: { top: 250, left: 135 } },
@@ -107,15 +107,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   imageContainer: {
-    width: 350,
-    height: 520,
+    width: 320,
+    height: 500,
     alignSelf: "center",
     flex: 1,
     position: "relative",
+    justifyContent: "center",
   },
   imageBackground: {
-    width: 320,
-    height: 520,
+    width: 300,
+    height: 500,
     alignSelf: "center",
   },
   dot: {

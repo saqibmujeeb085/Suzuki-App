@@ -73,11 +73,11 @@ const InspectionImagePicker = ({
             <Image source={{ uri: image.uri }} style={styles.image} />
             <AppText
               fontSize={mainStyles.h3FontSize}
-              width={200}
+              width={100}
               color={colors.fontBlack}
               numberOfLines={1}
               ellipsizeMode="tail"
-              maxWidth={120}
+              maxWidth={"45%"}
             >
               {image.name}
             </AppText>
@@ -93,7 +93,7 @@ const InspectionImagePicker = ({
           <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
             <View style={styles.uploadButton}>
               <AppText color={colors.fontGrey} fontSize={mainStyles.h3FontSize}>
-                Upload Image (jpeg, png, jpg)
+                Upload Image (jpeg, png)
               </AppText>
               <Feather name="upload" size={20} color={colors.fontGrey} />
             </View>
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
   pickerContainer: {
     gap: 10,
     padding: 10,
+    flex: 1,
   },
   imageContainer: {
     backgroundColor: colors.whiteBg,

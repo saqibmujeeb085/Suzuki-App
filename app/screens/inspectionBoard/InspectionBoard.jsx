@@ -197,7 +197,7 @@ const InspectionBoard = ({ navigation, route }) => {
           JSON.stringify(updatedCarFormDataArray)
         );
 
-        navigation.navigate("Draft");
+        navigation.navigate("Home");
       } else {
         console.log("No car data found in AsyncStorage");
       }
@@ -307,7 +307,7 @@ const InspectionBoard = ({ navigation, route }) => {
                   Varient: {getCarVarient(carInfo?.varientId, carInfo?.carId)}
                 </AppText>
               </View>
-              <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
+              {/* <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
                 <View style={styles.timer}>
                   <Image
                     source={require("../../assets/componentsImages/timer.png")}
@@ -327,7 +327,16 @@ const InspectionBoard = ({ navigation, route }) => {
                     </AppText>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+              <Image
+                source={require("../../assets/icon.png")}
+                style={{
+                  width: 40,
+                  height: 40,
+                  objectFit: "contain",
+                  borderRadius: 50,
+                }}
+              />
             </View>
             <View style={styles.breakLine} />
             <View style={styles.summaryContainer}>
@@ -481,6 +490,7 @@ const styles = StyleSheet.create({
   customerDetailsAndLogout: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   customerDetails: {
     gap: 2,
