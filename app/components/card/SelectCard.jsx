@@ -88,7 +88,7 @@ const SelectCard = ({
         padding: 20,
         gap: 20,
         borderWidth: 0.5,
-        borderColor: error ? colors.red : colors.whiteBg,
+        borderColor: error ? colors.green : colors.whiteBg,
       }}
     >
       <AppText

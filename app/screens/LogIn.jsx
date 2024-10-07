@@ -124,6 +124,7 @@ const LogIn = ({ navigation }) => {
                   placeholder="Enter Your Username Here"
                   onChangeText={handleUsernameChange}
                   Error={errors.username}
+                  val={selectedUsername}
                 />
                 <PasswordInput
                   autoComplete="off"
@@ -136,6 +137,7 @@ const LogIn = ({ navigation }) => {
                     }));
                   }}
                   Error={errors.password}
+                  val={selectedDealershipUserPassword}
                 />
                 <GradientButton
                   onPress={handleUserLogin}

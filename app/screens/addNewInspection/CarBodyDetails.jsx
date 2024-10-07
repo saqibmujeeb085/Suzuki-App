@@ -199,6 +199,7 @@ const CarBodyDetails = ({ navigation, route }) => {
             <AppTextInput
               placeholder="Registration No"
               onChangeText={(value) => setRegistrationNo(value)}
+              val={registrationNo}
             />
 
             <Dropdown
@@ -211,11 +212,13 @@ const CarBodyDetails = ({ navigation, route }) => {
               <AppTextInput
                 placeholder="Chassis No"
                 onChangeText={(value) => setChasisNo(value)}
+                val={chasisNo}
               />
               <AppTextInput
                 placeholder="Engine No"
                 onChangeText={(value) => setEngineNo(value)}
                 inputMode={"numeric"}
+                val={engineNo}
               />
             </View>
 
@@ -229,6 +232,7 @@ const CarBodyDetails = ({ navigation, route }) => {
               placeholder="Mileage"
               onChangeText={(value) => setMilage(value)}
               inputMode={"numeric"}
+              val={milage}
             />
 
             <Dropdown

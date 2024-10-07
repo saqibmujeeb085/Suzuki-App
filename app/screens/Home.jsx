@@ -219,10 +219,6 @@ const Home = ({ navigation }) => {
         </View>
       </ImageBackground>
 
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 20, minHeight: 600 }}
-      ></ScrollView>
-
       <View style={styles.recentInspectionContainer}>
         <View style={styles.headingAndButton}>
           <View style={styles.headingWithIcon}>

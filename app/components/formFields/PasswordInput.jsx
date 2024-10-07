@@ -5,7 +5,7 @@ import { mainStyles } from "../../constants/style";
 import AppText from "../text/Text";
 import { MaterialIcons } from "@expo/vector-icons";
 
-const PasswordInput = ({ Error, placeholder, ...inputType }) => {
+const PasswordInput = ({ Error, placeholder, val, ...inputType }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -28,9 +28,11 @@ const PasswordInput = ({ Error, placeholder, ...inputType }) => {
         <AppText
           color={colors.fontGrey}
           position={"absolute"}
-          top={!clicked ? 20 : 2}
+          top={clicked || val ? 2 : 20}
           left={20}
-          fontSize={!clicked ? mainStyles.h2FontSize : mainStyles.h3FontSize}
+          fontSize={
+            clicked || val ? mainStyles.h3FontSize : mainStyles.h2FontSize
+          }
         >
           {placeholder}
         </AppText>

@@ -18,7 +18,6 @@ const SingleInspection = ({ navigation, route }) => {
 
   const [questionsData, setQuestionsData] = useState([]);
   const [values, setValues] = useState([]);
-  const [validationErrors, setValidationErrors] = useState({}); // Separate error state
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -66,39 +65,19 @@ const SingleInspection = ({ navigation, route }) => {
     setLoading(false);
   }, [tempID, catid]);
 
-  // Function to validate a specific question (only for previous fields)
-  const validatePreviousFields = (id) => {
-    const currentIndex = values.findIndex((item) => item.IndID === id);
-    const newValidationErrors = { ...validationErrors }; // Clone the existing errors
-
-    values.forEach((item, index) => {
-      if (index < currentIndex && (!item.value || item.value === "")) {
-        newValidationErrors[item.IndID] = true; // Only validate previous questions
-      }
-    });
-
-    setValidationErrors(newValidationErrors);
-
-    // Check if any error exists in the previous fields
-    return Object.values(newValidationErrors).some((error) => error);
+  // Function to check whether a field is filled (returns true if field is filled)
+  const fieldIsFilled = (id) => {
+    const fieldValue = values.find((item) => item.IndID === id)?.value;
+    return !!fieldValue; // Returns true if the field has a value
   };
 
-  // Updated real-time value change handler (exclude current field from validation)
+  // Handle real-time value change
   const handleValueChange = (id, newValue) => {
     setValues((prevValues) =>
       prevValues.map((item) =>
         item.IndID === id ? { ...item, value: newValue } : item
       )
     );
-
-    // Update validation state for the current field
-    setValidationErrors((prevErrors) => ({
-      ...prevErrors,
-      [id]: !newValue, // Remove error only if the newValue is filled
-    }));
-
-    // Validate all previous fields only
-    validatePreviousFields(id);
   };
 
   const handleTextValueChange = (id, newValue) => {
@@ -107,15 +86,6 @@ const SingleInspection = ({ navigation, route }) => {
         item.IndID === id ? { ...item, value: newValue } : item
       )
     );
-
-    // Update validation state for the current field
-    setValidationErrors((prevErrors) => ({
-      ...prevErrors,
-      [id]: !newValue, // Remove error only if the newValue is filled
-    }));
-
-    // Validate all previous fields only
-    validatePreviousFields(id);
   };
 
   const handlePonitsValueChange = (id, newValue) => {
@@ -124,15 +94,6 @@ const SingleInspection = ({ navigation, route }) => {
         item.IndID === id ? { ...item, ponitValue: newValue } : item
       )
     );
-
-    // Update validation state for the current field
-    setValidationErrors((prevErrors) => ({
-      ...prevErrors,
-      [id]: !newValue, // Remove error only if the newValue is filled
-    }));
-
-    // Validate all previous fields only
-    validatePreviousFields(id);
   };
 
   const handleImageSelected = (id, imageUri) => {
@@ -143,9 +104,6 @@ const SingleInspection = ({ navigation, route }) => {
           : item
       )
     );
-
-    // Validate all previous fields only
-    validatePreviousFields(id);
   };
 
   const handleReasonValueChange = (id, newReason) => {
@@ -154,9 +112,6 @@ const SingleInspection = ({ navigation, route }) => {
         item.IndID === id ? { ...item, reasonValue: newReason } : item
       )
     );
-
-    // Validate all previous fields only
-    validatePreviousFields(id);
   };
 
   const handleImageNameSelected = (id, imageName) => {
@@ -167,9 +122,6 @@ const SingleInspection = ({ navigation, route }) => {
           : item
       )
     );
-
-    // Validate all previous fields only
-    validatePreviousFields(id);
   };
 
   const handleRemoveImage = (id) => {
@@ -178,17 +130,12 @@ const SingleInspection = ({ navigation, route }) => {
         item.IndID === id ? { ...item, image: { uri: null, name: null } } : item
       )
     );
-
-    // Validate all previous fields only
-    validatePreviousFields(id);
   };
 
   const saveQuestionsData = async () => {
-    // Validate all previous fields before saving
-    const hasErrors = validatePreviousFields(values[values.length - 1].IndID); // Validate until the last question
-
-    if (hasErrors) {
-      return; // If there are errors, don't proceed with saving
+    const hasEmptyFields = values.some((item) => !item.value); // Check for unfilled questions
+    if (hasEmptyFields) {
+      return; // Exit if there are unfilled fields
     }
 
     setLoading(true);
@@ -234,6 +181,12 @@ const SingleInspection = ({ navigation, route }) => {
     }
   };
 
+  useEffect(() => {
+    // Disable the button if any fields are empty
+    const hasEmptyFields = values.some((item) => !item.value);
+    setIsButtonDisabled(hasEmptyFields);
+  }, [values]);
+
   return (
     <AppScreen>
       <ToastManager />
@@ -250,84 +203,79 @@ const SingleInspection = ({ navigation, route }) => {
           <Accordion key={index} title={subCat.subCatName}>
             <View style={{ gap: 10 }}>
               {subCat.subCatData.map((question, index) => {
-                const error = validationErrors[question.id]; // Check for validation error
-                if (question.type === "r") {
-                  return (
-                    <RangeCard
-                      key={question.id}
-                      indicator={question.question}
-                      img={question.image}
-                      value={
-                        values.find((val) => val.IndID === question.id)?.value
-                      }
-                      error={error} // Pass error state here
-                      onValueChange={(newValue) =>
-                        handleValueChange(question.id, newValue)
-                      }
-                      num={question.id}
-                      questionId={question.id}
-                      onImageSelected={handleImageSelected}
-                      onSelectedImageName={handleImageNameSelected}
-                      onRemoveImage={handleRemoveImage}
-                    />
-                  );
-                } else if (question.type === "b") {
-                  return (
-                    <SelectCard
-                      key={question.id}
-                      indicator={question.question}
-                      options={question.options}
-                      img={question.image}
-                      condition={question.condition}
-                      imgCondition={question.imgCondition}
-                      textCondition={question.textCondition}
-                      pointsCondition={question.pointsCondition}
-                      value={
-                        values.find((val) => val.IndID === question.id)?.value
-                      }
-                      error={error} // Pass error state here
-                      onValueChange={(newValue) =>
-                        handleValueChange(question.id, newValue)
-                      }
-                      onPointsValueChange={(newValue) =>
-                        handlePonitsValueChange(question.id, newValue)
-                      }
-                      onReasonValueChange={(newReason) =>
-                        handleReasonValueChange(question.id, newReason)
-                      }
-                      points={question.points}
-                      num={question.id}
-                      questionId={question.id}
-                      onImageSelected={handleImageSelected}
-                      onSelectedImageName={handleImageNameSelected}
-                      onRemoveImage={handleRemoveImage}
-                    />
-                  );
-                } else if (question.type === "t") {
-                  return (
-                    <TextCard
-                      key={question.id}
-                      indicator={question.question}
-                      value={
-                        values.find((val) => val.IndID === question.id)?.value
-                      }
-                      error={error} // Pass error state here
-                      showType={question.showType}
-                      placeholder={question.placeHolder}
-                      onValueChange={(newValue) =>
-                        handleTextValueChange(question.id, newValue)
-                      }
-                      points={question.points}
-                      img={question.image}
-                      num={question.id}
-                      onImageSelected={handleImageSelected}
-                      onSelectedImageName={handleImageNameSelected}
-                      onRemoveImage={handleRemoveImage}
-                    />
-                  );
-                } else {
-                  return null;
-                }
+                const isFilled = fieldIsFilled(question.id); // Check if the field is filled
+                return (
+                  <View key={question.id}>
+                    {question.type === "r" && (
+                      <RangeCard
+                        indicator={question.question}
+                        img={question.image}
+                        value={
+                          values.find((val) => val.IndID === question.id)?.value
+                        }
+                        error={isFilled} // Pass true if the field is filled
+                        onValueChange={(newValue) =>
+                          handleValueChange(question.id, newValue)
+                        }
+                        num={question.id}
+                        questionId={question.id}
+                        onImageSelected={handleImageSelected}
+                        onSelectedImageName={handleImageNameSelected}
+                        onRemoveImage={handleRemoveImage}
+                      />
+                    )}
+                    {question.type === "b" && (
+                      <SelectCard
+                        indicator={question.question}
+                        options={question.options}
+                        img={question.image}
+                        condition={question.condition}
+                        imgCondition={question.imgCondition}
+                        textCondition={question.textCondition}
+                        pointsCondition={question.pointsCondition}
+                        value={
+                          values.find((val) => val.IndID === question.id)?.value
+                        }
+                        error={isFilled} // Pass true if the field is filled
+                        onValueChange={(newValue) =>
+                          handleValueChange(question.id, newValue)
+                        }
+                        onPointsValueChange={(newValue) =>
+                          handlePonitsValueChange(question.id, newValue)
+                        }
+                        onReasonValueChange={(newReason) =>
+                          handleReasonValueChange(question.id, newReason)
+                        }
+                        points={question.points}
+                        num={question.id}
+                        questionId={question.id}
+                        onImageSelected={handleImageSelected}
+                        onSelectedImageName={handleImageNameSelected}
+                        onRemoveImage={handleRemoveImage}
+                      />
+                    )}
+                    {question.type === "t" && (
+                      <TextCard
+                        indicator={question.question}
+                        value={
+                          values.find((val) => val.IndID === question.id)?.value
+                        }
+                        error={isFilled} // Pass true if the field is filled
+                        showType={question.showType}
+                        placeholder={question.placeHolder}
+                        onValueChange={(newValue) =>
+                          handleTextValueChange(question.id, newValue)
+                        }
+                        points={question.points}
+                        img={question.image}
+                        num={question.id}
+                        onImageSelected={handleImageSelected}
+                        onSelectedImageName={handleImageNameSelected}
+                        onRemoveImage={handleRemoveImage}
+                      />
+                    )}
+                  </View>
+                );
               })}
             </View>
           </Accordion>
