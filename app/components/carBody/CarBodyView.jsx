@@ -44,13 +44,13 @@ const CarBodyView = ({ carBodyData }) => {
   return (
     <View>
       <View style={styles.container}>
-        <AppText
+        {/* <AppText
           fontSize={20}
           fontFamily={mainStyles.appFontBold}
           color={colors.red}
         >
           L
-        </AppText>
+        </AppText> */}
 
         <View style={styles.imageContainer}>
           <ImageBackground
@@ -83,13 +83,13 @@ const CarBodyView = ({ carBodyData }) => {
           </ImageBackground>
         </View>
 
-        <AppText
+        {/* <AppText
           fontSize={20}
           fontFamily={mainStyles.appFontBold}
           color={colors.purple}
         >
           R
-        </AppText>
+        </AppText> */}
       </View>
     </View>
   );

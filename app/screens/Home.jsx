@@ -1,12 +1,12 @@
 import {
-  FlatList,
+  ScrollView,
   Image,
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import AppScreen from "../components/screen/Screen";
 import InspectionCard from "../components/card/InspectionCard";
 import AppText from "../components/text/Text";
@@ -19,21 +19,85 @@ import SkeletonLoader from "../components/skeletonLoader/SkeletonLoader";
 import { colors } from "../constants/colors";
 import { mainStyles } from "../constants/style";
 import NetInfo from "@react-native-community/netinfo";
+import UploadingInspectionCard from "../components/card/UploadingInspectionCard";
+import { useFocusEffect } from "@react-navigation/native";
+import { FormDataContext } from "../context/formDataContext";
 
 const Home = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
+  const [
+    manufacturersData,
+    setManufacturersData,
+    modelsData,
+    setModelsData,
+    varientsData,
+    setVarientsData,
+    yearsData,
+    setYearsData,
+    colorsData,
+    setColorsData,
+    fuelsData,
+    setFuelsData,
+    transmissionsData,
+    setTransmissionsData,
+    capacitiesData,
+    setCapacitiesData,
+    citiesData,
+    setCitiesData,
+  ] = useContext(FormDataContext);
 
+  const [fullData, setFullData] = useState([]);
   const [inspectedCar, setInspectedCar] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
 
+  const getCarModel = (carId, manufacturerId) => {
+    const models = modelsData[manufacturerId];
+    if (models) {
+      const model = models.find((item) => item.key === carId);
+      return model ? model.value : "Unknown Model";
+    }
+    return "Unknown Model";
+  };
+
+  const getCarVarient = (varientId, carId) => {
+    const v = varientsData[carId];
+    if (v) {
+      const varient = v.find((item) => item.key === varientId);
+      return varient ? varient.value : "Unknown Varient";
+    }
+    return "Unknown Model";
+  };
+
+  const fetchDataFromAsyncStorage = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carformdata" || []);
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        const draftData = parsedData.filter(
+          (item) => item.status === "inspected"
+        );
+        setFullData(draftData);
+      }
+    } catch (error) {
+      console.error("Error fetching data from AsyncStorage", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchDataFromAsyncStorage();
+    }, [])
+  );
+
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected);
     });
-
-    // Clean up the subscription on component unmount
     return () => unsubscribe();
   }, []);
 
@@ -43,13 +107,11 @@ const Home = ({ navigation }) => {
     }
   }, [userData.user.duserid]);
 
-  // for logout
   const userLogout = async () => {
     setUserData({ token: "", user: "" });
     await AsyncStorage.removeItem("@auth");
   };
 
-  // for car data
   const inspectedCarsData = async () => {
     setRefreshing(true);
     const config = {
@@ -156,6 +218,9 @@ const Home = ({ navigation }) => {
           </View>
         </View>
       </ImageBackground>
+
+      <ScrollView contentContainerStyle={{ paddingBottom: 20 }}></ScrollView>
+
       <View style={styles.recentInspectionContainer}>
         <View style={styles.headingAndButton}>
           <View style={styles.headingWithIcon}>
@@ -173,77 +238,71 @@ const Home = ({ navigation }) => {
             View All
           </IconButton>
         </View>
-        {isConnected ? (
-          <View>
-            {loading ? (
-              <FlatList
-                data={Array(10).fill(0)}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={() => <SkeletonLoader />}
-                contentContainerStyle={{
-                  paddingBottom: 30,
-                }}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-                style={{ marginTop: 20, marginBottom: 190 }}
-              />
-            ) : (
-              <FlatList
-                contentContainerStyle={{
-                  paddingBottom: 90,
-                }}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-                style={{ marginTop: 20, marginBottom: 190 }}
-                data={inspectedCar}
-                extraData={inspectedCar}
-                keyExtractor={(item) => item.inpsectionid.toString()}
-                renderItem={({ item }) => (
-                  <InspectionCard
-                    carId={item?.inpsectionid}
-                    car={item?.carName}
-                    varient={item?.varientId}
-                    mileage={item?.mileage}
-                    date={item?.inspection_date}
-                    carImage={item?.carimage}
-                    rank={item?.rating}
-                    onPress={() =>
-                      navigation.navigate("SingleCar", {
-                        id: item?.inpsectionid,
-                        rating: item?.rating,
-                      })
-                    }
-                  />
-                )}
-                refreshing={refreshing}
-                onRefresh={inspectedCarsData}
-              />
-            )}
-          </View>
-        ) : (
-          <View
-            style={{
-              height: 400,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <AppText maxWidth={350}>
-              You Don't Have Internet Connection To See Data.
-            </AppText>
-          </View>
-        )}
+
+        <ScrollView
+          contentContainerStyle={{
+            paddingBottom: 280,
+          }}
+        >
+          {fullData.map((item) => (
+            <UploadingInspectionCard
+              key={item.tempID}
+              carId={item?.tempID}
+              car={getCarModel(item?.carId, item?.mfgId)}
+              varient={getCarVarient(item?.varientId, item?.carId)}
+              mileage={item?.mileage}
+              date={item?.inspectionDate}
+              carImage={item?.images[0]?.uri}
+              onPress={() =>
+                navigation.navigate("DraftSingleCar", { id: item?.tempID })
+              }
+            />
+          ))}
+          {isConnected ? (
+            <View>
+              {loading
+                ? Array(10)
+                    .fill(0)
+                    .map((_, index) => <SkeletonLoader key={index} />)
+                : inspectedCar.map((item) => (
+                    <InspectionCard
+                      key={item?.inpsectionid}
+                      carId={item?.inpsectionid}
+                      car={item?.carName}
+                      varient={item?.varientId}
+                      mileage={item?.mileage}
+                      date={item?.inspection_date}
+                      carImage={item?.carimage}
+                      rank={item?.rating}
+                      onPress={() =>
+                        navigation.navigate("SingleCar", {
+                          id: item?.inpsectionid,
+                          rating: item?.rating,
+                        })
+                      }
+                    />
+                  ))}
+            </View>
+          ) : (
+            <View
+              style={{
+                height: 400,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <AppText maxWidth={350}>
+                You Don't Have Internet Connection To See Data.
+              </AppText>
+            </View>
+          )}
+        </ScrollView>
       </View>
     </AppScreen>
   );
 };
 
 const styles = StyleSheet.create({
-  loaderContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   customerSummarycontainerbackgroundImage: {
     marginLeft: 20,
     marginRight: 20,
@@ -295,7 +354,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  // other styles...
 });
 
 export default Home;

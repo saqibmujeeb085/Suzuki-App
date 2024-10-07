@@ -1,4 +1,11 @@
-import { StyleSheet, View } from "react-native";
+import {
+  Image,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import AppScreen from "../../components/screen/Screen";
 import AppText from "../../components/text/Text";
@@ -10,6 +17,7 @@ import Checkbox from "expo-checkbox";
 import { mainStyles } from "../../constants/style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import InspectionImagePicker from "../../components/imagePicker/InspectionImagePicker"; // Import the Image Picker component
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const EditProblems = ({ navigation, route }) => {
   const { id, location } = route.params || {};
@@ -39,7 +47,11 @@ const EditProblems = ({ navigation, route }) => {
     },
   });
 
+  console.log("problems Data", problems);
+
   const [carBodyProblems, setCarBodyProblems] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     getCarProblemsDataByTempID(id, location);
@@ -260,68 +272,160 @@ const EditProblems = ({ navigation, route }) => {
     }
   };
 
+  const openImageModal = (imageUri) => {
+    setSelectedImage(imageUri);
+    console.log(imageUri);
+    setModalVisible(true);
+  };
+
   return (
     <AppScreen>
       <InspectionHeader onPress={() => navigation.goBack()}>
         Edit Car Problems
       </InspectionHeader>
-      <View
-        style={{
-          marginHorizontal: 20,
-          padding: 20,
-          backgroundColor: colors.whiteBg,
-          borderRadius: 5,
-          elevation: 2,
-          marginBottom: 10,
-        }}
-      >
-        <AppText
-          fontSize={mainStyles.h1FontSize}
-          fontFamily={mainStyles.appFontBold}
-          textAlign={"center"}
+      <ScrollView style={{ marginBottom: 120, minHeight: 500 }}>
+        <View
+          style={{
+            marginHorizontal: 20,
+            padding: 20,
+            backgroundColor: colors.whiteBg,
+            borderRadius: 5,
+            elevation: 2,
+            marginBottom: 10,
+          }}
         >
-          {carBodyProblems?.problemLocation}
-        </AppText>
-      </View>
-      <View style={styles.problemList}>
-        {Object.keys(points).map((problem) => (
-          <View key={problem}>
-            <View style={styles.problemRow}>
-              <Checkbox
-                onValueChange={() => handleProblemToggle(problem)}
-                color={problems[problem]?.checked ? colors.purple : undefined}
-                value={problems[problem]?.checked}
-                style={{ height: 25, width: 25 }}
-              />
-              <AppText fontSize={mainStyles.h2FontSize}>
-                {problem.charAt(0).toUpperCase() + problem.slice(1)}
-              </AppText>
-            </View>
-            {problems[problem]?.checked && (
-              <View style={styles.subProblemContainer}>
-                <RadioGroup
-                  containerStyle={styles.radioGroup}
-                  radioButtons={points[problem]}
-                  onPress={(selectedId) =>
-                    handleSubProblemSelect(problem, selectedId)
-                  }
-                  selectedId={problems[problem]?.selectedId}
+          <AppText
+            fontSize={mainStyles.h1FontSize}
+            fontFamily={mainStyles.appFontBold}
+            textAlign={"center"}
+          >
+            {carBodyProblems?.problemLocation}
+          </AppText>
+        </View>
+        <View style={styles.problemList}>
+          {Object.keys(points).map((problem) => (
+            <View key={problem}>
+              <View style={styles.problemRow}>
+                <Checkbox
+                  onValueChange={() => handleProblemToggle(problem)}
+                  color={problems[problem]?.checked ? colors.purple : undefined}
+                  value={problems[problem]?.checked}
+                  style={{ height: 25, width: 25 }}
                 />
-                <InspectionImagePicker
-                  onImageSelected={(uri) => handleImageUriSelect(problem, uri)}
-                  onSelectedImageName={(name) =>
-                    handleImageNameSelect(problem, name)
-                  }
-                  onRemoveImage={() => handleImageUriSelect(problem, null)}
-                />
+                <AppText fontSize={mainStyles.h2FontSize}>
+                  {problem.charAt(0).toUpperCase() + problem.slice(1)}
+                </AppText>
               </View>
-            )}
-          </View>
-        ))}
-      </View>
+              {problems[problem]?.checked && (
+                <View style={styles.subProblemContainer}>
+                  <RadioGroup
+                    containerStyle={styles.radioGroup}
+                    radioButtons={points[problem]}
+                    onPress={(selectedId) =>
+                      handleSubProblemSelect(problem, selectedId)
+                    }
+                    selectedId={problems[problem]?.selectedId}
+                  />
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 10,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {problems[problem].image != null && (
+                      <TouchableOpacity
+                        style={{
+                          borderRadius: 5,
+                          overflow: "hidden",
+                          width: 60,
+                          height: 60,
+                          elevation: 1,
+                          backgroundColor: colors.whiteBg,
+                        }}
+                        onPress={() => openImageModal(problems[problem]?.image)}
+                      >
+                        <Image
+                          source={{
+                            uri: problems[problem]?.image,
+                          }}
+                          style={{
+                            justifyContent: "cover",
+                            height: 60,
+                            width: 60,
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                    <InspectionImagePicker
+                      onImageSelected={(uri) =>
+                        handleImageUriSelect(problem, uri)
+                      }
+                      onSelectedImageName={(name) =>
+                        handleImageNameSelect(problem, name)
+                      }
+                      onRemoveImage={() => handleImageUriSelect(problem, null)}
+                    />
+                  </View>
+                </View>
+              )}
+            </View>
+          ))}
+        </View>
+      </ScrollView>
       <View style={styles.formButton}>
         <GradientButton onPress={handleSave}>Save</GradientButton>
       </View>
+
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)} // Close modal when back is pressed
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              position: "relative",
+              height: "60%",
+              width: "90%",
+              borderRadius: 15,
+              padding: 10,
+              backgroundColor: "#FFFFFF",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View style={styles.closeButton}>
+              <MaterialCommunityIcons
+                name="close"
+                size={20}
+                color={colors.fontWhite}
+                onPress={() => setModalVisible(false)}
+              />
+            </View>
+            <Image
+              source={{
+                uri: selectedImage,
+              }}
+              style={{
+                objectFit: "contain",
+                flex: 1,
+                width: "100%",
+                borderRadius: 5,
+                overflow: "hidden",
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </AppScreen>
   );
 };
@@ -339,6 +443,18 @@ const styles = StyleSheet.create({
   problemList: {
     paddingHorizontal: 20,
     gap: 10,
+  },
+  closeButton: {
+    position: "absolute",
+    top: -10,
+    right: -10,
+    borderRadius: 100,
+    height: 30,
+    width: 30,
+    backgroundColor: colors.red,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 99999,
   },
   problemRow: {
     flexDirection: "row",

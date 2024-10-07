@@ -211,7 +211,6 @@ const CarBodyDetails = ({ navigation, route }) => {
               <AppTextInput
                 placeholder="Chassis No"
                 onChangeText={(value) => setChasisNo(value)}
-                inputMode={"numeric"}
               />
               <AppTextInput
                 placeholder="Engine No"

@@ -236,7 +236,7 @@ const Reports = ({ navigation }) => {
   const onScroll = ({ nativeEvent }) => {
     const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
     const isCloseToBottom =
-      layoutMeasurement.height + contentOffset.y >= contentSize.height - 50;
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 150;
 
     if (isCloseToBottom && !isLoadingMore) {
       loadMoreCars(); // Load more data when reaching the bottom
