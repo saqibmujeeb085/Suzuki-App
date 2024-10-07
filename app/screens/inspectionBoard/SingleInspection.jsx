@@ -18,6 +18,7 @@ const SingleInspection = ({ navigation, route }) => {
 
   const [questionsData, setQuestionsData] = useState([]);
   const [values, setValues] = useState([]);
+  const [validationErrors, setValidationErrors] = useState({}); // Separate error state
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -33,7 +34,7 @@ const SingleInspection = ({ navigation, route }) => {
 
   useEffect(() => {
     if (!tempID || !catid) {
-      console.error("tempID or catid is not provided");
+      console.log("tempID or catid is not provided");
       return;
     }
 
@@ -47,7 +48,7 @@ const SingleInspection = ({ navigation, route }) => {
           type: question.type,
           catID: catid,
           catName: `${catName}`,
-          subCatName: subCat.subCatName, // Add subCatName here
+          subCatName: subCat.subCatName,
           IndID: question.id,
           IndQuestion: question.question,
           value: "",
@@ -65,12 +66,39 @@ const SingleInspection = ({ navigation, route }) => {
     setLoading(false);
   }, [tempID, catid]);
 
+  // Function to validate a specific question (only for previous fields)
+  const validatePreviousFields = (id) => {
+    const currentIndex = values.findIndex((item) => item.IndID === id);
+    const newValidationErrors = { ...validationErrors }; // Clone the existing errors
+
+    values.forEach((item, index) => {
+      if (index < currentIndex && (!item.value || item.value === "")) {
+        newValidationErrors[item.IndID] = true; // Only validate previous questions
+      }
+    });
+
+    setValidationErrors(newValidationErrors);
+
+    // Check if any error exists in the previous fields
+    return Object.values(newValidationErrors).some((error) => error);
+  };
+
+  // Updated real-time value change handler (exclude current field from validation)
   const handleValueChange = (id, newValue) => {
     setValues((prevValues) =>
       prevValues.map((item) =>
         item.IndID === id ? { ...item, value: newValue } : item
       )
     );
+
+    // Update validation state for the current field
+    setValidationErrors((prevErrors) => ({
+      ...prevErrors,
+      [id]: !newValue, // Remove error only if the newValue is filled
+    }));
+
+    // Validate all previous fields only
+    validatePreviousFields(id);
   };
 
   const handleTextValueChange = (id, newValue) => {
@@ -79,6 +107,15 @@ const SingleInspection = ({ navigation, route }) => {
         item.IndID === id ? { ...item, value: newValue } : item
       )
     );
+
+    // Update validation state for the current field
+    setValidationErrors((prevErrors) => ({
+      ...prevErrors,
+      [id]: !newValue, // Remove error only if the newValue is filled
+    }));
+
+    // Validate all previous fields only
+    validatePreviousFields(id);
   };
 
   const handlePonitsValueChange = (id, newValue) => {
@@ -87,6 +124,15 @@ const SingleInspection = ({ navigation, route }) => {
         item.IndID === id ? { ...item, ponitValue: newValue } : item
       )
     );
+
+    // Update validation state for the current field
+    setValidationErrors((prevErrors) => ({
+      ...prevErrors,
+      [id]: !newValue, // Remove error only if the newValue is filled
+    }));
+
+    // Validate all previous fields only
+    validatePreviousFields(id);
   };
 
   const handleImageSelected = (id, imageUri) => {
@@ -97,13 +143,20 @@ const SingleInspection = ({ navigation, route }) => {
           : item
       )
     );
+
+    // Validate all previous fields only
+    validatePreviousFields(id);
   };
+
   const handleReasonValueChange = (id, newReason) => {
     setValues((prevValues) =>
       prevValues.map((item) =>
         item.IndID === id ? { ...item, reasonValue: newReason } : item
       )
     );
+
+    // Validate all previous fields only
+    validatePreviousFields(id);
   };
 
   const handleImageNameSelected = (id, imageName) => {
@@ -114,6 +167,9 @@ const SingleInspection = ({ navigation, route }) => {
           : item
       )
     );
+
+    // Validate all previous fields only
+    validatePreviousFields(id);
   };
 
   const handleRemoveImage = (id) => {
@@ -122,14 +178,19 @@ const SingleInspection = ({ navigation, route }) => {
         item.IndID === id ? { ...item, image: { uri: null, name: null } } : item
       )
     );
+
+    // Validate all previous fields only
+    validatePreviousFields(id);
   };
 
-  useEffect(() => {
-    const hasEmptyValues = values.some((item) => item.value === "");
-    setIsButtonDisabled(hasEmptyValues);
-  }, [values]);
-
   const saveQuestionsData = async () => {
+    // Validate all previous fields before saving
+    const hasErrors = validatePreviousFields(values[values.length - 1].IndID); // Validate until the last question
+
+    if (hasErrors) {
+      return; // If there are errors, don't proceed with saving
+    }
+
     setLoading(true);
 
     const questionValues = values.map((item) => ({
@@ -168,34 +229,8 @@ const SingleInspection = ({ navigation, route }) => {
         id: tempID,
       });
     } catch (error) {
-      console.error("Error saving questions values:", error);
+      console.log("Error saving questions values:", error);
       setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getAllDataFromStorage();
-  }, []);
-
-  const getAllDataFromStorage = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem("@carQuestionsdata");
-      if (storedData) {
-        const data = JSON.parse(storedData);
-
-        // Ensure data is an array
-        if (Array.isArray(data)) {
-          console.log("All Data from Storage 11: ", data);
-          // You can handle the data here, e.g., set it to a state variable
-          // setYourStateVariable(data);
-        } else {
-          console.error("Stored data is not an array");
-        }
-      } else {
-        console.log("No data found in storage");
-      }
-    } catch (error) {
-      console.error("Error retrieving data from storage:", error);
     }
   };
 
@@ -215,6 +250,7 @@ const SingleInspection = ({ navigation, route }) => {
           <Accordion key={index} title={subCat.subCatName}>
             <View style={{ gap: 10 }}>
               {subCat.subCatData.map((question, index) => {
+                const error = validationErrors[question.id]; // Check for validation error
                 if (question.type === "r") {
                   return (
                     <RangeCard
@@ -224,6 +260,7 @@ const SingleInspection = ({ navigation, route }) => {
                       value={
                         values.find((val) => val.IndID === question.id)?.value
                       }
+                      error={error} // Pass error state here
                       onValueChange={(newValue) =>
                         handleValueChange(question.id, newValue)
                       }
@@ -248,6 +285,7 @@ const SingleInspection = ({ navigation, route }) => {
                       value={
                         values.find((val) => val.IndID === question.id)?.value
                       }
+                      error={error} // Pass error state here
                       onValueChange={(newValue) =>
                         handleValueChange(question.id, newValue)
                       }
@@ -256,7 +294,7 @@ const SingleInspection = ({ navigation, route }) => {
                       }
                       onReasonValueChange={(newReason) =>
                         handleReasonValueChange(question.id, newReason)
-                      } // Pass the handler here
+                      }
                       points={question.points}
                       num={question.id}
                       questionId={question.id}
@@ -266,28 +304,27 @@ const SingleInspection = ({ navigation, route }) => {
                     />
                   );
                 } else if (question.type === "t") {
-                  {
-                    return (
-                      <TextCard
-                        key={question.id}
-                        indicator={question.question}
-                        value={
-                          values.find((val) => val.IndID === question.id)?.value
-                        }
-                        showType={question.showType}
-                        placeholder={question.placeHolder}
-                        onValueChange={(newValue) =>
-                          handleTextValueChange(question.id, newValue)
-                        }
-                        points={question.points}
-                        img={question.image}
-                        num={question.id}
-                        onImageSelected={handleImageSelected}
-                        onSelectedImageName={handleImageNameSelected}
-                        onRemoveImage={handleRemoveImage}
-                      />
-                    );
-                  }
+                  return (
+                    <TextCard
+                      key={question.id}
+                      indicator={question.question}
+                      value={
+                        values.find((val) => val.IndID === question.id)?.value
+                      }
+                      error={error} // Pass error state here
+                      showType={question.showType}
+                      placeholder={question.placeHolder}
+                      onValueChange={(newValue) =>
+                        handleTextValueChange(question.id, newValue)
+                      }
+                      points={question.points}
+                      img={question.image}
+                      num={question.id}
+                      onImageSelected={handleImageSelected}
+                      onSelectedImageName={handleImageNameSelected}
+                      onRemoveImage={handleRemoveImage}
+                    />
+                  );
                 } else {
                   return null;
                 }

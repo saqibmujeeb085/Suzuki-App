@@ -18,6 +18,7 @@ const RangeCard = ({
   onRemoveImage,
   questionId,
   img = false,
+  error,
 }) => {
   const [sliderValue, setSliderValue] = useState(value);
 
@@ -31,7 +32,17 @@ const RangeCard = ({
   };
 
   return (
-    <View style={styles.inspectionBox}>
+    <View
+      style={{
+        backgroundColor: colors.whiteBg,
+        borderRadius: 5,
+        minHeight: 10,
+        padding: 20,
+        gap: 20,
+        borderWidth: 0.5,
+        borderColor: error ? colors.red : colors.whiteBg,
+      }}
+    >
       <AppText
         fontSize={mainStyles.h1FontSize}
         color={colors.fontBlack}
@@ -91,13 +102,6 @@ const RangeCard = ({
 };
 
 const styles = StyleSheet.create({
-  inspectionBox: {
-    backgroundColor: colors.whiteBg,
-    borderRadius: 5,
-    minHeight: 10,
-    padding: 20,
-    gap: 20,
-  },
   sliderContainer: {
     marginTop: 10,
   },

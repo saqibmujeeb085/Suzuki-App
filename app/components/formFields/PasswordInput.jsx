@@ -5,7 +5,7 @@ import { mainStyles } from "../../constants/style";
 import AppText from "../text/Text";
 import { MaterialIcons } from "@expo/vector-icons";
 
-const PasswordInput = ({ Error, ...inputType }) => {
+const PasswordInput = ({ Error, placeholder, ...inputType }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
