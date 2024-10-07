@@ -317,7 +317,7 @@ const startPosting = async (obj, groupedData, carbodyques) => {
     };
 
     const response = await axios.post(
-      "auth/add_carinspectionsnew.php",
+      "/auth/add_carinspectionsnew.php",
       formData,
       {
         headers: headers,

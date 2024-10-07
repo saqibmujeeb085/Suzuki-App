@@ -17,6 +17,7 @@ const TextCard = ({
   placeholder,
   img = false,
   showType,
+  val,
   error,
 }) => {
   const [tyreSize, setTyreSize] = useState("");
@@ -66,6 +67,7 @@ const TextCard = ({
           placeholder={placeholder || "In Millimeter"}
           onChangeText={(text) => onValueChange(text)}
           inputMode={"numeric"}
+          val={val}
         />
       )}
       {showType === "s" && (
@@ -73,7 +75,10 @@ const TextCard = ({
           placeholder={placeholder || "E.g: 18565R15"}
           maxLength={10} // Set length based on maximum formatted length
           onChangeText={handleInputChange}
-          value={tyreSize} // Ensure the input value is controlled
+          value={tyreSize}
+          val={val}
+
+          // Ensure the input value is controlled
         />
       )}
       {img && (

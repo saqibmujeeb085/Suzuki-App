@@ -272,6 +272,7 @@ const SingleInspection = ({ navigation, route }) => {
                         onImageSelected={handleImageSelected}
                         onSelectedImageName={handleImageNameSelected}
                         onRemoveImage={handleRemoveImage}
+                        val={isFilled}
                       />
                     )}
                   </View>
