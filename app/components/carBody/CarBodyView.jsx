@@ -1,10 +1,5 @@
-import React, { useState } from "react";
-import {
-  View,
-  TouchableOpacity,
-  ImageBackground,
-  StyleSheet,
-} from "react-native";
+import React from "react";
+import { View, ImageBackground, StyleSheet } from "react-native";
 import AppText from "../text/Text";
 import { colors } from "../../constants/colors";
 import { mainStyles } from "../../constants/style";
@@ -19,6 +14,7 @@ const CarBodyView = ({ carBodyData }) => {
     "Major Scratch": "S2",
     // Add more mappings as needed
   };
+
   const problemAreas = [
     { name: "Front Bumper", position: { top: 40, left: 135 } },
     { name: "Bonnet Left Side", position: { top: 100, left: 100 } },
@@ -37,21 +33,22 @@ const CarBodyView = ({ carBodyData }) => {
     { name: "Back Right Fender", position: { top: 360, right: 60 } },
   ];
 
+  // Function to get the short code
   const getShortCode = (value) => {
     return shortCodeMapping[value] || value;
+  };
+
+  // Function to get color based on short code
+  const getColorByShortCode = (shortCode) => {
+    if (shortCode === "P1" || shortCode === "P2") return colors.purple;
+    if (shortCode === "D1" || shortCode === "D2") return colors.red;
+    if (shortCode === "S1" || shortCode === "S2") return colors.blue;
+    return colors.black; // Default color if no match
   };
 
   return (
     <View>
       <View style={styles.container}>
-        {/* <AppText
-          fontSize={20}
-          fontFamily={mainStyles.appFontBold}
-          color={colors.red}
-        >
-          L
-        </AppText> */}
-
         <View style={styles.imageContainer}>
           <ImageBackground
             resizeMode="contain"
@@ -66,30 +63,25 @@ const CarBodyView = ({ carBodyData }) => {
               >
                 {carBodyData[area.name] && (
                   <View>
-                    {carBodyData[area.name].map((problem, i) => (
-                      <AppText
-                        key={i}
-                        fontSize={12}
-                        color={colors.purple}
-                        fontFamily={mainStyles.appFontBold}
-                      >
-                        {getShortCode(problem.selected_value)}
-                      </AppText>
-                    ))}
+                    {carBodyData[area.name].map((problem, i) => {
+                      const shortCode = getShortCode(problem.selected_value);
+                      return (
+                        <AppText
+                          key={i}
+                          fontSize={12}
+                          color={getColorByShortCode(shortCode)} // Dynamic color
+                          fontFamily={mainStyles.appFontBold}
+                        >
+                          {shortCode}
+                        </AppText>
+                      );
+                    })}
                   </View>
                 )}
               </View>
             ))}
           </ImageBackground>
         </View>
-
-        {/* <AppText
-          fontSize={20}
-          fontFamily={mainStyles.appFontBold}
-          color={colors.purple}
-        >
-          R
-        </AppText> */}
       </View>
     </View>
   );

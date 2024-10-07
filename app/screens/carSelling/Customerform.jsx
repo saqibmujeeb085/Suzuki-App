@@ -352,14 +352,25 @@ const Customerform = ({ navigation, route }) => {
                   style={styles.datePickerTouchable}
                 >
                   <AppText
+                    color={colors.fontGrey}
+                    position={"absolute"}
+                    top={!transferSlip ? 10 : -7}
+                    left={10}
+                    fontSize={
+                      !transferSlip
+                        ? mainStyles.h2FontSize
+                        : mainStyles.h3FontSize
+                    }
+                  >
+                    Transfer Slip Date
+                  </AppText>
+                  <AppText
                     color={transferSlip ? colors.fontBlack : colors.fontGrey}
                     padding={10}
                     textAlign={"start"}
                     fontSize={mainStyles.h2FontSize}
                   >
-                    {transferSlip
-                      ? transferSlip
-                      : "Transfer Slip Date (--/--/----)"}
+                    {transferSlip && transferSlip}
                   </AppText>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -400,12 +411,23 @@ const Customerform = ({ navigation, route }) => {
                   style={styles.datePickerTouchable}
                 >
                   <AppText
+                    color={colors.fontGrey}
+                    position={"absolute"}
+                    top={!sfs ? 10 : -7}
+                    left={10}
+                    fontSize={
+                      !sfs ? mainStyles.h2FontSize : mainStyles.h3FontSize
+                    }
+                  >
+                    SFS Date
+                  </AppText>
+                  <AppText
                     color={sfs ? colors.fontBlack : colors.fontGrey}
                     padding={10}
                     textAlign={"start"}
                     fontSize={mainStyles.h2FontSize}
                   >
-                    {sfs ? sfs : "SFS Date (--/--/----)"}
+                    {sfs && sfs}
                   </AppText>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -446,12 +468,23 @@ const Customerform = ({ navigation, route }) => {
                   style={styles.datePickerTouchable}
                 >
                   <AppText
+                    color={colors.fontGrey}
+                    position={"absolute"}
+                    top={!tfs ? 10 : -7}
+                    left={10}
+                    fontSize={
+                      !tfs ? mainStyles.h2FontSize : mainStyles.h3FontSize
+                    }
+                  >
+                    TFS Date
+                  </AppText>
+                  <AppText
                     color={tfs ? colors.fontBlack : colors.fontGrey}
                     padding={10}
                     textAlign={"start"}
                     fontSize={mainStyles.h2FontSize}
                   >
-                    {tfs ? tfs : "TFS Date (--/--/----)"}
+                    {tfs && tfs}
                   </AppText>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -492,12 +525,23 @@ const Customerform = ({ navigation, route }) => {
                   style={styles.datePickerTouchable}
                 >
                   <AppText
+                    color={colors.fontGrey}
+                    position={"absolute"}
+                    top={!ffs ? 10 : -7}
+                    left={10}
+                    fontSize={
+                      !ffs ? mainStyles.h2FontSize : mainStyles.h3FontSize
+                    }
+                  >
+                    FFS Date
+                  </AppText>
+                  <AppText
                     color={ffs ? colors.fontBlack : colors.fontGrey}
                     padding={10}
                     textAlign={"start"}
                     fontSize={mainStyles.h2FontSize}
                   >
-                    {ffs ? ffs : "FFS Date (--/--/----)"}
+                    {ffs && ffs}
                   </AppText>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -629,6 +673,7 @@ const styles = StyleSheet.create({
     width: "80%",
     borderRightWidth: 1,
     borderColor: colors.ligtGreyBg,
+    position: "relative",
   },
 
   cameraButton: {

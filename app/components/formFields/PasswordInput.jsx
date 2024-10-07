@@ -12,6 +12,8 @@ const PasswordInput = ({ Error, ...inputType }) => {
     setIsPasswordVisible((prevState) => !prevState);
   };
 
+  const [clicked, setClicked] = useState(false);
+
   return (
     <View style={styles.textFieldBox}>
       <View style={styles.inputContainer}>
@@ -20,7 +22,18 @@ const PasswordInput = ({ Error, ...inputType }) => {
           style={styles.inputField}
           secureTextEntry={!isPasswordVisible}
           placeholderTextColor={colors.fontGrey}
+          onFocus={() => setClicked(true)}
+          onBlur={() => setClicked(false)}
         />
+        <AppText
+          color={colors.fontGrey}
+          position={"absolute"}
+          top={!clicked ? 20 : 2}
+          left={20}
+          fontSize={!clicked ? mainStyles.h2FontSize : mainStyles.h3FontSize}
+        >
+          {placeholder}
+        </AppText>
         <TouchableOpacity
           style={styles.iconContainer}
           onPress={togglePasswordVisibility}
@@ -32,17 +45,6 @@ const PasswordInput = ({ Error, ...inputType }) => {
           />
         </TouchableOpacity>
       </View>
-      {Error && (
-        <AppText
-          fontSize={mainStyles.h2FontSize}
-          color={colors.fontRed}
-          marginLeft={10}
-          marginRight={10}
-          marginBottom={5}
-        >
-          {Error}
-        </AppText>
-      )}
     </View>
   );
 };
@@ -69,6 +71,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
+    position: "relative",
   },
   iconContainer: {
     position: "absolute",

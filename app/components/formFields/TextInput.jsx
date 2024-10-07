@@ -1,10 +1,12 @@
 import { TextInput, StyleSheet, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { colors } from "../../constants/colors";
 import { mainStyles } from "../../constants/style";
 import AppText from "../text/Text";
 
-const AppTextInput = ({ Error, inputMode, ...inputType }) => {
+const AppTextInput = ({ Error, inputMode, placeholder, ...inputType }) => {
+  const [clicked, setClicked] = useState(false);
+
   return (
     <View style={styles.textFieldBox}>
       <TextInput
@@ -12,18 +14,18 @@ const AppTextInput = ({ Error, inputMode, ...inputType }) => {
         inputMode={inputMode}
         style={styles.inputField}
         placeholderTextColor={colors.fontGrey}
+        onFocus={() => setClicked(true)} // Use onFocus to set clicked to true
+        onBlur={() => setClicked(false)} // Use onBlur to set clicked to false
       />
-      {Error && (
-        <AppText
-          fontSize={mainStyles.h3FontSize}
-          color={colors.fontRed}
-          marginLeft={10}
-          marginRight={10}
-          marginBottom={5}
-        >
-          {Error}
-        </AppText>
-      )}
+      <AppText
+        color={colors.fontGrey}
+        position={"absolute"}
+        top={!clicked ? 20 : 2}
+        left={20}
+        fontSize={!clicked ? mainStyles.h2FontSize : mainStyles.h3FontSize}
+      >
+        {placeholder}
+      </AppText>
     </View>
   );
 };
@@ -47,5 +49,6 @@ const styles = StyleSheet.create({
     gap: 5,
     minWidth: "48.5%",
     flex: 1,
+    position: "relative",
   },
 });
