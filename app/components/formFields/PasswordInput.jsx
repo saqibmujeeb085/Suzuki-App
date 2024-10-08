@@ -28,11 +28,15 @@ const PasswordInput = ({ Error, placeholder, val, ...inputType }) => {
         <AppText
           color={colors.fontGrey}
           position={"absolute"}
-          top={clicked || val ? 2 : 20}
+          top={clicked || val ? -9 : 20}
           left={20}
           fontSize={
             clicked || val ? mainStyles.h3FontSize : mainStyles.h2FontSize
           }
+          backgroundColor={clicked || val ? colors.ligtGreyBg : "transparent"}
+          zIndex={0}
+          paddingHorizontal={5}
+          paddingVertical={2}
         >
           {placeholder}
         </AppText>

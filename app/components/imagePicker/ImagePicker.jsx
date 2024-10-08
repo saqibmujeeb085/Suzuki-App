@@ -34,6 +34,7 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
       allowsEditing: false,
       quality: 0.5,
     });
+    setModalVisible(false);
 
     if (!result.canceled) {
       const selectedImages = result.assets.map((asset) => ({
@@ -43,10 +44,10 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
       }));
       addImages(selectedImages);
     }
-    setModalVisible(false);
   };
 
   const captureImage = async () => {
+    setModalVisible(false);
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false,
@@ -59,7 +60,6 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
 
       addImages([{ uri: localUri, name: filename, type: "image/jpeg" }]);
     }
-    setModalVisible(false);
   };
 
   const addImages = (newImages) => {
@@ -105,8 +105,15 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
           <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
             <View style={styles.pickerImageContainer}>
               <View style={styles.pickerIconContainer}>
-                <Ionicons name="image-outline" size={50} color={"#C9C9C9"} />
-                <AppText fontSize={12} color={"#525252"}>
+                <Ionicons
+                  name="image-outline"
+                  size={40}
+                  color={colors.fontGrey}
+                />
+                <AppText
+                  fontSize={mainStyles.h2FontSize}
+                  color={colors.fontGrey}
+                >
                   Add Photos
                 </AppText>
               </View>
@@ -260,8 +267,9 @@ const styles = StyleSheet.create({
     height: 60,
     marginHorizontal: 5,
     borderRadius: 5,
-    backgroundColor: colors.whiteBg,
-    elevation: 2,
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: colors.fontGrey,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -269,12 +277,13 @@ const styles = StyleSheet.create({
     borderColor: colors.purple,
   },
   pickerImageContainer: {
-    backgroundColor: "white",
+    backgroundColor: "transparent",
     height: 200,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 5,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.fontGrey,
   },
   pickerIconContainer: {
     justifyContent: "center",

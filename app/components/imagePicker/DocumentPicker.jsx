@@ -19,6 +19,7 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const pickDocument = async () => {
+    setModalVisible(false);
     let result = await DocumentPicker.getDocumentAsync({
       type: ["application/pdf"],
       copyToCacheDirectory: true,
@@ -38,10 +39,10 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
       console.log("Picked document:", selectedDocument); // Debug log
       selectedDocument.forEach((doc) => addDocument(doc));
     }
-    setModalVisible(false);
   };
 
   const pickImage = async () => {
+    setModalVisible(false);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsMultipleSelection: true,
@@ -57,10 +58,10 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
       console.log("Picked images:", selectedImages); // Debug log
       selectedImages.forEach((image) => addDocument(image));
     }
-    setModalVisible(false);
   };
 
   const captureImage = async () => {
+    setModalVisible(false);
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false,
@@ -75,7 +76,6 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
       console.log("Captured image:", newImage); // Debug log
       addDocument(newImage);
     }
-    setModalVisible(false);
   };
 
   const addDocument = (newDoc) => {
@@ -126,10 +126,10 @@ const AppDocumentPicker = ({ onDocumentsSelected, onRemoveDoc }) => {
         ))}
         <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
           <View style={styles.uploadButton}>
-            <AppText color={colors.fontGrey} fontSize={mainStyles.h4FontSize}>
+            <AppText color={colors.fontGrey} fontSize={mainStyles.h2FontSize}>
               Upload Your Documents
             </AppText>
-            <Feather name="upload" size={20} color={colors.fontGrey} />
+            <Feather name="upload" size={24} color={colors.fontGrey} />
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -200,12 +200,13 @@ export default AppDocumentPicker;
 
 const styles = StyleSheet.create({
   pickerContainer: {
-    gap: 10,
+    gap: 5,
   },
   documentContainer: {
-    backgroundColor: colors.whiteBg,
+    backgroundColor: "transparent",
     borderRadius: 5,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.fontGrey,
     marginVertical: 5,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -213,12 +214,13 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   uploadButton: {
-    backgroundColor: colors.whiteBg,
-    height: 50,
+    backgroundColor: "transparent",
+    height: 60,
     justifyContent: "space-between",
     alignItems: "center",
     borderRadius: 5,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.fontGrey,
     flexDirection: "row",
     gap: 5,
     padding: 10,

@@ -290,7 +290,7 @@ const ViewReport = ({ navigation, route }) => {
 
           console.log("Status changed successfully");
           // Navigate back to "Draft" or any other screen
-          navigation.navigate("Draft");
+          navigation.navigate("Home");
         } else {
           console.log(
             "No car data found with the given tempID:",

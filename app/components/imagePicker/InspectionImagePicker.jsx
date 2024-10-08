@@ -23,12 +23,12 @@ const InspectionImagePicker = ({
   const [modalVisible, setModalVisible] = useState(false);
 
   const pickImage = async () => {
+    setModalVisible(false);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 0.5,
     });
-    setModalVisible(false);
 
     if (!result.canceled) {
       const localUri = result.assets[0].uri;
@@ -39,6 +39,7 @@ const InspectionImagePicker = ({
   };
 
   const captureImage = async () => {
+    setModalVisible(false);
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
@@ -51,7 +52,6 @@ const InspectionImagePicker = ({
 
       addImage(localUri, filename);
     }
-    setModalVisible(false);
   };
 
   const addImage = (uri, name) => {

@@ -13,21 +13,24 @@ const AppTextInput = ({ Error, inputMode, placeholder, val, ...inputType }) => {
     <View style={styles.textFieldBox}>
       <View
         style={{
-          backgroundColor: colors.whiteBg,
+          // backgroundColor: colors.whiteBg,
           borderRadius: 5,
-          overflow: "hidden",
-          elevation: 2,
+          borderWidth: 1,
+          borderColor: colors.fontGrey,
         }}
       >
         <AppText
           color={colors.fontGrey}
           position={"absolute"}
-          top={clicked || val ? 2 : 20}
+          top={clicked || val ? -8 : 20}
           left={20}
           fontSize={
             clicked || val ? mainStyles.h3FontSize : mainStyles.h2FontSize
           }
+          backgroundColor={clicked || val ? colors.ligtGreyBg : "transparent"}
           zIndex={0}
+          paddingHorizontal={5}
+          paddingVertical={2}
         >
           {placeholder}
         </AppText>

@@ -1,6 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
+import {
+  FontAwesome6,
+  MaterialCommunityIcons,
+  Octicons,
+} from "@expo/vector-icons";
 import AppText from "../text/Text";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { mainStyles } from "../../constants/style";
@@ -35,7 +39,7 @@ const InspectionBoardCard = ({
               color={colors.fontBlack}
               fontFamily={mainStyles.appFontBold}
               fontSize={mainStyles.h3FontSize}
-              maxWidth={150}
+              maxWidth={200}
             >
               {name}
             </AppText>
@@ -60,11 +64,7 @@ const InspectionBoardCard = ({
             {Rating ? Rating : "NaN"} / 10
           </AppText>
         </View> */}
-        <MaterialCommunityIcons
-          name="select-all"
-          size={30}
-          color={colors.fontGrey}
-        />
+        <FontAwesome6 name="angle-right" size={24} color={colors.fontGrey} />
       </View>
     </TouchableWithoutFeedback>
   );

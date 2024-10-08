@@ -14,7 +14,7 @@ const ProcessModal = ({
   pbtn,
   pbtnPress,
   sbtn,
-  sbtnColor = "#BBBBBB",
+  sbtnColor = colors.fontGrey,
   sbtnPress,
   icon,
   show,
@@ -35,20 +35,24 @@ const ProcessModal = ({
             )}
           </View>
           <View style={styles.modalContent}>
-            <AppText
-              fontSize={headingSize}
-              color={colors.fontBlack}
-              textAlign={"center"}
-            >
-              {heading}
-            </AppText>
-            <AppText
-              fontSize={mainStyles.h3FontSize}
-              color={colors.fontBlack}
-              textAlign={"center"}
-            >
-              {text}
-            </AppText>
+            {heading && (
+              <AppText
+                fontSize={headingSize}
+                color={colors.fontBlack}
+                textAlign={"center"}
+              >
+                {heading}
+              </AppText>
+            )}
+            {text && (
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                color={colors.fontBlack}
+                textAlign={"center"}
+              >
+                {text}
+              </AppText>
+            )}
           </View>
           <View style={styles.modalButtons}>
             <GradientButton size={mainStyles.h3FontSize} onPress={pbtnPress}>
@@ -103,7 +107,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   modalButtons: {
-    marginTop: 15,
+    marginTop: 0,
     gap: 15,
     height: 80,
   },

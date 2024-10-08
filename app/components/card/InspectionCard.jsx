@@ -21,8 +21,6 @@ const InspectionCard = ({
     return colors.green;
   };
 
-  console.log(`${process.env.IMAGE_URL}${carImage}`);
-
   return (
     <View>
       <TouchableOpacity onPress={onPress} style={styles.Container}>

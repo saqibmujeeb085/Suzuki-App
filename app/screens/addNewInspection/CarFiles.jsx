@@ -232,8 +232,6 @@ const CarFiles = ({ navigation }) => {
           show={show}
           setShow={setShow}
           icon
-          heading={"Customer ID: 0KD560PLF"}
-          text={"You have to complete the inspection in 20 minutes."}
           pbtn={loading ? "Loading..." : "Start Inspection Now"}
           disabled={loading}
           pbtnPress={saveCarDetails}
@@ -253,7 +251,11 @@ const CarFiles = ({ navigation }) => {
             onImagesSelected={handleImagesSelected}
             onRemoveImage={handleRemoveImage}
           />
-          <AppText fontSize={mainStyles.h3FontSize} marginTop={20}>
+          <AppText
+            fontSize={mainStyles.h2FontSize}
+            fontFamily={mainStyles.appFontBold}
+            marginTop={20}
+          >
             Upload Car Documents
           </AppText>
           <AppDocumentPicker

@@ -208,7 +208,7 @@ const InspectionBoard = ({ navigation, route }) => {
 
   const handleSaveForLater = useCallback(() => {
     setShow((prevShow) => !prevShow);
-    navigation.navigate("Draft");
+    navigation.navigate("Home");
   }, [navigation]);
 
   useFocusEffect(
@@ -255,8 +255,6 @@ const InspectionBoard = ({ navigation, route }) => {
           show={show}
           setShow={setShow}
           icon
-          heading={"Customer ID: 0KD560PLF"}
-          text={"If you cancel the inspection, it will be saved as a draft"}
           pbtn={"Continue Inspection"}
           pbtnPress={ShowModal}
           sbtn={"Save for later"}

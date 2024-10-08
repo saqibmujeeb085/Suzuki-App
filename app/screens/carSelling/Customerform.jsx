@@ -289,20 +289,23 @@ const Customerform = ({ navigation, route }) => {
               placeholder="Customer Name"
               value={customerName}
               onChangeText={setCustomerName}
+              val={customerName}
             />
             <AppTextInput
-              placeholder="CNIC Number (xxxxx-xxxxxxx-x)"
+              placeholder="CNIC Number"
               inputMode={"numeric"}
               maxLength={15}
               value={cnicNumber}
               onChangeText={handleInputChange}
+              val={cnicNumber}
             />
             <AppTextInput
-              placeholder="Customer Contact (03xx-xxxxxxx)"
+              placeholder="Customer Contact"
               inputMode={"numeric"}
               maxLength={12}
               value={customerContact}
               onChangeText={handlePhoneInputChange}
+              val={customerContact}
             />
             <AppTextInput
               placeholder="Customer Address"
@@ -312,12 +315,14 @@ const Customerform = ({ navigation, route }) => {
               textAlignVertical={"top"}
               value={customerAddress}
               onChangeText={setCustomerAddress}
+              val={customerAddress}
             />
             <AppTextInput
               placeholder="Sale Price"
               inputMode={"numeric"}
               value={salePrice}
               onChangeText={setSalePrice}
+              val={salePrice}
             />
             <Dropdown
               DropItems="Warranty Category"
@@ -331,17 +336,19 @@ const Customerform = ({ navigation, route }) => {
               selectedItem={(selected) => setWarrantyCategory(selected)}
             />
             <AppTextInput
-              placeholder="DMIS sales entry (00/00000)"
+              placeholder="DMIS sales entry"
               inputMode={"numeric"}
               value={dmisSalesEntry}
               onChangeText={handleDmisInputChange}
+              val={dmisSalesEntry}
             />
             <AppTextInput
-              placeholder="Warranty booklet number (0000)"
+              placeholder="Warranty booklet number"
               inputMode={"numeric"}
               value={warrantyBookletNumber}
               onChangeText={setWarrantyBookletNumber}
               maxLength={4}
+              val={warrantyBookletNumber}
             />
 
             {/* Transfer Slip Date Picker and Camera */}
@@ -354,8 +361,10 @@ const Customerform = ({ navigation, route }) => {
                   <AppText
                     color={colors.fontGrey}
                     position={"absolute"}
-                    top={!transferSlip ? 10 : -7}
-                    left={10}
+                    backgroundColor={colors.ligtGreyBg}
+                    top={!transferSlip ? 10 : -15}
+                    paddingHorizontal={5}
+                    left={5}
                     fontSize={
                       !transferSlip
                         ? mainStyles.h2FontSize
@@ -413,8 +422,10 @@ const Customerform = ({ navigation, route }) => {
                   <AppText
                     color={colors.fontGrey}
                     position={"absolute"}
-                    top={!sfs ? 10 : -7}
-                    left={10}
+                    backgroundColor={colors.ligtGreyBg}
+                    top={!sfs ? 10 : -15}
+                    paddingHorizontal={5}
+                    left={5}
                     fontSize={
                       !sfs ? mainStyles.h2FontSize : mainStyles.h3FontSize
                     }
@@ -470,8 +481,10 @@ const Customerform = ({ navigation, route }) => {
                   <AppText
                     color={colors.fontGrey}
                     position={"absolute"}
-                    top={!tfs ? 10 : -7}
-                    left={10}
+                    backgroundColor={colors.ligtGreyBg}
+                    top={!tfs ? 10 : -15}
+                    paddingHorizontal={5}
+                    left={5}
                     fontSize={
                       !tfs ? mainStyles.h2FontSize : mainStyles.h3FontSize
                     }
@@ -527,8 +540,10 @@ const Customerform = ({ navigation, route }) => {
                   <AppText
                     color={colors.fontGrey}
                     position={"absolute"}
-                    top={!ffs ? 10 : -7}
-                    left={10}
+                    backgroundColor={colors.ligtGreyBg}
+                    top={!ffs ? 10 : -15}
+                    paddingHorizontal={5}
+                    left={5}
                     fontSize={
                       !ffs ? mainStyles.h2FontSize : mainStyles.h3FontSize
                     }
@@ -578,6 +593,7 @@ const Customerform = ({ navigation, route }) => {
               placeholder="Warranty claim"
               value={warrantyClaim}
               onChangeText={setWarrantyClaim}
+              val={warrantyClaim}
             />
           </View>
         </View>
@@ -661,9 +677,10 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   datePickerButton: {
-    backgroundColor: colors.whiteBg,
+    backgroundColor: "transparent",
     borderRadius: 5,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.fontGrey,
     padding: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -671,13 +688,13 @@ const styles = StyleSheet.create({
   },
   datePickerTouchable: {
     width: "80%",
-    borderRightWidth: 1,
-    borderColor: colors.ligtGreyBg,
+    borderRightWidth: 0.5,
+    borderColor: colors.fontGrey,
     position: "relative",
   },
 
   cameraButton: {
-    backgroundColor: colors.ligtGreyBg,
+    backgroundColor: "#80808010",
     height: 40,
     width: "17%",
     justifyContent: "center",

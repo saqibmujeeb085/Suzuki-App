@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  RefreshControl,
 } from "react-native";
 import React, { useContext, useEffect, useState, useCallback } from "react";
 import AppScreen from "../components/screen/Screen";
@@ -25,26 +26,7 @@ import { FormDataContext } from "../context/formDataContext";
 
 const Home = ({ navigation }) => {
   const [userData, setUserData] = useContext(AuthContext);
-  const [
-    manufacturersData,
-    setManufacturersData,
-    modelsData,
-    setModelsData,
-    varientsData,
-    setVarientsData,
-    yearsData,
-    setYearsData,
-    colorsData,
-    setColorsData,
-    fuelsData,
-    setFuelsData,
-    transmissionsData,
-    setTransmissionsData,
-    capacitiesData,
-    setCapacitiesData,
-    citiesData,
-    setCitiesData,
-  ] = useContext(FormDataContext);
+  const [modelsData, varientsData] = useContext(FormDataContext);
 
   const [fullData, setFullData] = useState([]);
   const [inspectedCar, setInspectedCar] = useState([]);
@@ -72,7 +54,7 @@ const Home = ({ navigation }) => {
 
   const fetchDataFromAsyncStorage = async () => {
     try {
-      const storedData = await AsyncStorage.getItem("@carformdata" || []);
+      const storedData = await AsyncStorage.getItem("@carformdata");
       if (storedData) {
         const parsedData = JSON.parse(storedData);
         const draftData = parsedData.filter(
@@ -116,14 +98,24 @@ const Home = ({ navigation }) => {
     setRefreshing(true);
     const config = {
       method: "get",
-      maxBodyLength: Infinity,
-      url: `auth/get_carinspectionbasicInfo.php?startRecord=1&endRecord=10&duser_id=${userData.user.duserid}`,
-      headers: {},
+      url: `auth/get_carinspectionbasicInfo.php?startRecord=1&endRecord=20&duser_id=${userData.user.duserid}`,
     };
 
     try {
       const response = await axios.request(config);
       setInspectedCar(response.data);
+
+      // Check if AsyncStorage data matches server data
+      const storedData = await AsyncStorage.getItem("@carformdata");
+      const parsedStoredData = storedData ? JSON.parse(storedData) : [];
+      if (JSON.stringify(response.data) !== JSON.stringify(parsedStoredData)) {
+        await AsyncStorage.setItem(
+          "@carformdata",
+          JSON.stringify(response.data)
+        );
+        setFullData(response.data);
+      }
+
       setLoading(false);
     } catch (error) {
       console.log("Error fetching inspected car data:", error);
@@ -134,6 +126,12 @@ const Home = ({ navigation }) => {
     } finally {
       setRefreshing(false);
     }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    inspectedCarsData();
+    setRefreshing(false);
   };
 
   return (
@@ -238,13 +236,16 @@ const Home = ({ navigation }) => {
         </View>
 
         <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           contentContainerStyle={{
             paddingBottom: 280,
           }}
         >
           {fullData.map((item) => (
             <UploadingInspectionCard
-              key={item.tempID}
+              key={item?.tempID}
               carId={item?.tempID}
               car={getCarModel(item?.carId, item?.mfgId)}
               varient={getCarVarient(item?.varientId, item?.carId)}
@@ -261,8 +262,8 @@ const Home = ({ navigation }) => {
               {loading
                 ? Array(10)
                     .fill(0)
-                    .map((_, index) => <SkeletonLoader key={index} />)
-                : inspectedCar.map((item) => (
+                    .map((index) => <SkeletonLoader key={index} />)
+                : inspectedCar.map((item, i) => (
                     <InspectionCard
                       key={item?.inpsectionid}
                       carId={item?.inpsectionid}

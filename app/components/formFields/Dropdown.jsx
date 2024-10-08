@@ -9,7 +9,6 @@ import { AntDesign } from "@expo/vector-icons";
 const Dropdown = ({
   DropItems,
   Data,
-  Error,
   save,
   selectedItem,
   Search = false,
@@ -24,7 +23,7 @@ const Dropdown = ({
     selectedItem(""); // Notify parent component
     setKey(Date.now()); // Force rerender by updating key
   };
-
+  const placeholder = `Select ${DropItems}`;
   return (
     <View style={styles.dropdownbox}>
       <View style={styles.dropdown}>
@@ -37,8 +36,8 @@ const Dropdown = ({
             color: colors.fontBlack,
           }}
           dropdownItemStyles={{
-            borderColor: colors.ligtGreyBg,
-            borderBottomWidth: 1,
+            borderColor: colors.fontGrey,
+            borderBottomWidth: 0.3,
             marginHorizontal: 20,
             paddingVertical: 20,
             paddingHorizontal: 0,
@@ -46,7 +45,7 @@ const Dropdown = ({
             marginBottom: 8,
           }}
           dropdownStyles={{
-            backgroundColor: colors.whiteBg,
+            backgroundColor: "#80808010",
             padding: 0,
             marginTop: 0,
             borderRadius: 0,
@@ -64,7 +63,7 @@ const Dropdown = ({
             fontSize: mainStyles.h2FontSize,
           }}
           boxStyles={styles.dealersdropdown}
-          placeholder={DropItems}
+          placeholder={""}
           setSelected={(val) => {
             setSelected(val);
             selectedItem(val);
@@ -84,25 +83,28 @@ const Dropdown = ({
             size={20}
           />
         )}
-      </View>
-      {Error && (
         <AppText
-          fontSize={mainStyles.h2FontSize}
-          color={colors.fontRed}
-          marginLeft={10}
-          marginRight={10}
-          marginBottom={5}
+          color={colors.fontGrey}
+          position={"absolute"}
+          top={-6}
+          display={selected ? "flex" : "none"}
+          left={16}
+          fontSize={mainStyles.h3FontSize}
+          backgroundColor={colors.ligtGreyBg}
+          zIndex={10}
+          paddingHorizontal={5}
+          paddingVertical={2}
         >
-          {Error}
+          {DropItems}
         </AppText>
-      )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   dealersdropdown: {
-    backgroundColor: colors.whiteBg,
+    backgroundColor: "transparent",
     paddingVertical: 20,
     borderWidth: 0,
   },
@@ -110,13 +112,15 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   dropdown: {
-    borderRadius: 5,
-    backgroundColor: colors.whiteBg,
-    elevation: 2,
+    borderRadius: 3,
+    borderWidth: 1,
+    borderColor: colors.fontGrey,
+    // backgroundColor: colors.whiteBg,
+    // elevation: 2,
     position: "relative", // Ensure the clear icon is positioned correctly
   },
   clearIcon: {
-    backgroundColor: colors.whiteBg,
+    backgroundColor: colors.ligtGreyBg,
     position: "absolute",
     padding: 5,
     right: 15,
