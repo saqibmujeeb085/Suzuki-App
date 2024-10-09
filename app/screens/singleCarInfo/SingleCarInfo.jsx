@@ -25,6 +25,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   AntDesign,
   Feather,
+  FontAwesome,
   FontAwesome5,
   FontAwesome6,
   MaterialCommunityIcons,
@@ -835,7 +836,10 @@ const SingleCarInfo = ({ route, navigation }) => {
             <View>
               <CarBodyView carBodyData={carInfo.grouped_problems} />
               <View style={{ gap: 10, marginTop: 20 }}>
-                <AppText fontFamily={mainStyles.appFontBold}>
+                <AppText
+                  fontFamily={mainStyles.appFontBold}
+                  fontSize={mainStyles.h2FontSize}
+                >
                   Full Description
                 </AppText>
 
@@ -847,19 +851,64 @@ const SingleCarInfo = ({ route, navigation }) => {
                   }}
                 >
                   <View>
-                    <AppText>P: Repaint</AppText>
-                    <AppText>P1: Shower Paint</AppText>
-                    <AppText>P2: Polycate paint</AppText>
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome
+                        name="circle"
+                        size={7}
+                        color={colors.purple}
+                      />
+                      <AppText>P: Repaint</AppText>
+                    </View>
+
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome
+                        name="circle"
+                        size={7}
+                        color={colors.purple}
+                      />
+                      <AppText>P1: Shower Paint</AppText>
+                    </View>
+
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome
+                        name="circle"
+                        size={7}
+                        color={colors.purple}
+                      />
+                      <AppText>P2: Polycate paint</AppText>
+                    </View>
                   </View>
                   <View>
-                    <AppText>D: Dent</AppText>
-                    <AppText>D1: Minor Dent</AppText>
-                    <AppText>D2: Major Dent</AppText>
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome name="circle" size={7} color={colors.red} />
+                      <AppText>D: Dent</AppText>
+                    </View>
+
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome name="circle" size={7} color={colors.red} />
+                      <AppText>D1: Minor Dent</AppText>
+                    </View>
+
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome name="circle" size={7} color={colors.red} />
+                      <AppText>D2: Major Dent</AppText>
+                    </View>
                   </View>
                   <View>
-                    <AppText>S: Scratch</AppText>
-                    <AppText>S1: Minor Scratch</AppText>
-                    <AppText>S2: Major Scratch</AppText>
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome name="circle" size={7} color={colors.blue} />
+                      <AppText>S: Scratch</AppText>
+                    </View>
+
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome name="circle" size={7} color={colors.blue} />
+                      <AppText>S1: Minor Scratch</AppText>
+                    </View>
+
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome name="circle" size={7} color={colors.blue} />
+                      <AppText>S2: Major Scratch</AppText>
+                    </View>
                   </View>
                 </View>
               </View>

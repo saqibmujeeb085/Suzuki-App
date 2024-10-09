@@ -22,7 +22,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const EditProblems = ({ navigation, route }) => {
   const { id, location } = route.params || {};
 
-  // Ensuring the keys match the radio button options in `points`
   const [problems, setProblems] = useState({
     repaint: {
       checked: false,
@@ -47,8 +46,6 @@ const EditProblems = ({ navigation, route }) => {
     },
   });
 
-  console.log("problems Data", problems);
-
   const [carBodyProblems, setCarBodyProblems] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -57,14 +54,12 @@ const EditProblems = ({ navigation, route }) => {
     getCarProblemsDataByTempID(id, location);
   }, [id, location]);
 
-  // Load data from AsyncStorage and preselect values
   const getCarProblemsDataByTempID = async (tempID, location) => {
     try {
       const storedData = await AsyncStorage.getItem("@carBodyQuestionsdata");
       if (storedData !== null) {
         const carFormDataArray = JSON.parse(storedData);
 
-        // Find the object where both tempID and problemLocation match
         const carbodyques = carFormDataArray.find(
           (item) => item.tempID == tempID && item.problemLocation === location
         );
@@ -72,7 +67,6 @@ const EditProblems = ({ navigation, route }) => {
         if (carbodyques) {
           setCarBodyProblems(carbodyques);
 
-          // Preselect the values from stored data
           const updatedProblems = { ...problems };
           carbodyques.problems.forEach((problem) => {
             if (updatedProblems[problem.problemName]) {
@@ -83,7 +77,6 @@ const EditProblems = ({ navigation, route }) => {
                 problem.problemName
               ]?.find((p) => p.value === problem.selectedValue)?.id;
 
-              // If image is present in the stored data, add it to the problem
               if (problem.image) {
                 updatedProblems[problem.problemName].image = problem.image.uri;
                 updatedProblems[problem.problemName].imageName =
@@ -92,22 +85,13 @@ const EditProblems = ({ navigation, route }) => {
             }
           });
           setProblems(updatedProblems);
-        } else {
-          console.log(
-            "No data found with tempID and problemLocation:",
-            tempID,
-            location
-          );
         }
-      } else {
-        console.log("No car data found in AsyncStorage");
       }
     } catch (error) {
       console.error("Error retrieving car data:", error);
     }
   };
 
-  // Radio button options
   const points = {
     repaint: [
       {
@@ -153,9 +137,7 @@ const EditProblems = ({ navigation, route }) => {
     ],
   };
 
-  // Toggle problem checked/unchecked state
   const handleProblemToggle = (problem) => {
-    // Ensure problem exists in `problems` before accessing it
     if (problems[problem]) {
       setProblems((prev) => {
         const updatedProblem = {
@@ -182,7 +164,6 @@ const EditProblems = ({ navigation, route }) => {
     }
   };
 
-  // Handle radio button selection
   const handleSubProblemSelect = (problem, selectedId) => {
     const selectedOption = points[problem].find(
       (radio) => radio.id === selectedId
@@ -199,7 +180,6 @@ const EditProblems = ({ navigation, route }) => {
     }));
   };
 
-  // Handle image selection (URI and name)
   const handleImageUriSelect = (problem, uri) => {
     if (problems[problem]) {
       setProblems((prev) => ({
@@ -224,21 +204,27 @@ const EditProblems = ({ navigation, route }) => {
     }
   };
 
-  // Save the updated data back to AsyncStorage
+  // Function to check if all checked problems have valid data
+  const isSaveDisabled = () => {
+    return Object.keys(problems).some((key) => {
+      const problem = problems[key];
+      return problem.checked && (!problem.selectedValue || !problem.image);
+    });
+  };
+
   const handleSave = async () => {
     try {
       const storedData = await AsyncStorage.getItem("@carBodyQuestionsdata");
       if (storedData !== null) {
         let carFormDataArray = JSON.parse(storedData);
 
-        // Find the existing data for the given tempID and location
         const updatedData = carFormDataArray.map((item) => {
           if (item.tempID === id && item.problemLocation === location) {
             return {
               ...item,
               problems: Object.keys(problems)
                 .filter(
-                  (key) => problems[key].checked && problems[key].selectedValue // Save only if checked and selectedValue exists
+                  (key) => problems[key].checked && problems[key].selectedValue
                 )
                 .map((key) => ({
                   problemName: key,
@@ -256,7 +242,6 @@ const EditProblems = ({ navigation, route }) => {
           return item;
         });
 
-        // Save updated data back to AsyncStorage
         await AsyncStorage.setItem(
           "@carBodyQuestionsdata",
           JSON.stringify(updatedData)
@@ -270,12 +255,6 @@ const EditProblems = ({ navigation, route }) => {
     } catch (error) {
       console.error("Error saving car data:", error);
     }
-  };
-
-  const openImageModal = (imageUri) => {
-    setSelectedImage(imageUri);
-    console.log(imageUri);
-    setModalVisible(true);
   };
 
   return (
@@ -375,57 +354,10 @@ const EditProblems = ({ navigation, route }) => {
         </View>
       </ScrollView>
       <View style={styles.formButton}>
-        <GradientButton onPress={handleSave}>Save</GradientButton>
+        <GradientButton onPress={handleSave} disabled={isSaveDisabled()}>
+          Save
+        </GradientButton>
       </View>
-
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)} // Close modal when back is pressed
-      >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,.5)",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <View
-            style={{
-              position: "relative",
-              height: "60%",
-              width: "90%",
-              borderRadius: 15,
-              padding: 10,
-              backgroundColor: "#FFFFFF",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <View style={styles.closeButton}>
-              <MaterialCommunityIcons
-                name="close"
-                size={20}
-                color={colors.fontWhite}
-                onPress={() => setModalVisible(false)}
-              />
-            </View>
-            <Image
-              source={{
-                uri: selectedImage,
-              }}
-              style={{
-                objectFit: "contain",
-                flex: 1,
-                width: "100%",
-                borderRadius: 5,
-                overflow: "hidden",
-              }}
-            />
-          </View>
-        </View>
-      </Modal>
     </AppScreen>
   );
 };

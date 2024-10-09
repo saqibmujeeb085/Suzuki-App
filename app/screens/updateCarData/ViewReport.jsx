@@ -312,8 +312,6 @@ const ViewReport = ({ navigation, route }) => {
           show={show}
           setShow={setShow}
           icon
-          heading={"Customer ID: 0KD560PLF"}
-          text={"If you cancel the inspection, it will be saved as a draft"}
           pbtn={"Continue Editing Inspection"}
           pbtnPress={ShowModal}
           sbtn={"Save for later"}

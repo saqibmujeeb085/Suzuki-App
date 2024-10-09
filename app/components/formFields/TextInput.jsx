@@ -4,7 +4,14 @@ import { colors } from "../../constants/colors";
 import { mainStyles } from "../../constants/style";
 import AppText from "../text/Text";
 
-const AppTextInput = ({ Error, inputMode, placeholder, val, ...inputType }) => {
+const AppTextInput = ({
+  Error,
+  inputMode,
+  placeholder,
+  val,
+  bgColor = colors.ligtGreyBg,
+  ...inputType
+}) => {
   const [clicked, setClicked] = useState(false);
 
   console.log(val);
@@ -27,7 +34,7 @@ const AppTextInput = ({ Error, inputMode, placeholder, val, ...inputType }) => {
           fontSize={
             clicked || val ? mainStyles.h3FontSize : mainStyles.h2FontSize
           }
-          backgroundColor={clicked || val ? colors.ligtGreyBg : "transparent"}
+          backgroundColor={clicked || val ? bgColor : "transparent"}
           zIndex={0}
           paddingHorizontal={5}
           paddingVertical={2}

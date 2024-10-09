@@ -208,7 +208,7 @@ const InspectionBoard = ({ navigation, route }) => {
 
   const handleSaveForLater = useCallback(() => {
     setShow((prevShow) => !prevShow);
-    navigation.navigate("Home");
+    navigation.navigate("Draft");
   }, [navigation]);
 
   useFocusEffect(

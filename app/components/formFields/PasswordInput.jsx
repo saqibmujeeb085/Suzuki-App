@@ -28,7 +28,7 @@ const PasswordInput = ({ Error, placeholder, val, ...inputType }) => {
         <AppText
           color={colors.fontGrey}
           position={"absolute"}
-          top={clicked || val ? -9 : 20}
+          top={clicked || val ? -8 : 20}
           left={20}
           fontSize={
             clicked || val ? mainStyles.h3FontSize : mainStyles.h2FontSize
@@ -59,28 +59,38 @@ export default PasswordInput;
 
 const styles = StyleSheet.create({
   inputField: {
-    fontSize: mainStyles.h3FontSize.fontSize,
+    fontSize: mainStyles.h3FontSize,
     color: colors.fontBlack,
-    backgroundColor: colors.whiteBg,
+    backgroundColor: "transparent",
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderRadius: 5,
-    elevation: 2,
     flex: 1,
     width: "100%",
-    minHeight: 60,
+    height: 60,
+    position: "relative",
+    zIndex: 10,
   },
   textFieldBox: {
     gap: 5,
+    minWidth: "48.5%",
+    flex: 1,
+    position: "relative",
+    zIndex: 5,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
     position: "relative",
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: colors.fontGrey,
   },
   iconContainer: {
     position: "absolute",
     right: 20,
+    zIndex: 20,
+    padding: 10,
   },
 });

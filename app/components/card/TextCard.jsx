@@ -68,6 +68,7 @@ const TextCard = ({
           onChangeText={(text) => onValueChange(text)}
           inputMode={"numeric"}
           val={val}
+          bgColor={colors.whiteBg}
         />
       )}
       {showType === "s" && (
@@ -77,6 +78,7 @@ const TextCard = ({
           onChangeText={handleInputChange}
           value={tyreSize}
           val={val}
+          bgColor={colors.whiteBg}
 
           // Ensure the input value is controlled
         />
