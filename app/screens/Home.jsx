@@ -83,7 +83,6 @@ const Home = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching data from AsyncStorage", error);
     } finally {
-      setLoading(false);
       setRefreshing(false);
     }
   };
@@ -113,6 +112,7 @@ const Home = ({ navigation }) => {
   };
 
   const inspectedCarsData = async () => {
+    setLoading(true);
     setRefreshing(true);
     const config = {
       method: "get",

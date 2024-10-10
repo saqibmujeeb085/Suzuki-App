@@ -1199,6 +1199,16 @@ const SingleCarInfo = ({ route, navigation }) => {
                     {Object.keys(carInfo.grouped_checkpoints[key]).map(
                       (subKey, subIndex) => (
                         <View style={{ gap: 0 }} key={subIndex}>
+                          <AppText
+                            paddingVertical={20}
+                            fontSize={mainStyles.h2FontSize}
+                            borderTopWidth={0.8}
+                            borderColor={colors.fontGrey}
+                            marginTop={10}
+                            textAlign={"center"}
+                          >
+                            {subKey}
+                          </AppText>
                           {carInfo.grouped_checkpoints[key][subKey].map(
                             (item, itemIndex) => {
                               // Find the corresponding question in the predefined questions data
@@ -1255,29 +1265,99 @@ const SingleCarInfo = ({ route, navigation }) => {
                                     ) : (
                                       <View
                                         style={{
-                                          width: "100%",
-                                          flex: 1,
+                                          width: "50%",
+
                                           padding: 10,
                                           flexDirection: "row",
                                           gap: 10,
+                                          borderWidth: 0.3,
+                                          justifyContent: "center",
+                                          alignItems: "center",
                                         }}
                                       >
-                                        <AppText
-                                          textAlign={"center"}
-                                          borderWidth={0.3}
-                                        >
-                                          Rating:
-                                        </AppText>
-                                        <AppText
-                                          textAlign={"center"}
-                                          borderWidth={0.3}
-                                        >
+                                        {item.value.length == 1 && (
+                                          <AppText
+                                            fontFamily={mainStyles.appFontBold}
+                                          >
+                                            Rating:
+                                          </AppText>
+                                        )}
+                                        {item.value.length > 1 && (
+                                          <AppText
+                                            fontFamily={mainStyles.appFontBold}
+                                          >
+                                            Size:
+                                          </AppText>
+                                        )}
+                                        <AppText>
                                           {item.value}
                                           {item.value.length == 1 && "/5"}
+                                          {item.value.length > 1 && "mm"}
                                         </AppText>
                                       </View>
                                     )}
                                   </View>
+                                  {item.reason && (
+                                    <View
+                                      style={{
+                                        gap: 10,
+                                        flexDirection: "row",
+                                      }}
+                                    >
+                                      <AppText
+                                        color={colors.fontGrey}
+                                        width={60}
+                                        flex={1}
+                                      >
+                                        Reason:
+                                      </AppText>
+                                      <AppText>{item.reason}:</AppText>
+                                    </View>
+                                  )}
+                                  {item.point && (
+                                    <View
+                                      style={{
+                                        gap: 10,
+                                        flexDirection: "row",
+                                      }}
+                                    >
+                                      <AppText
+                                        color={colors.fontGrey}
+                                        width={60}
+                                        flex={1}
+                                      >
+                                        Point:
+                                      </AppText>
+                                      <AppText>{item.point}:</AppText>
+                                    </View>
+                                  )}
+                                  {item.image_uri && (
+                                    <TouchableOpacity
+                                      style={{
+                                        height: 50,
+                                        width: 50,
+                                        objectFit: "cover",
+                                        borderRadius: 5,
+                                        overflow: "hidden",
+                                      }}
+                                      onPress={() =>
+                                        openImageModal(
+                                          `${process.env.INDICATORS_IMAGE_URL}${item.image_name}`
+                                        )
+                                      }
+                                    >
+                                      <Image
+                                        source={{
+                                          uri: `${process.env.INDICATORS_IMAGE_URL}${item.image_name}`,
+                                        }}
+                                        style={{
+                                          height: 50,
+                                          width: 50,
+                                          objectFit: "cover",
+                                        }}
+                                      />
+                                    </TouchableOpacity>
+                                  )}
                                 </View>
                               );
                             }
