@@ -34,6 +34,7 @@ import {
 } from "@expo/vector-icons";
 import CarBodyView from "../../components/carBody/CarBodyView";
 import { LinearGradient } from "expo-linear-gradient";
+import { questions } from "../../data/questionsData";
 
 const SingleCarInfo = ({ route, navigation }) => {
   const { id, rating } = route.params || {};
@@ -139,6 +140,18 @@ const SingleCarInfo = ({ route, navigation }) => {
     );
   }
 
+  function getColorForValue(value) {
+    switch (value) {
+      case "good":
+        return "#00800020";
+      case "bad":
+        return "#FF000020";
+      case "not-applicable":
+        return "#FFA50020";
+      default:
+        return "transparent"; // Fallback color
+    }
+  }
   const getColorByRank = (rank) => {
     if (rank <= 1.9) return colors.red;
     if (rank <= 2.9) return colors.yellow;
@@ -171,7 +184,7 @@ const SingleCarInfo = ({ route, navigation }) => {
     });
   };
 
-  console.log(carInfo.grouped_problems);
+  console.log(carInfo.grouped_checkpoints);
 
   return (
     <AppScreen>
@@ -1017,7 +1030,7 @@ const SingleCarInfo = ({ route, navigation }) => {
             </View>
           )}
 
-          {carInfo?.grouped_checkpoints &&
+          {/* {carInfo?.grouped_checkpoints &&
             Object.keys(carInfo.grouped_checkpoints).map((key, index) => (
               <View key={index}>
                 <TouchableOpacity
@@ -1148,6 +1161,126 @@ const SingleCarInfo = ({ route, navigation }) => {
                                 </View>
                               </View>
                             )
+                          )}
+                        </View>
+                      )
+                    )}
+                  </View>
+                )}
+              </View>
+            ))} */}
+          {carInfo?.grouped_checkpoints &&
+            Object.keys(carInfo.grouped_checkpoints).map((key, index) => (
+              <View key={index}>
+                <TouchableOpacity
+                  style={styles.accordianTap}
+                  onPress={() => toggleExpanded(key)}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.accordionHeader}>
+                    <AppText
+                      fontFamily={mainStyles.appFontBold}
+                      fontSize={mainStyles.h2FontSize}
+                    >
+                      {key}
+                    </AppText>
+                    <Feather
+                      name={
+                        expandedSections[key] ? "chevron-up" : "chevron-down"
+                      }
+                      size={24}
+                      color="black"
+                    />
+                  </View>
+                </TouchableOpacity>
+
+                {expandedSections[key] && (
+                  <View>
+                    {Object.keys(carInfo.grouped_checkpoints[key]).map(
+                      (subKey, subIndex) => (
+                        <View style={{ gap: 0 }} key={subIndex}>
+                          {carInfo.grouped_checkpoints[key][subKey].map(
+                            (item, itemIndex) => {
+                              // Find the corresponding question in the predefined questions data
+                              const matchedQuestion = questions
+                                .flatMap((q) => q.data)
+                                .flatMap((sc) => sc.subCatData)
+                                .find((q) => q.question === item.ind_question);
+
+                              return (
+                                <View
+                                  key={itemIndex}
+                                  style={{
+                                    gap: 10,
+                                    borderTopWidth: 0.8,
+                                    borderColor: colors.fontGrey,
+                                    paddingVertical: 20,
+                                  }}
+                                >
+                                  <AppText
+                                    paddingBottom={10}
+                                    fontSize={mainStyles.h2FontSize}
+                                  >
+                                    {questionNumber++}. {item.ind_question}
+                                  </AppText>
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      flexWrap: "wrap",
+                                    }}
+                                  >
+                                    {matchedQuestion?.options ? (
+                                      matchedQuestion.options.map(
+                                        (option, optionIndex) => (
+                                          <View
+                                            key={optionIndex}
+                                            style={{
+                                              backgroundColor:
+                                                option.label === item.value
+                                                  ? getColorForValue(
+                                                      option.value
+                                                    )
+                                                  : "transparent",
+                                              padding: 10,
+                                              width: "50%",
+                                              borderWidth: 0.3,
+                                            }}
+                                          >
+                                            <AppText textAlign={"center"}>
+                                              {option.label}
+                                            </AppText>
+                                          </View>
+                                        )
+                                      )
+                                    ) : (
+                                      <View
+                                        style={{
+                                          width: "100%",
+                                          flex: 1,
+                                          padding: 10,
+                                          flexDirection: "row",
+                                          gap: 10,
+                                        }}
+                                      >
+                                        <AppText
+                                          textAlign={"center"}
+                                          borderWidth={0.3}
+                                        >
+                                          Rating:
+                                        </AppText>
+                                        <AppText
+                                          textAlign={"center"}
+                                          borderWidth={0.3}
+                                        >
+                                          {item.value}
+                                          {item.value.length == 1 && "/5"}
+                                        </AppText>
+                                      </View>
+                                    )}
+                                  </View>
+                                </View>
+                              );
+                            }
                           )}
                         </View>
                       )
