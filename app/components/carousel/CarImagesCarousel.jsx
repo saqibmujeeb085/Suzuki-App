@@ -31,6 +31,8 @@ const CarImagesCarousel = ({ images }) => {
 
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
 
+  // console.log(images);
+  console.log(process.env.IMAGE_URL);
   return (
     <View style={styles.container}>
       <View style={styles.CarouselImages}>
@@ -44,7 +46,7 @@ const CarImagesCarousel = ({ images }) => {
           renderItem={({ item }) => (
             <View style={styles.imageContainer}>
               <Image
-                source={{ uri: `${process.env.IMAGE_URL}/${item.image_uri}` }}
+                source={{ uri: `${process.env.IMAGE_URL}${item.image_uri}` }}
                 style={styles.carouselImage}
               />
             </View>
@@ -59,7 +61,7 @@ const CarImagesCarousel = ({ images }) => {
         {images.map((image, index) => (
           <TouchableOpacity key={index} onPress={() => onThumbnailPress(index)}>
             <Image
-              source={{ uri: `${process.env.IMAGE_URL}/${image.image_uri}` }}
+              source={{ uri: `${process.env.IMAGE_URL}${image.image_uri}` }}
               style={[
                 styles.thumbnail,
                 index === currentIndex && styles.activeThumbnail,

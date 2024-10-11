@@ -184,8 +184,6 @@ const SingleCarInfo = ({ route, navigation }) => {
     });
   };
 
-  console.log(carInfo.grouped_checkpoints);
-
   return (
     <AppScreen>
       <InspectionHeader onPress={() => navigation.goBack()}>
@@ -1198,13 +1196,14 @@ const SingleCarInfo = ({ route, navigation }) => {
                   <View>
                     {Object.keys(carInfo.grouped_checkpoints[key]).map(
                       (subKey, subIndex) => (
-                        <View style={{ gap: 0 }} key={subIndex}>
+                        <View style={{ gap: 10 }} key={subIndex}>
                           <AppText
-                            paddingVertical={20}
-                            fontSize={mainStyles.h2FontSize}
-                            borderTopWidth={0.8}
-                            borderColor={colors.fontGrey}
-                            marginTop={10}
+                            paddingVertical={10}
+                            fontSize={mainStyles.h1FontSize}
+                            // borderTopWidth={0.8}
+                            // borderColor={colors.fontGrey}
+                            fontFamily={mainStyles.appFontBold}
+                            marginTop={20}
                             textAlign={"center"}
                           >
                             {subKey}
@@ -1222,14 +1221,18 @@ const SingleCarInfo = ({ route, navigation }) => {
                                   key={itemIndex}
                                   style={{
                                     gap: 10,
-                                    borderTopWidth: 0.8,
-                                    borderColor: colors.fontGrey,
-                                    paddingVertical: 20,
+                                    // borderTopWidth: 0.8,
+                                    // borderColor: colors.fontGrey,
+                                    backgroundColor: colors.whiteBg,
+                                    borderRadius: 5,
+                                    padding: 20,
+                                    elevation: 2,
                                   }}
                                 >
                                   <AppText
                                     paddingBottom={10}
                                     fontSize={mainStyles.h2FontSize}
+                                    fontFamily={mainStyles.appFontBold}
                                   >
                                     {questionNumber++}. {item.ind_question}
                                   </AppText>
@@ -1289,10 +1292,12 @@ const SingleCarInfo = ({ route, navigation }) => {
                                             Size:
                                           </AppText>
                                         )}
-                                        <AppText>
+                                        <AppText textTransform={"capitalize"}>
                                           {item.value}
                                           {item.value.length == 1 && "/5"}
-                                          {item.value.length > 1 && "mm"}
+                                          {item.value.length > 1 &&
+                                            /^[0-9]+$/.test(item.value) &&
+                                            "mm"}
                                         </AppText>
                                       </View>
                                     )}
@@ -1311,7 +1316,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                                       >
                                         Reason:
                                       </AppText>
-                                      <AppText>{item.reason}:</AppText>
+                                      <AppText>{item.reason}</AppText>
                                     </View>
                                   )}
                                   {item.point && (
@@ -1328,7 +1333,11 @@ const SingleCarInfo = ({ route, navigation }) => {
                                       >
                                         Point:
                                       </AppText>
-                                      <AppText>{item.point}:</AppText>
+                                      <AppText
+                                        style={{ textTransform: "capitalize" }}
+                                      >
+                                        {item.point}
+                                      </AppText>
                                     </View>
                                   )}
                                   {item.image_uri && (

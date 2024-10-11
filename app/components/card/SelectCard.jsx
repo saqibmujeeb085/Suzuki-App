@@ -105,6 +105,9 @@ const SelectCard = ({
           alignItems: "flex-start",
           flexWrap: "wrap",
         }}
+        labelStyle={{
+          textTransform: "capitalize",
+        }}
         radioButtons={options}
         onPress={handleValueChange}
         selectedId={selectedId}
@@ -120,6 +123,8 @@ const SelectCard = ({
             textAlignVertical={"top"}
             value={reasonValue} // Bind the value
             onChangeText={handleReasonValueChange} // Handle text change
+            val={reasonValue}
+            bgColor={colors.whiteBg}
           />
         </View>
       )}

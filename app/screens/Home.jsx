@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  RefreshControl,
+  DeviceEventEmitter, // Import DeviceEventEmitter
 } from "react-native";
 import React, { useContext, useEffect, useState, useCallback } from "react";
 import AppScreen from "../components/screen/Screen";
@@ -70,6 +72,7 @@ const Home = ({ navigation }) => {
     return "Unknown Model";
   };
 
+  // Fetch data from AsyncStorage
   const fetchDataFromAsyncStorage = async () => {
     try {
       const storedData = await AsyncStorage.getItem("@carformdata" || []);
@@ -87,9 +90,30 @@ const Home = ({ navigation }) => {
     }
   };
 
+  // Event listener to handle real-time updates from AsyncStorage
+  useEffect(() => {
+    const listener = DeviceEventEmitter.addListener("dataUpdated", () => {
+      fetchDataFromAsyncStorage();
+    });
+
+    return () => {
+      listener.remove(); // Clean up the listener
+    };
+  }, []);
+
+  // Trigger event when AsyncStorage is updated
+  const updateAsyncStorage = async (newData) => {
+    try {
+      await AsyncStorage.setItem("@carformdata", JSON.stringify(newData));
+      DeviceEventEmitter.emit("dataUpdated"); // Emit the event for changes
+    } catch (error) {
+      console.error("Error updating AsyncStorage", error);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
-      fetchDataFromAsyncStorage();
+      fetchDataFromAsyncStorage(); // Fetch data when the screen is focused
     }, [])
   );
 
@@ -241,6 +265,12 @@ const Home = ({ navigation }) => {
           contentContainerStyle={{
             paddingBottom: 280,
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={inspectedCarsData}
+            />
+          }
         >
           {fullData.map((item) => (
             <UploadingInspectionCard

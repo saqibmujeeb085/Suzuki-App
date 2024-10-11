@@ -317,14 +317,14 @@ const startPosting = async (obj, groupedData, carbodyques) => {
     };
 
     const response = await axios.post(
-      "/auth/add_carinspectionsnew.php",
+      "auth/add_carinspectionsnew.php",
       formData,
       {
         headers: headers,
       }
     );
 
-    if (response.data.success == 200) {
+    if (response.data.success) {
       removeProcessedData(obj.tempID);
       notifyCarUploadSuccess(); // Local notification for successful upload
     } else {
@@ -356,14 +356,14 @@ const removeProcessedData = async (processedTempID) => {
     // Retrieve stored data from AsyncStorage
     const carjsonValue = await AsyncStorage.getItem("@carformdata");
     const questionjsonValue = await AsyncStorage.getItem("@carQuestionsdata");
-    // const carbodyjsonValue = await AsyncStorage.getItem(
-    //   "@carBodyQuestionsdata"
-    // ); // Retrieve car body questions
+    const carbodyjsonValue = await AsyncStorage.getItem(
+      "@carBodyQuestionsdata"
+    ); // Retrieve car body questions
 
     if (carjsonValue && questionjsonValue && carbodyjsonValue) {
       let carFormData = JSON.parse(carjsonValue);
       let questionsData = JSON.parse(questionjsonValue);
-      // let carBodyData = JSON.parse(carbodyjsonValue); // Parse car body data
+      let carBodyData = JSON.parse(carbodyjsonValue); // Parse car body data
 
       // Ensure the data is an array
       if (!Array.isArray(carFormData)) {
@@ -372,33 +372,16 @@ const removeProcessedData = async (processedTempID) => {
       if (!Array.isArray(questionsData)) {
         questionsData = [];
       }
-      // if (!Array.isArray(carBodyData)) {
-      //   carBodyData = [];
-      // }
-
-      // Log the data before filtering
-      console.log("Before filtering:", {
-        carFormData,
-        questionsData,
-        carBodyData,
-        processedTempID,
-      });
+      if (!Array.isArray(carBodyData)) {
+        carBodyData = [];
+      }
 
       // Filter out the processed data for each data set
-      carFormData = carFormData.filter((obj) => obj.tempID !== processedTempID);
-      questionsData = questionsData.filter(
-        (q) => q.QtempID !== processedTempID
-      );
-      // carBodyData = carBodyData.filter(
-      //   (item) => item.tempID !== processedTempID
-      // ); // Filter car body data
-
-      // Log the data after filtering to verify
-      console.log("After filtering:", {
-        carFormData,
-        questionsData,
-        carBodyData,
-      });
+      carFormData = carFormData.filter((obj) => obj.tempID != processedTempID);
+      questionsData = questionsData.filter((q) => q.QtempID != processedTempID);
+      carBodyData = carBodyData.filter(
+        (item) => item.tempID != processedTempID
+      ); // Filter car body data
 
       // Update AsyncStorage with the new data
       await AsyncStorage.setItem("@carformdata", JSON.stringify(carFormData));
@@ -406,10 +389,10 @@ const removeProcessedData = async (processedTempID) => {
         "@carQuestionsdata",
         JSON.stringify(questionsData)
       );
-      // await AsyncStorage.setItem(
-      //   "@carBodyQuestionsdata",
-      //   JSON.stringify(carBodyData)
-      // ); // Update car body questions data
+      await AsyncStorage.setItem(
+        "@carBodyQuestionsdata",
+        JSON.stringify(carBodyData)
+      ); // Update car body questions data
 
       console.log("Processed data removed successfully.");
     } else {
