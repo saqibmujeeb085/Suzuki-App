@@ -44,7 +44,6 @@ const CarDetails = ({ navigation }) => {
   const [carVarient, setCarVarient] = useState("");
   const [carYear, setCarYear] = useState("");
   const [carColor, setCarColor] = useState("");
-  const [cplc, setCplc] = useState("");
 
   const ManufacturerSelected = (selected) => {
     setManufacturer(selected);
@@ -61,34 +60,19 @@ const CarDetails = ({ navigation }) => {
   const CarColorSelected = (selected) => {
     setCarColor(selected);
   };
-  const CplcSelected = (selected) => {
-    setCplc(selected);
-  };
-
-  const cplcOptions = [
-    {
-      key: "1",
-      value: "Cleared",
-    },
-    {
-      key: "2",
-      value: "Non-Cleared",
-    },
-  ];
 
   useEffect(() => {
     if (
       manufacturer !== "" &&
       carModel !== "" &&
       carYear !== "" &&
-      carColor !== "" &&
-      cplc !== ""
+      carColor !== ""
     ) {
       setAllSelected(true);
     } else {
       setAllSelected(false);
     }
-  }, [manufacturer, carModel, carYear, carColor, cplc]);
+  }, [manufacturer, carModel, carYear, carColor]);
 
   const addCarDetails = () => {
     setCarData((prevData) => ({
@@ -100,7 +84,6 @@ const CarDetails = ({ navigation }) => {
       varientId: carVarient,
       model: carYear,
       color: carColor,
-      cplc: cplc,
     }));
     navigation.navigate("CarBodyDetails");
   };
@@ -148,12 +131,6 @@ const CarDetails = ({ navigation }) => {
           Data={colorsData}
           save={"value"}
           selectedItem={CarColorSelected}
-        />
-        <Dropdown
-          DropItems="CPLC"
-          Data={cplcOptions}
-          save={"value"}
-          selectedItem={CplcSelected}
         />
       </View>
       <View style={styles.formButton}>

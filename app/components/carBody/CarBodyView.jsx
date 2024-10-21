@@ -6,12 +6,13 @@ import { mainStyles } from "../../constants/style";
 
 const CarBodyView = ({ carBodyData }) => {
   const shortCodeMapping = {
-    "Shower Paint": "P1",
-    "Polycate paint": "P2",
+    Painted: "P1",
+    "Minor Paint": "P2",
     "Minor Dent": "D1",
     "Major Dent": "D2",
     "Minor Scratch": "S1",
     "Major Scratch": "S2",
+    "Panel Replaced": "R",
     // Add more mappings as needed
   };
 
@@ -43,6 +44,7 @@ const CarBodyView = ({ carBodyData }) => {
     if (shortCode === "P1" || shortCode === "P2") return colors.purple;
     if (shortCode === "D1" || shortCode === "D2") return colors.red;
     if (shortCode === "S1" || shortCode === "S2") return colors.blue;
+    if (shortCode === "R") return colors.green;
     return colors.black; // Default color if no match
   };
 

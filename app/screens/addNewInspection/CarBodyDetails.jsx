@@ -49,6 +49,7 @@ const CarBodyDetails = ({ navigation, route }) => {
   const [milage, setMilage] = useState("");
   const [owner, setOwner] = useState("");
   const [registrationNo, setRegistrationNo] = useState("");
+  const [province, setProvince] = useState("");
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -79,6 +80,25 @@ const CarBodyDetails = ({ navigation, route }) => {
     },
   ];
 
+  const provinceOptions = [
+    {
+      key: "1",
+      value: "Sindh",
+    },
+    {
+      key: "2",
+      value: "Punjab",
+    },
+    {
+      key: "3",
+      value: "KPK",
+    },
+    {
+      key: "4",
+      value: "Balochistan",
+    },
+  ];
+
   const FuelTypeSelected = (selected) => {
     setFuelType(selected);
   };
@@ -90,6 +110,10 @@ const CarBodyDetails = ({ navigation, route }) => {
   };
   const RegistrationCitySelected = (selected) => {
     setRegistrationCity(selected);
+  };
+
+  const ProvinceSelected = (selected) => {
+    setProvince(selected);
   };
 
   useEffect(() => {
@@ -150,7 +174,8 @@ const CarBodyDetails = ({ navigation, route }) => {
       registrationCity !== "" &&
       fuelType !== "" &&
       registrationNo !== "" &&
-      owner !== ""
+      owner !== "" &&
+      province !== ""
     ) {
       setCarData((prevData) => ({
         ...prevData,
@@ -163,6 +188,7 @@ const CarBodyDetails = ({ navigation, route }) => {
         FuelType: fuelType,
         registrationNo: registrationNo,
         NoOfOwners: owner,
+        province: province,
       }));
       navigation.navigate("CarFiles");
     } else {
@@ -187,6 +213,13 @@ const CarBodyDetails = ({ navigation, route }) => {
               save={"value"}
               selectedItem={RegistrationCitySelected}
               Search={true}
+            />
+
+            <Dropdown
+              DropItems="Province"
+              Data={provinceOptions}
+              save={"value"}
+              selectedItem={ProvinceSelected}
             />
 
             <Dropdown

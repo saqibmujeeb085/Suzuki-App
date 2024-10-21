@@ -42,6 +42,12 @@ const CarBodyModal = ({
       imageName: null,
       imageType: null,
     },
+    PanelReplaced: {
+      checked: false,
+      image: null,
+      imageName: null,
+      imageType: null,
+    },
   });
 
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
@@ -51,14 +57,14 @@ const CarBodyModal = ({
     repaint: [
       {
         id: "1",
-        label: "Shower Paint",
-        value: "Shower Paint",
+        label: "Painted",
+        value: "Painted",
         color: colors.purple,
       },
       {
         id: "2",
-        label: "Polycate paint",
-        value: "Polycate paint",
+        label: "Minor Paint",
+        value: "Minor Paint",
         color: colors.purple,
       },
     ],
@@ -93,9 +99,12 @@ const CarBodyModal = ({
   };
 
   useEffect(() => {
-    // Ensure all checked problems have both a selectedValue and an image
+    // Ensure all checked problems have both a selectedValue (if applicable) and an image
     const areAllValid = Object.values(problems).every(
-      (problem) => !problem.checked || (problem.selectedValue && problem.image)
+      (problem) =>
+        !problem.checked ||
+        ((problem.selectedValue || problem.selectedValue === null) &&
+          problem.image)
     );
     setIsSaveDisabled(!areAllValid);
   }, [problems]);
@@ -107,7 +116,12 @@ const CarBodyModal = ({
         ...prev[problem],
         checked: !prev[problem].checked,
         selectedId: null,
-        selectedValue: null,
+        selectedValue:
+          problem === "PanelReplaced"
+            ? prev[problem].checked
+              ? null
+              : "Panel Replaced"
+            : null,
         image: null,
         imageName: null,
         imageType: null,
@@ -116,7 +130,7 @@ const CarBodyModal = ({
   };
 
   const handleSubProblemSelect = (problem, selectedId) => {
-    const selectedOption = points[problem].find(
+    const selectedOption = points[problem]?.find(
       (radio) => radio.id === selectedId
     );
     const selectedValue = selectedOption ? selectedOption.value : null;
@@ -131,7 +145,6 @@ const CarBodyModal = ({
     }));
   };
 
-  // Separate functions to handle image URI and image name updates
   const handleImageUriSelect = (problem, uri) => {
     setProblems((prev) => ({
       ...prev,
@@ -228,6 +241,12 @@ const CarBodyModal = ({
         imageName: null,
         imageType: null,
       },
+      PanelReplaced: {
+        checked: false,
+        image: null,
+        imageName: null,
+        imageType: null,
+      },
     });
   };
 
@@ -305,6 +324,39 @@ const CarBodyModal = ({
                   )}
                 </View>
               ))}
+
+              {/* Panel Replaced Section */}
+              <View>
+                <View style={styles.problemRow}>
+                  <Checkbox
+                    onValueChange={() => handleProblemToggle("PanelReplaced")}
+                    color={
+                      problems.PanelReplaced.checked ? colors.purple : undefined
+                    }
+                    value={problems.PanelReplaced.checked}
+                    style={{ padding: 10 }}
+                  />
+                  <AppText fontSize={mainStyles.h2FontSize}>
+                    Panel Replaced
+                  </AppText>
+                </View>
+                {problems.PanelReplaced.checked && (
+                  <View style={styles.subProblemContainer}>
+                    {/* No radio buttons, only image upload */}
+                    <InspectionImagePicker
+                      onImageSelected={(uri) =>
+                        handleImageUriSelect("PanelReplaced", uri)
+                      }
+                      onSelectedImageName={(name) =>
+                        handleImageNameSelect("PanelReplaced", name)
+                      }
+                      onRemoveImage={() =>
+                        handleImageUriSelect("PanelReplaced", null)
+                      }
+                    />
+                  </View>
+                )}
+              </View>
             </View>
           </ScrollView>
 

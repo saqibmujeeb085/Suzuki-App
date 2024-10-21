@@ -11,6 +11,7 @@ import AppDocumentPicker from "../../components/imagePicker/DocumentPicker";
 import { mainStyles } from "../../constants/style";
 import { colors } from "../../constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Dropdown from "../../components/formFields/Dropdown";
 
 const CarFiles = ({ navigation }) => {
   const [carData, setCarData, resetCarData] = useContext(InspecteCarContext);
@@ -18,6 +19,7 @@ const CarFiles = ({ navigation }) => {
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
+  const [cplc, setCplc] = useState("");
 
   const [show, setShow] = useState(false);
   const [tempIDCounter, setTempIDCounter] = useState(0);
@@ -49,6 +51,9 @@ const CarFiles = ({ navigation }) => {
     }
   };
 
+  const CplcSelected = (selected) => {
+    setCplc(selected);
+  };
   const ShowModal = () => {
     setShow(!show);
   };
@@ -91,7 +96,7 @@ const CarFiles = ({ navigation }) => {
       varientId: carData.varientId,
       engineDisplacement: carData.engineDisplacement,
       model: carData.model,
-      cplc: carData.cplc,
+      cplc: cplc,
       buyingCode: carData.buyingCode,
       NoOfOwners: carData.NoOfOwners,
       transmissionType: carData.transmissionType,
@@ -157,7 +162,7 @@ const CarFiles = ({ navigation }) => {
       varientId: carData.varientId,
       engineDisplacement: carData.engineDisplacement,
       model: carData.model,
-      cplc: carData.cplc,
+      cplc: cplc,
       buyingCode: carData.buyingCode,
       NoOfOwners: carData.NoOfOwners,
       transmissionType: carData.transmissionType,
@@ -224,7 +229,16 @@ const CarFiles = ({ navigation }) => {
       prevDocuments.filter((document) => document.uri !== removedDocument.uri)
     );
   };
-
+  const cplcOptions = [
+    {
+      key: "1",
+      value: "Cleared",
+    },
+    {
+      key: "2",
+      value: "Non-Cleared",
+    },
+  ];
   return (
     <AppScreen>
       {show && (
@@ -262,12 +276,18 @@ const CarFiles = ({ navigation }) => {
             onDocumentsSelected={handleDocumentsSelected}
             onRemoveDoc={handleRemoveDocument}
           />
+          <Dropdown
+            DropItems="CPLC"
+            Data={cplcOptions}
+            save={"value"}
+            selectedItem={CplcSelected}
+          />
         </View>
       </ScrollView>
       <View style={styles.formButton}>
         <GradientButton
           onPress={ShowModal}
-          disabled={!isImageUploaded || loading}
+          disabled={!isImageUploaded || !cplc || loading}
         >
           Start Inspection
         </GradientButton>

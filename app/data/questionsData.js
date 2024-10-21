@@ -11,7 +11,7 @@ export const questions = [
           {
             id: 1,
             type: "b",
-            question: "Radiator Core Support",
+            question: "Radiator Support Frame",
             options: [
               {
                 id: 1,
@@ -36,7 +36,7 @@ export const questions = [
           {
             id: 2,
             type: "b",
-            question: "Right Strut Tower Apron",
+            question: "Right Strut Tower Support",
             options: [
               {
                 id: 1,
@@ -61,7 +61,7 @@ export const questions = [
           {
             id: 3,
             type: "b",
-            question: "Left Strut Tower Apron",
+            question: "Left Strut Tower Support",
             options: [
               {
                 id: 1,
@@ -86,7 +86,7 @@ export const questions = [
           {
             id: 4,
             type: "b",
-            question: "Right Front Rail",
+            question: "Right Front Chassis Rail",
             options: [
               {
                 id: 1,
@@ -111,7 +111,7 @@ export const questions = [
           {
             id: 5,
             type: "b",
-            question: "Left Front Rail",
+            question: "Left Front Chassis Rail",
             options: [
               {
                 id: 1,
@@ -136,7 +136,7 @@ export const questions = [
           {
             id: 6,
             type: "b",
-            question: "Cowl Panel Firewall ",
+            question: "Cowl Assembly",
             options: [
               {
                 id: 1,
@@ -575,6 +575,37 @@ export const questions = [
             image: false,
           },
           {
+            id: "25n",
+            type: "b",
+            question: "Parking Sensors",
+            options: [
+              {
+                id: 1,
+                value: "good",
+                label: "Working",
+                color: colors.blue,
+              },
+              {
+                id: 2,
+                value: "bad",
+                label: "Not Working",
+                color: colors.blue,
+              },
+              {
+                id: 3,
+                value: "not-applicable",
+                label: "Not Applicable",
+                color: colors.blue,
+              },
+            ],
+            condition: false,
+            image: false,
+            imgCondition: false,
+            textCondition: false,
+            pointsCondition: false,
+            points: [],
+          },
+          {
             id: 25,
             type: "b",
             question: "Starter Operation ",
@@ -752,7 +783,7 @@ export const questions = [
           {
             id: 32,
             type: "b",
-            question: "Hoses ",
+            question: "Radiator Hoses",
             options: [
               {
                 id: 1,
@@ -886,183 +917,214 @@ export const questions = [
             pointsCondition: false,
             points: [],
           },
-          {
-            id: 36,
-            type: "b",
-            question: "Exhaust Sound  ",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "Working",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Not Working",
-                color: colors.blue,
-              },
-              {
-                id: 3,
-                value: "worst",
-                label: "Cracked/Damage",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: true,
-            imgCondition: false,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
+          // {
+          //   id: 36,
+          //   type: "b",
+          //   question: "Exhaust Sound  ",
+          //   options: [
+          //     {
+          //       id: 1,
+          //       value: "good",
+          //       label: "Working",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 2,
+          //       value: "bad",
+          //       label: "Not Working",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 3,
+          //       value: "worst",
+          //       label: "Cracked/Damage",
+          //       color: colors.blue,
+          //     },
+          //   ],
+          //   condition: false,
+          //   image: true,
+          //   imgCondition: false,
+          //   textCondition: false,
+          //   pointsCondition: false,
+          //   points: [],
+          // },
         ],
       },
       {
         subCatId: 6,
         subCatName: "Suspension",
         subCatData: [
-          {
-            id: 37,
-            type: "b",
-            question: "Right Ball Joint  ",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "Ok",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Not OK",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: false,
-            imgCondition: false,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
-          {
-            id: 38,
-            type: "b",
-            question: "Left Ball Joint ",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "Ok",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Not OK",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: false,
-            imgCondition: false,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
-          {
-            id: 39,
-            type: "b",
-            question: "Right Z Links  ",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "Ok",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Not OK",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: true,
-            imgCondition: false,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
-          {
-            id: 40,
-            type: "b",
-            question: "Left Z Links ",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "Ok",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Not OK",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: true,
-            imgCondition: false,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
-          {
-            id: 41,
-            type: "b",
-            question: "Right Tie Rod End",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "Ok",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Not OK",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: true,
-            imgCondition: false,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
+          // {
+          //   id: 37,
+          //   type: "b",
+          //   question: "Right Ball Joint  ",
+          //   options: [
+          //     {
+          //       id: 1,
+          //       value: "good",
+          //       label: "Ok",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 2,
+          //       value: "bad",
+          //       label: "Not OK",
+          //       color: colors.blue,
+          //     },
+          //   ],
+          //   condition: false,
+          //   image: false,
+          //   imgCondition: false,
+          //   textCondition: false,
+          //   pointsCondition: false,
+          //   points: [],
+          // },
+          // {
+          //   id: 38,
+          //   type: "b",
+          //   question: "Left Ball Joint ",
+          //   options: [
+          //     {
+          //       id: 1,
+          //       value: "good",
+          //       label: "Ok",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 2,
+          //       value: "bad",
+          //       label: "Not OK",
+          //       color: colors.blue,
+          //     },
+          //   ],
+          //   condition: false,
+          //   image: false,
+          //   imgCondition: false,
+          //   textCondition: false,
+          //   pointsCondition: false,
+          //   points: [],
+          // },
+          // {
+          //   id: 39,
+          //   type: "b",
+          //   question: "Right Z Links  ",
+          //   options: [
+          //     {
+          //       id: 1,
+          //       value: "good",
+          //       label: "Ok",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 2,
+          //       value: "bad",
+          //       label: "Not OK",
+          //       color: colors.blue,
+          //     },
+          //   ],
+          //   condition: false,
+          //   image: true,
+          //   imgCondition: false,
+          //   textCondition: false,
+          //   pointsCondition: false,
+          //   points: [],
+          // },
+          // {
+          //   id: 40,
+          //   type: "b",
+          //   question: "Left Z Links ",
+          //   options: [
+          //     {
+          //       id: 1,
+          //       value: "good",
+          //       label: "Ok",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 2,
+          //       value: "bad",
+          //       label: "Not OK",
+          //       color: colors.blue,
+          //     },
+          //   ],
+          //   condition: false,
+          //   image: true,
+          //   imgCondition: false,
+          //   textCondition: false,
+          //   pointsCondition: false,
+          //   points: [],
+          // },
+          // {
+          //   id: 41,
+          //   type: "b",
+          //   question: "Right Tie Rod End",
+          //   options: [
+          //     {
+          //       id: 1,
+          //       value: "good",
+          //       label: "Ok",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 2,
+          //       value: "bad",
+          //       label: "Not OK",
+          //       color: colors.blue,
+          //     },
+          //   ],
+          //   condition: false,
+          //   image: true,
+          //   imgCondition: false,
+          //   textCondition: false,
+          //   pointsCondition: false,
+          //   points: [],
+          // },
+          // {
+          //   id: 42,
+          //   type: "b",
+          //   question: "Left Tie Rod End",
+          //   options: [
+          //     {
+          //       id: 1,
+          //       value: "good",
+          //       label: "Ok",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 2,
+          //       value: "bad",
+          //       label: "Not OK",
+          //       color: colors.blue,
+          //     },
+          //   ],
+          //   condition: false,
+          //   image: true,
+          //   imgCondition: false,
+          //   textCondition: false,
+          //   pointsCondition: false,
+          //   points: [],
+          // },
           {
             id: 42,
             type: "b",
-            question: "Left Tie Rod End",
+            question: "Suspension Condition",
             options: [
               {
                 id: 1,
                 value: "good",
-                label: "Ok",
+                label: "Excellent",
                 color: colors.blue,
               },
               {
                 id: 2,
                 value: "bad",
-                label: "Not OK",
+                label: "Good",
+                color: colors.blue,
+              },
+              {
+                id: 3,
+                value: "worst",
+                label: "Poor",
                 color: colors.blue,
               },
             ],
@@ -1173,35 +1235,35 @@ export const questions = [
             pointsCondition: false,
             points: [],
           },
-          {
-            id: 47,
-            type: "b",
-            question: "Front Right Shock",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "Ok",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Not OK",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: true,
-            imgCondition: false,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
+          // {
+          //   id: 47,
+          //   type: "b",
+          //   question: "Front Right Shock",
+          //   options: [
+          //     {
+          //       id: 1,
+          //       value: "good",
+          //       label: "Ok",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 2,
+          //       value: "bad",
+          //       label: "Not OK",
+          //       color: colors.blue,
+          //     },
+          //   ],
+          //   condition: false,
+          //   image: true,
+          //   imgCondition: false,
+          //   textCondition: false,
+          //   pointsCondition: false,
+          //   points: [],
+          // },
           {
             id: 48,
             type: "b",
-            question: "Front Left Shock ",
+            question: "Front Shocks ",
             options: [
               {
                 id: 1,
@@ -1276,7 +1338,7 @@ export const questions = [
           {
             id: 51,
             type: "b",
-            question: "Rear Right Shock ",
+            question: "Rear Shocks ",
             options: [
               {
                 id: 1,
@@ -1298,31 +1360,31 @@ export const questions = [
             pointsCondition: false,
             points: [],
           },
-          {
-            id: 52,
-            type: "b",
-            question: "Rear Left Shock",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "Ok",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Not OK",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: true,
-            imgCondition: false,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
+          // {
+          //   id: 52,
+          //   type: "b",
+          //   question: "Rear Left Shock",
+          //   options: [
+          //     {
+          //       id: 1,
+          //       value: "good",
+          //       label: "Ok",
+          //       color: colors.blue,
+          //     },
+          //     {
+          //       id: 2,
+          //       value: "bad",
+          //       label: "Not OK",
+          //       color: colors.blue,
+          //     },
+          //   ],
+          //   condition: false,
+          //   image: true,
+          //   imgCondition: false,
+          //   textCondition: false,
+          //   pointsCondition: false,
+          //   points: [],
+          // },
         ],
       },
     ],
@@ -1437,7 +1499,7 @@ export const questions = [
           {
             id: 57,
             type: "b",
-            question: "Power Steering Warning Light",
+            question: "SRS Air Bag warning light",
             options: [
               {
                 id: 1,
@@ -1499,7 +1561,38 @@ export const questions = [
           {
             id: 59,
             type: "b",
-            question: "Key Fob Battery Low Light",
+            question: "ESP warning light parameter",
+            options: [
+              {
+                id: 1,
+                value: "good",
+                label: "Not Preset",
+                color: colors.blue,
+              },
+              {
+                id: 2,
+                value: "bad",
+                label: "Present",
+                color: colors.blue,
+              },
+              {
+                id: 3,
+                value: "not-applicable",
+                label: "Not Applicable",
+                color: colors.blue,
+              },
+            ],
+            condition: false,
+            image: true,
+            imgCondition: false,
+            textCondition: false,
+            pointsCondition: false,
+            points: [],
+          },
+          {
+            id: "58n",
+            type: "b",
+            question: "Traction Control Warning Light",
             options: [
               {
                 id: 1,
@@ -1561,7 +1654,7 @@ export const questions = [
           {
             id: 61,
             type: "b",
-            question: "Terminals Condition",
+            question: "Battery Condition",
             options: [
               {
                 id: 1,
@@ -1642,7 +1735,7 @@ export const questions = [
     data: [
       {
         subCatId: 9,
-        subCatName: "EXTERIIOR LIGHTS",
+        subCatName: "EXTERIOR LIGHTS",
         subCatData: [
           {
             id: 64,
@@ -1876,7 +1969,7 @@ export const questions = [
               {
                 id: 1,
                 value: "good",
-                label: "Woring",
+                label: "WorKing",
                 color: colors.blue,
               },
               {
@@ -1945,7 +2038,7 @@ export const questions = [
               {
                 id: 1,
                 value: "good",
-                label: "Woring",
+                label: "WorKing",
                 color: colors.blue,
               },
               {
@@ -1970,7 +2063,7 @@ export const questions = [
               {
                 id: 1,
                 value: "good",
-                label: "Woring",
+                label: "WorKing",
                 color: colors.blue,
               },
               {
@@ -2049,6 +2142,12 @@ export const questions = [
                 id: 2,
                 value: "bad",
                 label: "Modified",
+                color: colors.blue,
+              },
+              {
+                id: 2,
+                value: "worst",
+                label: "Not Present",
                 color: colors.blue,
               },
             ],
@@ -2341,7 +2440,7 @@ export const questions = [
           {
             id: 92,
             type: "b",
-            question: "Leftt Sideview Mirror (Condition)",
+            question: "Left Sideview Mirror (Condition)",
             options: [
               {
                 id: 1,

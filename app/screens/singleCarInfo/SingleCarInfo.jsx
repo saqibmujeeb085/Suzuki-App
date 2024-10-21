@@ -859,9 +859,10 @@ const SingleCarInfo = ({ route, navigation }) => {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "flex-start",
+                    flexWrap: "wrap",
                   }}
                 >
-                  <View>
+                  <View style={{ width: "28%" }}>
                     <View flexDirection={"row"} gap={5} alignItems={"center"}>
                       <FontAwesome
                         name="circle"
@@ -889,7 +890,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                       <AppText>P2: Polycate paint</AppText>
                     </View>
                   </View>
-                  <View>
+                  <View style={{ width: "28%" }}>
                     <View flexDirection={"row"} gap={5} alignItems={"center"}>
                       <FontAwesome name="circle" size={7} color={colors.red} />
                       <AppText>D: Dent</AppText>
@@ -905,7 +906,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                       <AppText>D2: Major Dent</AppText>
                     </View>
                   </View>
-                  <View>
+                  <View style={{ width: "28%" }}>
                     <View flexDirection={"row"} gap={5} alignItems={"center"}>
                       <FontAwesome name="circle" size={7} color={colors.blue} />
                       <AppText>S: Scratch</AppText>
@@ -919,6 +920,16 @@ const SingleCarInfo = ({ route, navigation }) => {
                     <View flexDirection={"row"} gap={5} alignItems={"center"}>
                       <FontAwesome name="circle" size={7} color={colors.blue} />
                       <AppText>S2: Major Scratch</AppText>
+                    </View>
+                  </View>
+                  <View style={{ width: "28%" }}>
+                    <View flexDirection={"row"} gap={5} alignItems={"center"}>
+                      <FontAwesome
+                        name="circle"
+                        size={7}
+                        color={colors.green}
+                      />
+                      <AppText>R: Panel Replaced</AppText>
                     </View>
                   </View>
                 </View>

@@ -37,8 +37,10 @@ const Customerform = ({ navigation, route }) => {
   const [customerAddress, setCustomerAddress] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [warrantyCategory, setWarrantyCategory] = useState("");
+  const [futureProspect, setFutureProspect] = useState("");
   const [dmisSalesEntry, setDmisSalesEntry] = useState("");
   const [warrantyBookletNumber, setWarrantyBookletNumber] = useState("");
+  const [mileage, setMileage] = useState("");
   const [transferSlip, setTransferSlip] = useState("");
   const [ffs, setFFS] = useState("");
   const [sfs, setSFS] = useState("");
@@ -129,6 +131,8 @@ const Customerform = ({ navigation, route }) => {
     formData.append("sfs", sfs);
     formData.append("tfs", tfs);
     formData.append("warranty_claim", warrantyClaim);
+    formData.append("mileage", mileage);
+    formData.append("futureProspect", futureProspect);
 
     formData.append("transfer_slip_image", {
       uri: transferSlipImage.uri,
@@ -349,6 +353,14 @@ const Customerform = ({ navigation, route }) => {
               onChangeText={setWarrantyBookletNumber}
               maxLength={4}
               val={warrantyBookletNumber}
+            />
+
+            <AppTextInput
+              placeholder="Mileage"
+              inputMode={"numeric"}
+              value={mileage}
+              onChangeText={setMileage}
+              val={mileage}
             />
 
             {/* Transfer Slip Date Picker and Camera */}
@@ -594,6 +606,15 @@ const Customerform = ({ navigation, route }) => {
               value={warrantyClaim}
               onChangeText={setWarrantyClaim}
               val={warrantyClaim}
+            />
+            <Dropdown
+              DropItems="Future Prospect"
+              Data={[
+                { key: 1, value: "Yes" },
+                { key: 2, value: "No" },
+              ]}
+              save={"value"}
+              selectedItem={(selected) => setFutureProspect(selected)}
             />
           </View>
         </View>
