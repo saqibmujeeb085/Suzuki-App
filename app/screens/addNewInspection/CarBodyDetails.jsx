@@ -9,6 +9,7 @@ import { InspecteCarContext } from "../../context/newInspectionContext";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { colors } from "../../constants/colors";
 import { FormDataContext } from "../../context/formDataContext";
+import SingleImagePicker from "../../components/imagePicker/singleImagePicjer";
 
 const CarBodyDetails = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -34,11 +35,15 @@ const CarBodyDetails = ({ navigation, route }) => {
     setCapacitiesData,
     citiesData,
     setCitiesData,
+    provinceData,
+    setProvinceData,
+    chasisData,
+    setChasisData,
+    engineData,
+    setEngineData,
   ] = useContext(FormDataContext);
 
   const [allSelected, setAllSelected] = useState(false);
-
-  console.log(capacitiesData);
 
   const [fuelType, setFuelType] = useState("");
   const [transmissionsType, setTransmissionsType] = useState("");
@@ -79,25 +84,15 @@ const CarBodyDetails = ({ navigation, route }) => {
       value: "5",
     },
   ];
+  const [vinImage, setVinImage] = useState(null);
 
-  const provinceOptions = [
-    {
-      key: "1",
-      value: "Sindh",
-    },
-    {
-      key: "2",
-      value: "Punjab",
-    },
-    {
-      key: "3",
-      value: "KPK",
-    },
-    {
-      key: "4",
-      value: "Balochistan",
-    },
-  ];
+  const handleImageSelected = (image) => {
+    setVinImage(image); // set the vinImage state with the selected image
+  };
+
+  const handleRemoveImage = (image) => {
+    setVinImage(null); // Remove the image from state when it's removed
+  };
 
   const FuelTypeSelected = (selected) => {
     setFuelType(selected);
@@ -126,7 +121,9 @@ const CarBodyDetails = ({ navigation, route }) => {
       registrationCity !== "" &&
       fuelType !== "" &&
       registrationNo !== "" &&
-      owner !== ""
+      owner !== "" &&
+      province !== "" &&
+      vinImage !== null // check for null instead of empty string
     ) {
       setAllSelected(true);
     } else {
@@ -142,6 +139,8 @@ const CarBodyDetails = ({ navigation, route }) => {
     fuelType,
     registrationNo,
     owner,
+    province,
+    vinImage, // Add vinImage to the dependency array
   ]);
 
   useEffect(() => {
@@ -164,6 +163,10 @@ const CarBodyDetails = ({ navigation, route }) => {
     };
   }, []);
 
+  // Ensure safe access to chasisData and engineData
+  const chasisCode = chasisData?.[carData?.carId]?.[0]?.value || "";
+  const engineCode = engineData?.[carData?.carId]?.[0]?.value || "";
+
   const addCarDetails = () => {
     if (
       chasisNo !== "" &&
@@ -175,21 +178,28 @@ const CarBodyDetails = ({ navigation, route }) => {
       fuelType !== "" &&
       registrationNo !== "" &&
       owner !== "" &&
-      province !== ""
+      province !== "" &&
+      vinImage !== null // Check for vinImage null
     ) {
-      setCarData((prevData) => ({
-        ...prevData,
-        chasisNo: chasisNo,
-        EngineNo: engineNo,
-        engineDisplacement: engineCapacity,
-        transmissionType: transmissionsType,
-        mileage: milage,
-        registrationCity: registrationCity,
-        FuelType: fuelType,
-        registrationNo: registrationNo,
-        NoOfOwners: owner,
-        province: province,
-      }));
+      setCarData((prevData) => {
+        const updatedData = {
+          ...prevData,
+          chasisNo: `${chasisCode}-${chasisNo}`,
+          EngineNo: `${engineCode}-${engineNo}`,
+          engineDisplacement: engineCapacity,
+          transmissionType: transmissionsType,
+          mileage: milage,
+          registrationCity: registrationCity,
+          FuelType: fuelType,
+          registrationNo: registrationNo,
+          NoOfOwners: owner,
+          province: province,
+          vinImage: vinImage,
+        };
+        console.log("new Data", updatedData); // Log the new data correctly
+        return updatedData;
+      });
+
       navigation.navigate("CarFiles");
     } else {
       alert("Please Select and Fill All The Fields");
@@ -217,7 +227,7 @@ const CarBodyDetails = ({ navigation, route }) => {
 
             <Dropdown
               DropItems="Province"
-              Data={provinceOptions}
+              Data={provinceData}
               save={"value"}
               selectedItem={ProvinceSelected}
             />
@@ -241,19 +251,26 @@ const CarBodyDetails = ({ navigation, route }) => {
               save={"value"}
               selectedItem={FuelTypeSelected}
             />
-            <View style={styles.inlineFormContainer}>
-              <AppTextInput
-                placeholder="Chassis No"
-                onChangeText={(value) => setChasisNo(value)}
-                val={chasisNo}
-              />
-              <AppTextInput
-                placeholder="Engine No"
-                onChangeText={(value) => setEngineNo(value)}
-                inputMode={"numeric"}
-                val={engineNo}
-              />
-            </View>
+
+            <AppTextInput
+              placeholder={`Chassis No After (${
+                chasisData?.[carData?.carId]?.[0]?.value || ""
+              })`}
+              onChangeText={(value) => setChasisNo(value)}
+              val={chasisNo}
+            />
+            <AppTextInput
+              placeholder={`Engine No After (${
+                engineData?.[carData?.carId]?.[0]?.value || ""
+              })`}
+              onChangeText={(value) => setEngineNo(value)}
+              inputMode={"numeric"}
+              val={engineNo}
+            />
+            <SingleImagePicker
+              onImageSelected={handleImageSelected}
+              onRemoveImage={handleRemoveImage}
+            />
 
             <Dropdown
               DropItems="Transmission Type"
@@ -270,7 +287,7 @@ const CarBodyDetails = ({ navigation, route }) => {
 
             <Dropdown
               DropItems="Engine Capacity"
-              Data={capacitiesData[carData.carId] || []}
+              Data={capacitiesData?.[carData?.carId] || []}
               save={"value"}
               selectedItem={EngineCapacitySelected}
             />

@@ -197,7 +197,7 @@ const startPosting = async (obj, groupedData, carbodyques) => {
   formData.append("customerID", obj.customerID);
   formData.append("registrationNo", obj.registrationNo);
   formData.append("chasisNo", obj.chasisNo);
-  formData.append("EngineNo", obj.EngineNo);
+  formData.append("EngineNo", obj.engineNo);
   formData.append("inspectionDate", obj.inspectionDate);
   formData.append("mfgId", obj.mfgId);
   formData.append("carId", obj.carId);
@@ -213,6 +213,9 @@ const startPosting = async (obj, groupedData, carbodyques) => {
   formData.append("FuelType", obj.FuelType);
   formData.append("color", obj.color);
   formData.append("status", obj.status);
+  formData.append("province", obj.province);
+
+  formData.append("vinImage", obj.vinImage);
 
   if (obj.images && Array.isArray(obj.images)) {
     for (const image of obj.images) {

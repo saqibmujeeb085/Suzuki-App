@@ -31,6 +31,12 @@ const CarDetails = ({ navigation }) => {
     setCapacitiesData,
     citiesData,
     setCitiesData,
+    provinceData,
+    setProvinceData,
+    chasisData,
+    setChasisData,
+    engineData,
+    setEngineData,
   ] = useContext(FormDataContext);
 
   console.log(varientsData);

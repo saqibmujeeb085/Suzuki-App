@@ -342,7 +342,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Inspection Date
@@ -381,7 +381,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Car Varient
@@ -420,7 +420,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Transmission Type
@@ -459,7 +459,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Mileage
@@ -499,7 +499,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Color
@@ -538,7 +538,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Engine Displacement
@@ -577,7 +577,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Fuel Type
@@ -616,7 +616,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 CPLC
@@ -655,7 +655,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Registration No
@@ -694,7 +694,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Chasis No
@@ -733,7 +733,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Engine No
@@ -772,7 +772,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 No Of Owners
@@ -809,7 +809,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontGrey}
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                width={140}
+                width={120}
                 flex={1}
               >
                 Registration City

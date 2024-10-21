@@ -18,6 +18,9 @@ const FormDataProvider = ({ children }) => {
   const [transmissionsData, setTransmissionsData] = useState([]);
   const [capacitiesData, setCapacitiesData] = useState([]);
   const [citiesData, setCitiesData] = useState([]);
+  const [provinceData, setProvinceData] = useState([]);
+  const [chasisData, setChasisData] = useState([]);
+  const [engineData, setEngineData] = useState([]);
 
   // Function to load data from AsyncStorage
   const loadLocalStorageData = async () => {
@@ -32,6 +35,9 @@ const FormDataProvider = ({ children }) => {
         "@formDataTransmissions",
         "@formDataCapacity",
         "@formDataCities",
+        "@formDataProvince",
+        "@formDataChasis",
+        "@formDataEngine",
       ];
 
       // Fetch all AsyncStorage values for the given keys
@@ -48,6 +54,9 @@ const FormDataProvider = ({ children }) => {
         setTransmissionsData: JSON.parse(values[6][1]) || [],
         setCapacitiesData: JSON.parse(values[7][1]) || [],
         setCitiesData: JSON.parse(values[8][1]) || [],
+        setProvinceData: JSON.parse(values[9][1]) || [],
+        setChasisData: JSON.parse(values[10][1]) || [],
+        setEngineData: JSON.parse(values[11][1]) || [],
       };
 
       // Map over the object and apply the state setters
@@ -74,6 +83,9 @@ const FormDataProvider = ({ children }) => {
         ["@formDataTransmissions", JSON.stringify(transmissionsData)],
         ["@formDataCapacity", JSON.stringify(capacitiesData)],
         ["@formDataCities", JSON.stringify(citiesData)],
+        ["@formDataProvince", JSON.stringify(provinceData)],
+        ["@formDataChasis", JSON.stringify(chasisData)],
+        ["@formDataEngine", JSON.stringify(engineData)],
       ];
       await AsyncStorage.multiSet(data);
     } catch (error) {
@@ -94,6 +106,9 @@ const FormDataProvider = ({ children }) => {
         fetchTransmissionsTypes(),
         fetchRegistrationCity(),
         fetchCarCapacity(),
+        fetchProvince(),
+        fetchChasis(),
+        fetchEngine(),
       ]);
       await saveDataToLocalStorage(); // Save fetched data after successful fetching
     } catch (error) {
@@ -104,6 +119,27 @@ const FormDataProvider = ({ children }) => {
   //////////////////////////////////////////////////////////////////////
 
   // Fetch functions (server-side logic)
+  const fetchProvince = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_province.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const ProvinceData = response.data;
+
+      setProvinceData(ProvinceData);
+      await AsyncStorage.setItem(
+        "@formDataProvince",
+        JSON.stringify(ProvinceData)
+      );
+    } catch (error) {
+      console.log("Error fetching Province:", error);
+    }
+  };
   const fetchManufacturers = async () => {
     const config = {
       method: "get",
@@ -154,6 +190,70 @@ const FormDataProvider = ({ children }) => {
       );
     } catch (error) {
       console.log("Error fetching car models:", error);
+    }
+  };
+
+  const fetchChasis = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_chasisNo.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const chasisNo = response.data;
+      const transformedList = chasisNo.reduce((acc, chasis) => {
+        acc[chasis.carID] = chasis.carChasisNo.map((c) => ({
+          key: c.chasisID,
+          value: c.chasisNo,
+        }));
+        return acc;
+      }, {});
+
+      // Set the transformed data in the component state
+      setChasisData(transformedList);
+
+      // Store the transformed data in AsyncStorage
+      await AsyncStorage.setItem(
+        "@formDataChasis",
+        JSON.stringify(transformedList)
+      );
+    } catch (error) {
+      console.log("Error fetching car Chasis No:", error);
+    }
+  };
+
+  const fetchEngine = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "/auth/get_engineNo.php",
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      const engineNo = response.data;
+      const transformedList = engineNo.reduce((acc, engine) => {
+        acc[engine.carID] = engine.carEngineNo.map((c) => ({
+          key: c.engineID,
+          value: c.engineNo,
+        }));
+        return acc;
+      }, {});
+
+      // Set the transformed data in the component state
+      setEngineData(transformedList);
+
+      // Store the transformed data in AsyncStorage
+      await AsyncStorage.setItem(
+        "@formDataEngine",
+        JSON.stringify(transformedList)
+      );
+    } catch (error) {
+      console.log("Error fetching car Chasis No:", error);
     }
   };
 
@@ -419,6 +519,12 @@ const FormDataProvider = ({ children }) => {
         setCapacitiesData,
         citiesData,
         setCitiesData,
+        provinceData,
+        setProvinceData,
+        chasisData,
+        setChasisData,
+        engineData,
+        setEngineData,
       ]}
     >
       {children}

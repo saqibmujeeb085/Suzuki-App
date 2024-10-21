@@ -83,13 +83,20 @@ const CarFiles = ({ navigation }) => {
 
     if (newTempID === null) return;
 
+    // Validate carData before proceeding
+    if (!carData || typeof carData !== "object") {
+      console.error("Invalid carData object");
+      setLoading(false);
+      return;
+    }
+
     const carDetails = {
       dealershipId: carData.dealershipId,
       duserId: carData.duserId,
       customerID: carData.customerID,
       registrationNo: carData.registrationNo,
       chasisNo: carData.chasisNo,
-      EngineNo: carData.EngineNo,
+      engineNo: carData.EngineNo,
       inspectionDate: newDateTime,
       mfgId: carData.mfgId,
       carId: carData.carId,
@@ -102,28 +109,47 @@ const CarFiles = ({ navigation }) => {
       transmissionType: carData.transmissionType,
       mileage: carData.mileage,
       registrationCity: carData.registrationCity,
-      engineCapacity: carData.engineCapacity,
       FuelType: carData.FuelType,
       color: carData.color,
-      images: selectedImages.map((image, index) => ({
+
+      // Add fallbacks for selectedImages and selectedDocuments to prevent errors
+      images: (selectedImages || []).map((image, index) => ({
         uri: image.uri,
         name: image.name,
         type: image.type,
       })),
-      documents: selectedDocuments.map((document, index) => ({
+      documents: (selectedDocuments || []).map((document, index) => ({
         uri: document.uri,
         name: document.name,
         type: document.type,
       })),
       status: carData.status,
       tempID: newTempID,
+      vinImage:
+        carData.vinImage && typeof carData.vinImage === "object"
+          ? JSON.stringify(carData.vinImage) // Convert object to JSON string if it's an object
+          : carData.vinImage,
+      province: carData.province,
     };
+
+    console.log(carDetails);
 
     try {
       // Save car details with tempID to AsyncStorage
       const storedData = await AsyncStorage.getItem("@carformdata");
-      const carFormDataArray = storedData ? JSON.parse(storedData) : [];
+
+      let carFormDataArray = [];
+      if (storedData) {
+        try {
+          carFormDataArray = JSON.parse(storedData);
+        } catch (parseError) {
+          console.error("Error parsing stored data:", parseError);
+          carFormDataArray = [];
+        }
+      }
+
       carFormDataArray.push(carDetails);
+
       await AsyncStorage.setItem(
         "@carformdata",
         JSON.stringify(carFormDataArray)
@@ -139,6 +165,7 @@ const CarFiles = ({ navigation }) => {
       resetCarData(); // Reset the data here
     } catch (error) {
       console.error("Error saving car details:", error);
+      setLoading(false);
     }
   };
 
@@ -149,13 +176,20 @@ const CarFiles = ({ navigation }) => {
 
     if (newTempID === null) return;
 
+    // Validate carData before proceeding
+    if (!carData || typeof carData !== "object") {
+      console.error("Invalid carData object");
+      setLoading(false);
+      return;
+    }
+
     const carDetails = {
       dealershipId: carData.dealershipId,
       duserId: carData.duserId,
       customerID: carData.customerID,
       registrationNo: carData.registrationNo,
       chasisNo: carData.chasisNo,
-      EngineNo: carData.EngineNo,
+      engineNo: carData.EngineNo,
       inspectionDate: newDateTime,
       mfgId: carData.mfgId,
       carId: carData.carId,
@@ -168,28 +202,47 @@ const CarFiles = ({ navigation }) => {
       transmissionType: carData.transmissionType,
       mileage: carData.mileage,
       registrationCity: carData.registrationCity,
-      engineCapacity: carData.engineCapacity,
       FuelType: carData.FuelType,
       color: carData.color,
-      images: selectedImages.map((image, index) => ({
+
+      // Add fallbacks for selectedImages and selectedDocuments to prevent errors
+      images: (selectedImages || []).map((image, index) => ({
         uri: image.uri,
         name: image.name,
         type: image.type,
       })),
-      documents: selectedDocuments.map((document, index) => ({
+      documents: (selectedDocuments || []).map((document, index) => ({
         uri: document.uri,
         name: document.name,
         type: document.type,
       })),
       status: carData.status,
       tempID: newTempID,
+      vinImage:
+        carData.vinImage && typeof carData.vinImage === "object"
+          ? JSON.stringify(carData.vinImage) // Convert object to JSON string if it's an object
+          : carData.vinImage,
+      province: carData.province,
     };
+
+    console.log(carDetails);
 
     try {
       // Save car details with tempID to AsyncStorage
       const storedData = await AsyncStorage.getItem("@carformdata");
-      const carFormDataArray = storedData ? JSON.parse(storedData) : [];
+
+      let carFormDataArray = [];
+      if (storedData) {
+        try {
+          carFormDataArray = JSON.parse(storedData);
+        } catch (parseError) {
+          console.error("Error parsing stored data:", parseError);
+          carFormDataArray = [];
+        }
+      }
+
       carFormDataArray.push(carDetails);
+
       await AsyncStorage.setItem(
         "@carformdata",
         JSON.stringify(carFormDataArray)
@@ -203,6 +256,7 @@ const CarFiles = ({ navigation }) => {
       resetCarData(); // Reset the data here
     } catch (error) {
       console.error("Error saving car details:", error);
+      setLoading(false);
     }
   };
 

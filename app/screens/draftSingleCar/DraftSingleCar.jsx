@@ -245,6 +245,23 @@ const DraftSingleCar = ({ route, navigation }) => {
           </View>
           <View style={styles.infoContainer}>
             <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+              Engine No:
+            </AppText>
+            <AppText
+              fontSize={mainStyles.h3FontSize}
+              width={150}
+              textAlign={"right"}
+              style={{
+                fontSize: mainStyles.h3FontSize,
+                color: colors.fontGrey,
+                width: 200,
+              }}
+            >
+              {carInfo?.engineNo}
+            </AppText>
+          </View>
+          <View style={styles.infoContainer}>
+            <AppText style={{ fontSize: mainStyles.h3FontSize }}>
               Chasis No:
             </AppText>
             <AppText
