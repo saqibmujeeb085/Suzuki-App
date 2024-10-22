@@ -19,14 +19,14 @@ const SingleImagePicker = ({
   onSelectedImageName = () => {},
   onRemoveImage = () => {}, // Add default function for removing image
 }) => {
-  const [images, setImages] = useState([]);
+  const [image, setImage] = useState(null); // Handle single image only
   const [modalVisible, setModalVisible] = useState(false);
 
   const pickImage = async () => {
     setModalVisible(false);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+      allowsEditing: true, // Set allowsEditing to true
       quality: 0.5,
     });
 
@@ -34,14 +34,11 @@ const SingleImagePicker = ({
       const localUri = result.assets[0].uri;
       const filename = localUri.split("/").pop();
 
-      // Extract the file extension (if any) and determine the type
-      const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : `image`;
-
       // Create the vinImage object
-      const vinImage = { uri: localUri, name: filename, type };
+      const vinImage = { uri: localUri, name: filename, type: "image/jpeg" };
 
       addImage(vinImage);
+      console.log(vinImage);
     }
   };
 
@@ -49,7 +46,7 @@ const SingleImagePicker = ({
     setModalVisible(false);
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+      allowsEditing: false, // Set allowsEditing to true
       quality: 0.5,
     });
 
@@ -69,21 +66,20 @@ const SingleImagePicker = ({
   };
 
   const addImage = (vinImage) => {
-    setImages((prevImages) => [...prevImages, vinImage]);
+    setImage(vinImage); // Handle single image
     onImageSelected(vinImage); // Pass the vinImage object to the parent component
   };
 
-  const removeImage = (index) => {
-    const removedImage = images[index]; // Get the removed image object
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
-    onRemoveImage(removedImage); // Notify parent component about the removed image
+  const removeImage = () => {
+    setImage(null);
+    onRemoveImage(); // Notify parent component about the removed image
   };
 
   return (
     <ScrollView>
       <View style={styles.pickerContainer}>
-        {images.map((image, index) => (
-          <View key={index} style={styles.imageContainer}>
+        {image && (
+          <View style={styles.imageContainer}>
             <Image source={{ uri: image.uri }} style={styles.image} />
             <AppText
               fontSize={mainStyles.h3FontSize}
@@ -97,13 +93,13 @@ const SingleImagePicker = ({
             </AppText>
             <TouchableOpacity
               style={styles.removeIconContainer}
-              onPress={() => removeImage(index)}
+              onPress={removeImage}
             >
               <Feather name="x-circle" size={24} color="red" />
             </TouchableOpacity>
           </View>
-        ))}
-        {images.length < 1 && (
+        )}
+        {!image && (
           <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
             <View style={styles.uploadButton}>
               <AppText color={colors.fontGrey} fontSize={mainStyles.h2FontSize}>
@@ -176,7 +172,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     backgroundColor: "transparent",
     borderRadius: 5,
-
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

@@ -1063,13 +1063,13 @@ export const questions = [
               {
                 id: 1,
                 value: "good",
-                label: "Ok",
+                label: "Good  ",
                 color: colors.blue,
               },
               {
                 id: 2,
                 value: "bad",
-                label: "Not OK",
+                label: "Bad",
                 color: colors.blue,
               },
             ],
@@ -1138,13 +1138,13 @@ export const questions = [
               {
                 id: 1,
                 value: "good",
-                label: "Ok",
+                label: "Good",
                 color: colors.blue,
               },
               {
                 id: 2,
                 value: "bad",
-                label: "Not OK",
+                label: "Bad",
                 color: colors.blue,
               },
             ],
@@ -1915,7 +1915,7 @@ export const questions = [
                 color: colors.blue,
               },
               {
-                id: 2,
+                id: 3,
                 value: "worst",
                 label: "Not Present",
                 color: colors.blue,

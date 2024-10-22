@@ -215,10 +215,12 @@ const startPosting = async (obj, groupedData, carbodyques) => {
   formData.append("status", obj.status);
   formData.append("province", obj.province);
 
+  console.log(obj.vinImage);
+
   formData.append("vinImage", {
-    uri: obj.vinImage.uri, // The URI of the file, typically obtained from an image picker or camera
-    name: obj.vinImage.name,
+    uri: obj.vinImage.uri,
     type: obj.vinImage.type,
+    name: obj.vinImage.name,
   });
 
   if (obj.images && Array.isArray(obj.images)) {
@@ -317,8 +319,8 @@ const startPosting = async (obj, groupedData, carbodyques) => {
     });
   });
 
+  console.log(formData.vinImage);
   try {
-    console.log(formData);
     const headers = {
       "Content-Type": "multipart/form-data",
     };

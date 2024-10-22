@@ -330,7 +330,7 @@ const ViewReport = ({ navigation, route }) => {
       </InspectionHeader>
 
       <ScrollView style={[{ marginBottom: 110 }, styles.container]}>
-        <View style={styles.contentContainer}>
+        {/* <View style={styles.contentContainer}>
           <View style={styles.headingContainer}>
             <AppText
               fontSize={mainStyles.h1FontSize}
@@ -607,7 +607,7 @@ const ViewReport = ({ navigation, route }) => {
               </AppText>
             </View>
           </View>
-        </View>
+        </View> */}
         <View style={[styles.contentContainer, { marginTop: 20 }]}>
           <AppText
             fontSize={mainStyles.h1FontSize}

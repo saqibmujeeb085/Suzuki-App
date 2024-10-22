@@ -160,6 +160,11 @@ const Home = ({ navigation }) => {
     }
   };
 
+  const reload = () => {
+    fetchDataFromAsyncStorage();
+    inspectedCarsData();
+  };
+
   return (
     <AppScreen>
       <ImageBackground
@@ -266,10 +271,7 @@ const Home = ({ navigation }) => {
             paddingBottom: 280,
           }}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={inspectedCarsData}
-            />
+            <RefreshControl refreshing={refreshing} onRefresh={reload} />
           }
         >
           {fullData.map((item) => (

@@ -125,14 +125,14 @@ const CarFiles = ({ navigation }) => {
       })),
       status: carData.status,
       tempID: newTempID,
-      vinImage:
-        carData.vinImage && typeof carData.vinImage === "object"
-          ? JSON.stringify(carData.vinImage) // Convert object to JSON string if it's an object
-          : carData.vinImage,
-      province: carData.province,
+      vinImage: {
+        uri: carData.vinImage.uri,
+        name: carData.vinImage.name,
+        type: carData.vinImage.type,
+      },
     };
 
-    console.log(carDetails);
+    console.log("car Saving vinImage", carDetails);
 
     try {
       // Save car details with tempID to AsyncStorage
@@ -168,6 +168,8 @@ const CarFiles = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  console.log(carData);
 
   const saveCarDetailsInDraft = async () => {
     setLoading(true);
@@ -218,16 +220,15 @@ const CarFiles = ({ navigation }) => {
       })),
       status: carData.status,
       tempID: newTempID,
-      vinImage:
-        carData.vinImage && typeof carData.vinImage === "object"
-          ? JSON.stringify(carData.vinImage) // Convert object to JSON string if it's an object
-          : carData.vinImage,
-      province: carData.province,
+      vinImage: {
+        uri: carData.vinImage.uri,
+        name: carData.vinImage.name,
+        type: carData.vinImage.type,
+      },
     };
 
-    console.log(carDetails);
-
     try {
+      console.log("car Saving vinImage", carDetails.vinImage);
       // Save car details with tempID to AsyncStorage
       const storedData = await AsyncStorage.getItem("@carformdata");
 

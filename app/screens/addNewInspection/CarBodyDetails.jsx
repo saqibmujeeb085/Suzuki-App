@@ -86,11 +86,13 @@ const CarBodyDetails = ({ navigation, route }) => {
   ];
   const [vinImage, setVinImage] = useState(null);
 
+  console.log("vinImage", vinImage);
+
   const handleImageSelected = (image) => {
     setVinImage(image); // set the vinImage state with the selected image
   };
 
-  const handleRemoveImage = (image) => {
+  const handleRemoveImage = () => {
     setVinImage(null); // Remove the image from state when it's removed
   };
 
@@ -264,7 +266,6 @@ const CarBodyDetails = ({ navigation, route }) => {
                 engineData?.[carData?.carId]?.[0]?.value || ""
               })`}
               onChangeText={(value) => setEngineNo(value)}
-              inputMode={"numeric"}
               val={engineNo}
             />
             <SingleImagePicker

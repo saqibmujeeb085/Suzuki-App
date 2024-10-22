@@ -155,6 +155,8 @@ const Customerform = ({ navigation, route }) => {
       type: "image/jpeg",
     });
 
+    console.log("hello image", formData.tfs_image);
+
     try {
       // Use axios to send the POST request
       const response = await axios.post("/auth/add_customers.php", formData, {

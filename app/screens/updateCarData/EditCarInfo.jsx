@@ -293,6 +293,7 @@ const EditCarInfo = ({ navigation, route }) => {
           <AppTextInput
             placeholder={`Registration no: ${registrationNo}`}
             onChangeText={(value) => setRegistrationNoNew(value)}
+            val={registrationNoNew}
           />
 
           <Dropdown
@@ -303,18 +304,16 @@ const EditCarInfo = ({ navigation, route }) => {
             placeholder={`Fuel Type (${fuelType || "Select Fuel Type"})`}
           />
 
-          <View style={styles.inlineFormContainer}>
-            <AppTextInput
-              placeholder={`Chasis no: ${chasisNo}`}
-              onChangeText={(value) => setChasisNoNew(value)}
-              inputMode={"numeric"}
-            />
-            <AppTextInput
-              placeholder={`Engine No: (${engineNo || "Enter Engine No"})`}
-              onChangeText={(value) => setEngineNoNew(value)}
-              inputMode={"numeric"}
-            />
-          </View>
+          <AppTextInput
+            placeholder={`Chasis no: ${chasisNo}`}
+            onChangeText={(value) => setChasisNoNew(value)}
+            val={chasisNoNew}
+          />
+          <AppTextInput
+            placeholder={`Engine No: (${engineNo || "Enter Engine No"})`}
+            onChangeText={(value) => setEngineNoNew(value)}
+            val={engineNoNew}
+          />
 
           <Dropdown
             DropItems={transmissionsType}
@@ -329,7 +328,7 @@ const EditCarInfo = ({ navigation, route }) => {
           <AppTextInput
             placeholder={`Milage: ${milage}`}
             onChangeText={(value) => setMilageNew(value)}
-            inputMode={"numeric"}
+            val={milageNew}
           />
 
           <Dropdown

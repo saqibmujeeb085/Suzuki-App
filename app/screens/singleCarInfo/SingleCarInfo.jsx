@@ -229,8 +229,6 @@ const SingleCarInfo = ({ route, navigation }) => {
               gap: 20,
               marginBottom: 20,
               paddingVertical: 20,
-              // borderBottomWidth: 0.3,
-              // borderTopWidth: 0.3,
               borderColor: colors.fontGrey,
             }}
           >
@@ -757,6 +755,53 @@ const SingleCarInfo = ({ route, navigation }) => {
                 flex: 1,
               }}
             >
+              <FontAwesome
+                name="file-image-o"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={120}
+                flex={1}
+              >
+                VIN Image
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <TouchableOpacity
+                onPress={() =>
+                  openImageModal(
+                    `${process.env.VIN_IMAGE_URL}${carInfo?.chasis_name}`
+                  )
+                }
+              >
+                <AppText color={colors.blue}>View Image</AppText>
+              </TouchableOpacity>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
               <FontAwesome5
                 name="people-arrows"
                 size={24}
@@ -783,6 +828,45 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontBlack}
               />
               <AppText>{carInfo?.no_of_owners}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
+                flex: 1,
+              }}
+            >
+              <FontAwesome5
+                name="globe-africa"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={120}
+                flex={1}
+              >
+                Province
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.province}</AppText>
             </View>
 
             <View

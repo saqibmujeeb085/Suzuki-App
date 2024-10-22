@@ -44,11 +44,16 @@ const EditProblems = ({ navigation, route }) => {
       image: null,
       imageName: null,
     },
+    PanelReplaced: {
+      // Added PanelReplaced
+      checked: false,
+      selectedValue: null, // Automatically set this when checked
+      image: null,
+      imageName: null,
+    },
   });
 
   const [carBodyProblems, setCarBodyProblems] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     getCarProblemsDataByTempID(id, location);
@@ -144,9 +149,12 @@ const EditProblems = ({ navigation, route }) => {
           ...prev[problem],
           checked: !prev[problem].checked,
           selectedId: prev[problem].checked ? null : prev[problem].selectedId,
-          selectedValue: prev[problem].checked
-            ? null
-            : prev[problem].selectedValue,
+          selectedValue:
+            problem === "PanelReplaced" && !prev[problem].checked
+              ? "Replaced Panel" // Automatically set value for PanelReplaced
+              : prev[problem].checked
+              ? null
+              : prev[problem].selectedValue,
         };
 
         if (!updatedProblem.checked) {
@@ -351,6 +359,37 @@ const EditProblems = ({ navigation, route }) => {
               )}
             </View>
           ))}
+
+          {/* Panel Replaced Section */}
+          <View>
+            <View style={styles.problemRow}>
+              <Checkbox
+                onValueChange={() => handleProblemToggle("PanelReplaced")}
+                color={
+                  problems.PanelReplaced?.checked ? colors.purple : undefined
+                }
+                value={problems.PanelReplaced?.checked}
+                style={{ height: 25, width: 25 }}
+              />
+              <AppText fontSize={mainStyles.h2FontSize}>Panel Replaced</AppText>
+            </View>
+            {problems.PanelReplaced?.checked && (
+              <View style={styles.subProblemContainer}>
+                {/* Only image picker for Panel Replaced */}
+                <InspectionImagePicker
+                  onImageSelected={(uri) =>
+                    handleImageUriSelect("PanelReplaced", uri)
+                  }
+                  onSelectedImageName={(name) =>
+                    handleImageNameSelect("PanelReplaced", name)
+                  }
+                  onRemoveImage={() =>
+                    handleImageUriSelect("PanelReplaced", null)
+                  }
+                />
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
       <View style={styles.formButton}>
