@@ -215,7 +215,11 @@ const startPosting = async (obj, groupedData, carbodyques) => {
   formData.append("status", obj.status);
   formData.append("province", obj.province);
 
-  formData.append("vinImage", obj.vinImage);
+  formData.append("vinImage", {
+    uri: obj.vinImage.uri, // The URI of the file, typically obtained from an image picker or camera
+    name: obj.vinImage.name,
+    type: obj.vinImage.type,
+  });
 
   if (obj.images && Array.isArray(obj.images)) {
     for (const image of obj.images) {

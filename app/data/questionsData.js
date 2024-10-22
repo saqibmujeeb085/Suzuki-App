@@ -575,7 +575,7 @@ export const questions = [
             image: false,
           },
           {
-            id: "25n",
+            id: 25,
             type: "b",
             question: "Parking Sensors",
             options: [
@@ -606,7 +606,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 25,
+            id: 26,
             type: "b",
             question: "Starter Operation ",
             options: [
@@ -631,7 +631,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 26,
+            id: 27,
             type: "b",
             question: "Engine Blow (Manual Check)  ",
             options: [
@@ -656,7 +656,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 27,
+            id: 28,
             type: "b",
             question: "Engine Noise",
             options: [
@@ -681,7 +681,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 28,
+            id: 29,
             type: "b",
             question: "Engine Vibration  ",
             options: [
@@ -706,7 +706,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 29,
+            id: 30,
             type: "b",
             question: "Cold Start ",
             options: [
@@ -731,7 +731,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 30,
+            id: 31,
             type: "b",
             question: "Engine Mounts ",
             options: [
@@ -756,7 +756,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 31,
+            id: 32,
             type: "b",
             question: "Pulleys (Adjuster)  ",
             options: [
@@ -781,7 +781,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 32,
+            id: 33,
             type: "b",
             question: "Radiator Hoses",
             options: [
@@ -812,7 +812,7 @@ export const questions = [
         subCatName: "EXHAUST CHECK",
         subCatData: [
           {
-            id: 33,
+            id: 34,
             type: "b",
             question: "Exhaust Sound  ",
             options: [
@@ -837,7 +837,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 34,
+            id: 35,
             type: "b",
             question: "Exhaust Smoke ",
             options: [
@@ -887,7 +887,7 @@ export const questions = [
         subCatName: "Engine Cooling System",
         subCatData: [
           {
-            id: 35,
+            id: 36,
             type: "b",
             question: "Radiator  ",
             options: [
@@ -917,195 +917,14 @@ export const questions = [
             pointsCondition: false,
             points: [],
           },
-          // {
-          //   id: 36,
-          //   type: "b",
-          //   question: "Exhaust Sound  ",
-          //   options: [
-          //     {
-          //       id: 1,
-          //       value: "good",
-          //       label: "Working",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 2,
-          //       value: "bad",
-          //       label: "Not Working",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 3,
-          //       value: "worst",
-          //       label: "Cracked/Damage",
-          //       color: colors.blue,
-          //     },
-          //   ],
-          //   condition: false,
-          //   image: true,
-          //   imgCondition: false,
-          //   textCondition: false,
-          //   pointsCondition: false,
-          //   points: [],
-          // },
         ],
       },
       {
         subCatId: 6,
         subCatName: "Suspension",
         subCatData: [
-          // {
-          //   id: 37,
-          //   type: "b",
-          //   question: "Right Ball Joint  ",
-          //   options: [
-          //     {
-          //       id: 1,
-          //       value: "good",
-          //       label: "Ok",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 2,
-          //       value: "bad",
-          //       label: "Not OK",
-          //       color: colors.blue,
-          //     },
-          //   ],
-          //   condition: false,
-          //   image: false,
-          //   imgCondition: false,
-          //   textCondition: false,
-          //   pointsCondition: false,
-          //   points: [],
-          // },
-          // {
-          //   id: 38,
-          //   type: "b",
-          //   question: "Left Ball Joint ",
-          //   options: [
-          //     {
-          //       id: 1,
-          //       value: "good",
-          //       label: "Ok",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 2,
-          //       value: "bad",
-          //       label: "Not OK",
-          //       color: colors.blue,
-          //     },
-          //   ],
-          //   condition: false,
-          //   image: false,
-          //   imgCondition: false,
-          //   textCondition: false,
-          //   pointsCondition: false,
-          //   points: [],
-          // },
-          // {
-          //   id: 39,
-          //   type: "b",
-          //   question: "Right Z Links  ",
-          //   options: [
-          //     {
-          //       id: 1,
-          //       value: "good",
-          //       label: "Ok",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 2,
-          //       value: "bad",
-          //       label: "Not OK",
-          //       color: colors.blue,
-          //     },
-          //   ],
-          //   condition: false,
-          //   image: true,
-          //   imgCondition: false,
-          //   textCondition: false,
-          //   pointsCondition: false,
-          //   points: [],
-          // },
-          // {
-          //   id: 40,
-          //   type: "b",
-          //   question: "Left Z Links ",
-          //   options: [
-          //     {
-          //       id: 1,
-          //       value: "good",
-          //       label: "Ok",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 2,
-          //       value: "bad",
-          //       label: "Not OK",
-          //       color: colors.blue,
-          //     },
-          //   ],
-          //   condition: false,
-          //   image: true,
-          //   imgCondition: false,
-          //   textCondition: false,
-          //   pointsCondition: false,
-          //   points: [],
-          // },
-          // {
-          //   id: 41,
-          //   type: "b",
-          //   question: "Right Tie Rod End",
-          //   options: [
-          //     {
-          //       id: 1,
-          //       value: "good",
-          //       label: "Ok",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 2,
-          //       value: "bad",
-          //       label: "Not OK",
-          //       color: colors.blue,
-          //     },
-          //   ],
-          //   condition: false,
-          //   image: true,
-          //   imgCondition: false,
-          //   textCondition: false,
-          //   pointsCondition: false,
-          //   points: [],
-          // },
-          // {
-          //   id: 42,
-          //   type: "b",
-          //   question: "Left Tie Rod End",
-          //   options: [
-          //     {
-          //       id: 1,
-          //       value: "good",
-          //       label: "Ok",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 2,
-          //       value: "bad",
-          //       label: "Not OK",
-          //       color: colors.blue,
-          //     },
-          //   ],
-          //   condition: false,
-          //   image: true,
-          //   imgCondition: false,
-          //   textCondition: false,
-          //   pointsCondition: false,
-          //   points: [],
-          // },
           {
-            id: 42,
+            id: 37,
             type: "b",
             question: "Suspension Condition",
             options: [
@@ -1136,7 +955,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 43,
+            id: 38,
             type: "b",
             question: "Front Right Boots",
             options: [
@@ -1161,7 +980,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 44,
+            id: 39,
             type: "b",
             question: "Front Left Boots ",
             options: [
@@ -1186,7 +1005,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 45,
+            id: 40,
             type: "b",
             question: "Front Right Bushes ",
             options: [
@@ -1211,7 +1030,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 46,
+            id: 41,
             type: "b",
             question: "Front Left Bushes",
             options: [
@@ -1235,33 +1054,9 @@ export const questions = [
             pointsCondition: false,
             points: [],
           },
-          // {
-          //   id: 47,
-          //   type: "b",
-          //   question: "Front Right Shock",
-          //   options: [
-          //     {
-          //       id: 1,
-          //       value: "good",
-          //       label: "Ok",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 2,
-          //       value: "bad",
-          //       label: "Not OK",
-          //       color: colors.blue,
-          //     },
-          //   ],
-          //   condition: false,
-          //   image: true,
-          //   imgCondition: false,
-          //   textCondition: false,
-          //   pointsCondition: false,
-          //   points: [],
-          // },
+
           {
-            id: 48,
+            id: 42,
             type: "b",
             question: "Front Shocks ",
             options: [
@@ -1286,7 +1081,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 49,
+            id: 43,
             type: "b",
             question: "Rear Right Bushes ",
             options: [
@@ -1311,7 +1106,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 50,
+            id: 44,
             type: "b",
             question: "Rear Left Bushes ",
             options: [
@@ -1336,7 +1131,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 51,
+            id: 45,
             type: "b",
             question: "Rear Shocks ",
             options: [
@@ -1360,31 +1155,6 @@ export const questions = [
             pointsCondition: false,
             points: [],
           },
-          // {
-          //   id: 52,
-          //   type: "b",
-          //   question: "Rear Left Shock",
-          //   options: [
-          //     {
-          //       id: 1,
-          //       value: "good",
-          //       label: "Ok",
-          //       color: colors.blue,
-          //     },
-          //     {
-          //       id: 2,
-          //       value: "bad",
-          //       label: "Not OK",
-          //       color: colors.blue,
-          //     },
-          //   ],
-          //   condition: false,
-          //   image: true,
-          //   imgCondition: false,
-          //   textCondition: false,
-          //   pointsCondition: false,
-          //   points: [],
-          // },
         ],
       },
     ],
@@ -1397,7 +1167,7 @@ export const questions = [
         subCatName: "INSTRUMENT CLUSTER  ",
         subCatData: [
           {
-            id: 53,
+            id: 46,
             type: "b",
             question: "Malfunction Check",
             options: [
@@ -1422,7 +1192,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 54,
+            id: 47,
             type: "b",
             question: "Battery Warning Light",
             options: [
@@ -1447,7 +1217,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 55,
+            id: 48,
             type: "b",
             question: "Oil Pressure Low Warning Light",
             options: [
@@ -1472,7 +1242,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 56,
+            id: 49,
             type: "b",
             question: "Temperature Warning Light / Gauge",
             options: [
@@ -1497,7 +1267,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 57,
+            id: 50,
             type: "b",
             question: "SRS Air Bag warning light",
             options: [
@@ -1528,7 +1298,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 58,
+            id: 51,
             type: "b",
             question: "ABS Warning Light",
             options: [
@@ -1559,7 +1329,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 59,
+            id: 52,
             type: "b",
             question: "ESP warning light parameter",
             options: [
@@ -1590,7 +1360,7 @@ export const questions = [
             points: [],
           },
           {
-            id: "58n",
+            id: 53,
             type: "b",
             question: "Traction Control Warning Light",
             options: [
@@ -1627,7 +1397,7 @@ export const questions = [
         subCatName: "BATTERY  ",
         subCatData: [
           {
-            id: 60,
+            id: 54,
             type: "b",
             question: "Voltage",
             options: [
@@ -1652,7 +1422,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 61,
+            id: 55,
             type: "b",
             question: "Battery Condition",
             options: [
@@ -1677,7 +1447,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 62,
+            id: 56,
             type: "b",
             question: "Charging",
             options: [
@@ -1702,7 +1472,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 63,
+            id: 57,
             type: "b",
             question: "Alternator Operation",
             options: [
@@ -1738,7 +1508,7 @@ export const questions = [
         subCatName: "EXTERIOR LIGHTS",
         subCatData: [
           {
-            id: 64,
+            id: 58,
             type: "b",
             question: "Right Headlight (Working)",
             options: [
@@ -1763,7 +1533,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 65,
+            id: 59,
             type: "b",
             question: "Left Headlight (Working)",
             options: [
@@ -1788,7 +1558,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 66,
+            id: 60,
             type: "b",
             question: "Right Headlight (Condition)",
             options: [
@@ -1819,7 +1589,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 67,
+            id: 61,
             type: "b",
             question: "Left Headlight (Condition)",
             options: [
@@ -1850,7 +1620,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 68,
+            id: 62,
             type: "b",
             question: "Right Taillight (Working)",
             options: [
@@ -1875,7 +1645,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 69,
+            id: 63,
             type: "b",
             question: "Left Taillight (Working)",
             options: [
@@ -1900,7 +1670,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 70,
+            id: 64,
             type: "b",
             question: "Right Taillight (Condition)",
             options: [
@@ -1931,7 +1701,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 71,
+            id: 65,
             type: "b",
             question: "Left Taillight (Condition)",
             options: [
@@ -1962,7 +1732,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 72,
+            id: 66,
             type: "b",
             question: "Fog Lights (Working)",
             options: [
@@ -1994,7 +1764,7 @@ export const questions = [
           },
 
           {
-            id: 73,
+            id: 67,
             type: "b",
             question: "Fog Lights (Condition)",
             options: [
@@ -2031,7 +1801,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 74,
+            id: 68,
             type: "b",
             question: "Indicators",
             options: [
@@ -2056,7 +1826,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 75,
+            id: 69,
             type: "b",
             question: "DRL",
             options: [
@@ -2093,42 +1863,42 @@ export const questions = [
         subCatName: "Tires",
         subCatData: [
           {
-            id: 76,
+            id: 70,
             question: "Front Right Tyre",
             type: "t",
             showType: "n",
             image: true,
           },
           {
-            id: 77,
+            id: 71,
             question: "Front Left Tyre",
             type: "t",
             showType: "n",
             image: true,
           },
           {
-            id: 78,
+            id: 72,
             question: "Rear Right Tyre",
             type: "t",
             showType: "n",
             image: true,
           },
           {
-            id: 79,
+            id: 73,
             question: "Rear Right Tyre",
             type: "t",
             showType: "n",
             image: true,
           },
           {
-            id: 80,
+            id: 74,
             question: "Tyre Size",
             type: "t",
             showType: "s",
             image: true,
           },
           {
-            id: 81,
+            id: 75,
             type: "b",
             question: "Rims",
             options: [
@@ -2159,7 +1929,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 82,
+            id: 76,
             type: "b",
             question: "Wheel Caps",
             options: [
@@ -2195,7 +1965,7 @@ export const questions = [
         subCatName: "WINDOWS & LOCKING",
         subCatData: [
           {
-            id: 83,
+            id: 77,
             type: "b",
             question: "Front Right power windows / Manual Lever ",
             options: [
@@ -2220,7 +1990,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 84,
+            id: 78,
             type: "b",
             question: "Front Left power windows / Manual Lever  ",
             options: [
@@ -2245,7 +2015,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 85,
+            id: 79,
             type: "b",
             question: "Rear Right power windows / Manual Lever  ",
             options: [
@@ -2270,7 +2040,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 86,
+            id: 80,
             type: "b",
             question: "Rear Left power windows / Manual Lever  ",
             options: [
@@ -2295,7 +2065,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 87,
+            id: 81,
             type: "b",
             question: "Door Handles  ",
             options: [
@@ -2320,7 +2090,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 88,
+            id: 82,
             type: "b",
             question: "Window Safety Lock ",
             options: [
@@ -2345,7 +2115,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 89,
+            id: 83,
             type: "b",
             question: "Central Locking",
             options: [
@@ -2376,7 +2146,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 90,
+            id: 84,
             type: "b",
             question: "Right Sideview Mirror (Condition)",
             options: [
@@ -2407,7 +2177,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 91,
+            id: 85,
             type: "b",
             question: "Right Sideview Mirror (Working)",
             options: [
@@ -2438,7 +2208,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 92,
+            id: 86,
             type: "b",
             question: "Left Sideview Mirror (Condition)",
             options: [
@@ -2469,7 +2239,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 93,
+            id: 87,
             type: "b",
             question: "Left Sideview Mirror (Working)",
             options: [
@@ -2500,7 +2270,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 94,
+            id: 88,
             type: "b",
             question: "Front Windshield Condition",
             options: [
@@ -2531,7 +2301,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 95,
+            id: 89,
             type: "b",
             question: "Rear Windshield Condition",
             options: [
@@ -2562,7 +2332,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 96,
+            id: 90,
             type: "b",
             question: "Front Right Door Window",
             options: [
@@ -2593,7 +2363,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 97,
+            id: 91,
             type: "b",
             question: "Front Left Door Window",
             options: [
@@ -2624,7 +2394,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 98,
+            id: 92,
             type: "b",
             question: "Rear Right Door Window",
             options: [
@@ -2655,7 +2425,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 99,
+            id: 93,
             type: "b",
             question: "Rear Left Door Window",
             options: [
@@ -2686,7 +2456,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 100,
+            id: 94,
             type: "b",
             question: "Windscreen Wiper",
             options: [
@@ -2717,7 +2487,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 101,
+            id: 95,
             type: "b",
             question: "Door Latches/Handles",
             options: [
@@ -2748,7 +2518,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 102,
+            id: 96,
             type: "b",
             question: "Trunk Lock",
             options: [
@@ -2785,25 +2555,25 @@ export const questions = [
         subCatName: "SEATS",
         subCatData: [
           {
-            id: 103,
+            id: 97,
             type: "r",
             question: "Seats",
             image: true,
           },
           {
-            id: 104,
+            id: 98,
             type: "r",
             question: "Seat Adjuster Recliner   ",
             image: false,
           },
           {
-            id: 105,
+            id: 99,
             type: "r",
             question: "Seat Adjuster Lear Track",
             image: false,
           },
           {
-            id: 106,
+            id: 100,
             type: "b",
             question: "Glove Box",
             options: [
@@ -2828,7 +2598,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 107,
+            id: 101,
             type: "r",
             question: "Door Latches",
             image: false,
@@ -2840,7 +2610,7 @@ export const questions = [
         subCatName: "POSHISH",
         subCatData: [
           {
-            id: 108,
+            id: 102,
             type: "b",
             question: "Roof Condition",
             options: [
@@ -2871,7 +2641,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 109,
+            id: 103,
             type: "b",
             question: "Floor Mat",
             options: [
@@ -2896,7 +2666,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 110,
+            id: 104,
             type: "b",
             question: "Seat Poshish",
             options: [
@@ -2927,7 +2697,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 111,
+            id: 105,
             type: "b",
             question: "Dashboard Condition",
             options: [
@@ -2964,7 +2734,7 @@ export const questions = [
         subCatName: "DASH/ROOF CONTROL",
         subCatData: [
           {
-            id: 112,
+            id: 106,
             type: "b",
             question: "Interior Lightings",
             options: [
@@ -2989,7 +2759,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 113,
+            id: 107,
             type: "b",
             question: "Dash Controls - A/C",
             options: [
@@ -3014,7 +2784,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 114,
+            id: 108,
             type: "b",
             question: "Dash Controls - De-Fog",
             options: [
@@ -3039,7 +2809,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 115,
+            id: 109,
             type: "b",
             question: "Dash Controls - Hazzard Lights",
             options: [
@@ -3064,7 +2834,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 116,
+            id: 110,
             type: "b",
             question: "Interior LightingsHorn",
             options: [
@@ -3089,7 +2859,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 117,
+            id: 111,
             type: "b",
             question: "Audio/Video",
             options: [
@@ -3114,7 +2884,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 118,
+            id: 112,
             type: "b",
             question: "Rear View Camera (Optional)",
             options: [
@@ -3145,7 +2915,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 119,
+            id: 113,
             type: "b",
             question: "Trunk Release Lever / Button",
             options: [
@@ -3170,7 +2940,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 120,
+            id: 114,
             type: "b",
             question: "Fuel Cap Release Lever / Button",
             options: [
@@ -3195,7 +2965,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 121,
+            id: 115,
             type: "b",
             question: "Bonnet Release Lever / Button",
             options: [
@@ -3226,13 +2996,13 @@ export const questions = [
         subCatName: "EQUIPMENT",
         subCatData: [
           {
-            id: 122,
+            id: 116,
             type: "r",
             question: "Seat Belts",
             image: false,
           },
           {
-            id: 123,
+            id: 117,
             type: "b",
             question: "Airbags",
             options: [
@@ -3263,7 +3033,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 124,
+            id: 118,
             type: "b",
             question: "Air Pumps",
             options: [
@@ -3294,7 +3064,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 125,
+            id: 119,
             type: "b",
             question: "Spare Tyre",
             options: [
@@ -3325,7 +3095,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 126,
+            id: 120,
             type: "b",
             question: "Tools",
             options: [
@@ -3350,7 +3120,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 127,
+            id: 121,
             type: "b",
             question: "Jack",
             options: [
@@ -3386,7 +3156,7 @@ export const questions = [
         subCatName: "A/C & HEATER",
         subCatData: [
           {
-            id: 128,
+            id: 122,
             type: "b",
             question: "A/C Fitted",
             options: [
@@ -3417,7 +3187,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 129,
+            id: 123,
             type: "b",
             question: "A/C Operational",
             options: [
@@ -3448,7 +3218,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 130,
+            id: 124,
             type: "b",
             question: "Blower",
             options: [
@@ -3479,7 +3249,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 131,
+            id: 125,
             type: "b",
             question: "Cooling",
             options: [
@@ -3516,7 +3286,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 132,
+            id: 126,
             type: "b",
             question: "Heating ",
             options: [
@@ -3564,19 +3334,19 @@ export const questions = [
         subCatName: "TEST DRIVE",
         subCatData: [
           {
-            id: 133,
+            id: 127,
             type: "r",
             question: "Engine Pick",
             image: false,
           },
           {
-            id: 134,
+            id: 128,
             type: "r",
             question: "Clutch Operation (While Driving)",
             image: false,
           },
           {
-            id: 135,
+            id: 129,
             type: "b",
             question: "Gear Shifting (Manual) ",
             options: [
@@ -3601,7 +3371,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 136,
+            id: 130,
             type: "b",
             question: "AGS Operation ",
             options: [
@@ -3638,7 +3408,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 137,
+            id: 131,
             type: "b",
             question: "CVT Operation",
             options: [
@@ -3675,13 +3445,13 @@ export const questions = [
             points: [],
           },
           {
-            id: 138,
+            id: 132,
             type: "r",
             question: "Brake Pedal Operation",
             image: false,
           },
           {
-            id: 139,
+            id: 133,
             type: "b",
             question: "Parking/Hand Brake Operation",
             options: [
@@ -3706,7 +3476,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 140,
+            id: 134,
             type: "b",
             question: "ABS Operation ",
             options: [
@@ -3743,7 +3513,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 141,
+            id: 135,
             type: "b",
             question: "Cruise Control ",
             options: [
@@ -3774,7 +3544,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 142,
+            id: 136,
             type: "b",
             question: "Front Suspension (While Driving)",
             options: [
@@ -3799,7 +3569,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 143,
+            id: 137,
             type: "b",
             question: "Rear Suspension (While Driving)",
             options: [
@@ -3824,13 +3594,13 @@ export const questions = [
             points: [],
           },
           {
-            id: 144,
+            id: 138,
             type: "r",
             question: "Steering Operation (While Driving)",
             image: false,
           },
           {
-            id: 145,
+            id: 139,
             type: "b",
             question: "Steering Wheel Alignment (While Driving)",
             options: [
@@ -3855,19 +3625,19 @@ export const questions = [
             points: [],
           },
           {
-            id: 146,
+            id: 140,
             type: "r",
             question: "AC Operation (While Driving)",
             image: false,
           },
           {
-            id: 147,
+            id: 141,
             type: "r",
             question: "Heater Operation (While Driving)",
             image: false,
           },
           {
-            id: 148,
+            id: 142,
             type: "b",
             question: "Speedometer (While Driving)",
             options: [
@@ -3892,7 +3662,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 149,
+            id: 143,
             type: "b",
             question: "Turning Noise",
             options: [
@@ -3917,7 +3687,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 150,
+            id: 144,
             type: "b",
             question: "Wheel bearing",
             options: [
@@ -3942,7 +3712,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 151,
+            id: 145,
             type: "b",
             question: "Steering Noise",
             options: [
@@ -3967,7 +3737,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 152,
+            id: 146,
             type: "b",
             question: "Steering Play",
             options: [
@@ -3992,13 +3762,13 @@ export const questions = [
             points: [],
           },
           {
-            id: 153,
+            id: 147,
             type: "r",
             question: "Foundation",
             image: false,
           },
           {
-            id: 154,
+            id: 148,
             type: "b",
             question: "Start",
             options: [
@@ -4023,7 +3793,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 155,
+            id: 149,
             type: "b",
             question: "Push Start  ",
             options: [
@@ -4054,7 +3824,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 156,
+            id: 150,
             type: "b",
             question: "Steering Adjustment",
             options: [
@@ -4079,7 +3849,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 157,
+            id: 151,
             type: "b",
             question: "Test Drive Done By",
             options: [
