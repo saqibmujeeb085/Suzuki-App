@@ -21,6 +21,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const EditProblems = ({ navigation, route }) => {
   const { id, location } = route.params || {};
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const [problems, setProblems] = useState({
     repaint: {
@@ -264,6 +265,11 @@ const EditProblems = ({ navigation, route }) => {
       console.error("Error saving car data:", error);
     }
   };
+  const openImageModal = (imageUri) => {
+    setSelectedImage(imageUri);
+    console.log(imageUri);
+    setModalVisible(true);
+  };
 
   return (
     <AppScreen>
@@ -397,6 +403,54 @@ const EditProblems = ({ navigation, route }) => {
           Save
         </GradientButton>
       </View>
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)} // Close modal when back is pressed
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              position: "relative",
+              height: "60%",
+              width: "90%",
+              borderRadius: 15,
+              padding: 10,
+              backgroundColor: "#FFFFFF",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View style={styles.closeButton}>
+              <MaterialCommunityIcons
+                name="close"
+                size={20}
+                color={colors.fontWhite}
+                onPress={() => setModalVisible(false)}
+              />
+            </View>
+            <Image
+              source={{
+                uri: selectedImage,
+              }}
+              style={{
+                objectFit: "contain",
+                flex: 1,
+                width: "100%",
+                borderRadius: 5,
+                overflow: "hidden",
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </AppScreen>
   );
 };

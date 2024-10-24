@@ -12,7 +12,7 @@ const CarBodyView = ({ carBodyData }) => {
     "Major Dent": "D2",
     "Minor Scratch": "S1",
     "Major Scratch": "S2",
-    "Panel Replaced": "R",
+    "Replaced Panel": "R",
     // Add more mappings as needed
   };
 

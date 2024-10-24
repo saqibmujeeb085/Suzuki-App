@@ -261,16 +261,16 @@ const CarBodyDetails = ({ navigation, route }) => {
               onChangeText={(value) => setChasisNo(value)}
               val={chasisNo}
             />
+            <SingleImagePicker
+              onImageSelected={handleImageSelected}
+              onRemoveImage={handleRemoveImage}
+            />
             <AppTextInput
               placeholder={`Engine No After (${
                 engineData?.[carData?.carId]?.[0]?.value || ""
               })`}
               onChangeText={(value) => setEngineNo(value)}
               val={engineNo}
-            />
-            <SingleImagePicker
-              onImageSelected={handleImageSelected}
-              onRemoveImage={handleRemoveImage}
             />
 
             <Dropdown

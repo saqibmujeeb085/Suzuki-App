@@ -1,4 +1,4 @@
-import { StyleSheet, View, Keyboard } from "react-native";
+import { StyleSheet, View, Keyboard, Image } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import AppScreen from "../../components/screen/Screen";
 import InspectionHeader from "../../components/header/InspectionHeader";
@@ -9,6 +9,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import AppTextInput from "../../components/formFields/TextInput";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors } from "../../constants/colors";
+import SingleImagePicker from "../../components/imagePicker/singleImagePicjer";
 
 const EditCarInfo = ({ navigation, route }) => {
   const [
@@ -30,6 +31,12 @@ const EditCarInfo = ({ navigation, route }) => {
     setCapacitiesData,
     citiesData,
     setCitiesData,
+    provinceData,
+    setProvinceData,
+    chasisData,
+    setChasisData,
+    engineData,
+    setEngineData,
   ] = useContext(FormDataContext);
 
   const { id } = route.params || {};
@@ -55,6 +62,8 @@ const EditCarInfo = ({ navigation, route }) => {
   const [owner, setOwner] = useState("");
   const [registrationNo, setRegistrationNo] = useState("");
   const [registrationNoNew, setRegistrationNoNew] = useState("");
+  const [provienceNew, setProvience] = useState("");
+  const [vinImageNew, setVinImage] = useState("");
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   // New states for manufacturer, model, and variant names
@@ -114,6 +123,14 @@ const EditCarInfo = ({ navigation, route }) => {
       return varient ? varient.value : "Unknown Varient";
     }
     return "Unknown Model";
+  };
+
+  const handleImageSelected = (image) => {
+    setVinImage(image); // set the vinImage state with the selected image
+  };
+
+  const handleRemoveImage = () => {
+    setVinImage(null); // Remove the image from state when it's removed
   };
 
   useEffect(() => {
@@ -277,6 +294,13 @@ const EditCarInfo = ({ navigation, route }) => {
           />
 
           <Dropdown
+            DropItems="Province"
+            Data={provinceData}
+            save={"value"}
+            selectedItem={setProvience}
+          />
+
+          <Dropdown
             DropItems={owner}
             Data={[
               { key: "1", value: "1" },
@@ -309,6 +333,23 @@ const EditCarInfo = ({ navigation, route }) => {
             onChangeText={(value) => setChasisNoNew(value)}
             val={chasisNoNew}
           />
+          <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+            {vinImageNew == ("" || null) && (
+              <Image
+                source={{ uri: carInfo?.vinImage.uri }}
+                style={{
+                  justifyContent: "cover",
+                  height: 65,
+                  width: 65,
+                  borderRadius: 5,
+                }}
+              />
+            )}
+            <SingleImagePicker
+              onImageSelected={handleImageSelected}
+              onRemoveImage={handleRemoveImage}
+            />
+          </View>
           <AppTextInput
             placeholder={`Engine No: (${engineNo || "Enter Engine No"})`}
             onChangeText={(value) => setEngineNoNew(value)}
