@@ -43,6 +43,10 @@ const EditCarInfo = ({ navigation, route }) => {
 
   const [carInfo, setCarInfo] = useState(null);
 
+  useEffect(() => {
+    getCarDataByTempID(`${id}`);
+  }, []);
+
   const [manufacturer, setManufacturer] = useState("");
   const [carModel, setCarModel] = useState("");
   const [carVarient, setCarVarient] = useState("");
@@ -70,10 +74,6 @@ const EditCarInfo = ({ navigation, route }) => {
   const [manufacturerName, setManufacturerName] = useState("");
   const [carModelName, setCarModelName] = useState("");
   const [carVarientName, setCarVarientName] = useState("");
-
-  useEffect(() => {
-    getCarDataByTempID(`${id}`);
-  }, []);
 
   const getCarDataByTempID = async (tempID) => {
     try {
@@ -150,6 +150,7 @@ const EditCarInfo = ({ navigation, route }) => {
       setMilage(carInfo?.mileage || "");
       setOwner(carInfo?.NoOfOwners || "");
       setRegistrationNo(carInfo?.registrationNo || "");
+      setProvience(carInfo?.province || "");
 
       // Update manufacturer, model, and variant names
       setManufacturerName(getManufacturer(carInfo?.mfgId));
@@ -179,6 +180,9 @@ const EditCarInfo = ({ navigation, route }) => {
   }, []);
 
   const updateCarData = async () => {
+    const chasisCode = chasisData?.[carModel]?.[0]?.value || "";
+    const engineCode = engineData?.[carModel]?.[0]?.value || "";
+
     try {
       const storedData = await AsyncStorage.getItem("@carformdata");
       if (storedData !== null) {
@@ -197,10 +201,12 @@ const EditCarInfo = ({ navigation, route }) => {
               transmissionType: transmissionsType,
               engineDisplacement: engineCapacity,
               registrationCity: registrationCity,
-              chasisNo: chasisNoNew ? chasisNoNew : chasisNo,
-              EngineNo: engineNoNew ? engineNoNew : engineNo,
+              chasisNo: chasisNoNew ? `${chasisCode}-${chasisNoNew}` : chasisNo,
+              EngineNo: engineNoNew ? `${engineCode}-${engineNoNew}` : engineNo,
               mileage: milageNew ? milageNew : milage,
               NoOfOwners: owner,
+              province: provienceNew,
+              vinImage: vinImageNew ? vinImageNew : carInfo.vinImage,
               registrationNo: registrationNoNew
                 ? registrationNoNew
                 : registrationNo,
@@ -230,49 +236,42 @@ const EditCarInfo = ({ navigation, route }) => {
       <KeyboardAwareScrollView>
         <View style={styles.InspectionformContainer}>
           <Dropdown
-            DropItems={manufacturerName}
-            Data={manufacturersData}
+            DropItems={"Select Manufacturer"} // Displayed item
+            Data={manufacturersData} // Dropdown options
             save={"key"}
-            selectedItem={setManufacturer}
-            placeholder={`Manufacturer (${
-              manufacturerName || "Select Manufacturer"
-            })`}
+            selectedItem={setManufacturer} // State update function
           />
 
           <Dropdown
-            DropItems={carModelName}
+            DropItems={"Select Car Model"}
             Data={modelsData[manufacturer] || []}
             save={"key"}
             selectedItem={setCarModel}
-            placeholder={`Model (${carModelName || "Select Model"})`}
           />
 
           <Dropdown
-            DropItems={carVarientName}
+            DropItems={"Select Car Varient"}
             Data={varientsData[carModel] || []}
             save={"key"}
             selectedItem={setCarVarient}
-            placeholder={`Car Varient (${carVarientName || "Select Varient"})`}
           />
 
           <Dropdown
-            DropItems={carYear}
+            DropItems={"Select Car Year"}
             Data={yearsData[carModel] || []}
             save={"value"}
             selectedItem={setCarYear}
-            placeholder={`Manufacturing Year (${carYear || "Select Year"})`}
           />
 
           <Dropdown
-            DropItems={carColor}
+            DropItems={"Select Car Color"}
             Data={colorsData}
             save={"value"}
             selectedItem={setCarColor}
-            placeholder={`Color (${carColor || "Select Color"})`}
           />
 
           <Dropdown
-            DropItems={cplc}
+            DropItems={"Select CPLC"}
             Data={[
               { key: "Cleared", value: "Cleared" },
               { key: "Non-Cleared", value: "Non-Cleared" },
@@ -283,25 +282,22 @@ const EditCarInfo = ({ navigation, route }) => {
           />
 
           <Dropdown
-            DropItems={registrationCity}
+            DropItems={"Select Registration City"}
             Data={citiesData}
             save={"value"}
             selectedItem={setRegistrationCity}
-            placeholder={`Registration City (${
-              registrationCity || "Select City"
-            })`}
             Search={true}
           />
 
           <Dropdown
-            DropItems="Province"
+            DropItems={"Select Province"}
             Data={provinceData}
             save={"value"}
             selectedItem={setProvience}
           />
 
           <Dropdown
-            DropItems={owner}
+            DropItems={"Select No Of Owner"}
             Data={[
               { key: "1", value: "1" },
               { key: "2", value: "2" },
@@ -311,7 +307,6 @@ const EditCarInfo = ({ navigation, route }) => {
             ]}
             save={"value"}
             selectedItem={setOwner}
-            placeholder={`No Of Owners (${owner || "Select No Of Owners"})`}
           />
 
           <AppTextInput
@@ -321,11 +316,10 @@ const EditCarInfo = ({ navigation, route }) => {
           />
 
           <Dropdown
-            DropItems={fuelType}
+            DropItems={"Select fuelType"}
             Data={fuelsData}
             save={"value"}
             selectedItem={setFuelType}
-            placeholder={`Fuel Type (${fuelType || "Select Fuel Type"})`}
           />
 
           <AppTextInput
@@ -334,7 +328,7 @@ const EditCarInfo = ({ navigation, route }) => {
             val={chasisNoNew}
           />
           <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-            {vinImageNew == ("" || null) && (
+            {vinImageNew == "" || vinImageNew == null ? (
               <Image
                 source={{ uri: carInfo?.vinImage.uri }}
                 style={{
@@ -344,6 +338,8 @@ const EditCarInfo = ({ navigation, route }) => {
                   borderRadius: 5,
                 }}
               />
+            ) : (
+              ""
             )}
             <SingleImagePicker
               onImageSelected={handleImageSelected}
@@ -357,13 +353,10 @@ const EditCarInfo = ({ navigation, route }) => {
           />
 
           <Dropdown
-            DropItems={transmissionsType}
+            DropItems={"Select TransmissionsType"}
             Data={transmissionsData}
             save={"value"}
             selectedItem={setTransmissionsType}
-            placeholder={`Transmission Type (${
-              transmissionsType || "Select Transmission Type"
-            })`}
           />
 
           <AppTextInput
@@ -373,13 +366,10 @@ const EditCarInfo = ({ navigation, route }) => {
           />
 
           <Dropdown
-            DropItems={engineCapacity}
+            DropItems={"Select EngineCapacity"}
             Data={capacitiesData}
             save={"value"}
             selectedItem={setEngineCapacity}
-            placeholder={`Engine Capacity (${
-              engineCapacity || "Select Engine Capacity"
-            })`}
           />
         </View>
       </KeyboardAwareScrollView>

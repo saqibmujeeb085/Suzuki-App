@@ -172,6 +172,7 @@ const InspectionBoard = ({ navigation, route }) => {
   }, []);
 
   const viewReport = () => {
+    setSubmitShow((prevShow) => !prevShow);
     navigation.navigate("ViewReport", {
       id: `${id}`,
     });
@@ -196,7 +197,7 @@ const InspectionBoard = ({ navigation, route }) => {
           "@carformdata",
           JSON.stringify(updatedCarFormDataArray)
         );
-
+        setSubmitShow((prevShow) => !prevShow);
         navigation.navigate("Home");
       } else {
         console.log("No car data found in AsyncStorage");
