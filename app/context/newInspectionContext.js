@@ -27,6 +27,7 @@ const InspecteCarProvider = ({ children }) => {
     mileage: "",
     registrationCity: "",
     FuelType: "",
+    provience: "",
     color: "",
     status: "draft",
   };

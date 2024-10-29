@@ -22,21 +22,21 @@ const Settings = ({ navigation }) => {
         <View
           style={{ gap: 10, paddingHorizontal: 20, flex: 1, paddingBottom: 20 }}
         >
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={styles.btn}
             activeOpacity={0.9}
-            onPress={() => navigation.navigate("UploadProgress")}
+            onPress={() => navigation.navigate("SoldCars")}
           >
             <View style={styles.btnDesign}>
               <MaterialCommunityIcons
-                name="progress-upload"
+                name="car"
                 size={30}
                 color={colors.purple}
               />
-              <AppText>Uploading Inspections</AppText>
+              <AppText>Sold Cars</AppText>
             </View>
             <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.btn}
             activeOpacity={0.9}

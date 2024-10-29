@@ -104,6 +104,7 @@ const CarFiles = ({ navigation }) => {
       engineDisplacement: carData.engineDisplacement,
       model: carData.model,
       cplc: cplc,
+      province: carData.province,
       buyingCode: carData.buyingCode,
       NoOfOwners: carData.NoOfOwners,
       transmissionType: carData.transmissionType,
@@ -199,6 +200,7 @@ const CarFiles = ({ navigation }) => {
       engineDisplacement: carData.engineDisplacement,
       model: carData.model,
       cplc: cplc,
+      province: carData.province,
       buyingCode: carData.buyingCode,
       NoOfOwners: carData.NoOfOwners,
       transmissionType: carData.transmissionType,
@@ -309,7 +311,7 @@ const CarFiles = ({ navigation }) => {
         />
       )}
       <InspectionHeader
-        rightText={"Cancel"}
+        // rightText={"Cancel"}
         onPress={() => navigation.goBack()}
       >
         Uploads

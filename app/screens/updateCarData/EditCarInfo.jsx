@@ -10,6 +10,8 @@ import AppTextInput from "../../components/formFields/TextInput";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors } from "../../constants/colors";
 import SingleImagePicker from "../../components/imagePicker/singleImagePicjer";
+import AppText from "../../components/text/Text";
+import { mainStyles } from "../../constants/style";
 
 const EditCarInfo = ({ navigation, route }) => {
   const [
@@ -234,6 +236,15 @@ const EditCarInfo = ({ navigation, route }) => {
         Edit Car Info
       </InspectionHeader>
       <KeyboardAwareScrollView>
+        <View style={{ marginBottom: 20 }}>
+          <AppText
+            color={colors.red}
+            textAlign={"center"}
+            fontFamily={mainStyles.appFontBold}
+          >
+            Just Select Those Fields You Want To Change
+          </AppText>
+        </View>
         <View style={styles.InspectionformContainer}>
           <Dropdown
             DropItems={"Select Manufacturer"} // Displayed item

@@ -68,6 +68,7 @@ const Drafts = ({ navigation }) => {
       if (storedData) {
         const parsedData = JSON.parse(storedData);
         const draftData = parsedData.filter((item) => item.status === "draft");
+
         setFullData(draftData);
       }
     } catch (error) {

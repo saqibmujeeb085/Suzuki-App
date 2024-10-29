@@ -211,7 +211,7 @@ const CarBodyDetails = ({ navigation, route }) => {
   return (
     <AppScreen>
       <InspectionHeader
-        rightText={"Cancel"}
+        // rightText={"Cancel"}
         onPress={() => navigation.goBack()}
       >
         Car Details

@@ -198,7 +198,7 @@ const InspectionBoard = ({ navigation, route }) => {
           JSON.stringify(updatedCarFormDataArray)
         );
         setSubmitShow((prevShow) => !prevShow);
-        navigation.navigate("Home");
+        navigation.push("Home");
       } else {
         console.log("No car data found in AsyncStorage");
       }
@@ -209,7 +209,7 @@ const InspectionBoard = ({ navigation, route }) => {
 
   const handleSaveForLater = useCallback(() => {
     setShow((prevShow) => !prevShow);
-    navigation.navigate("Draft");
+    navigation.push("Draft");
   }, [navigation]);
 
   useFocusEffect(

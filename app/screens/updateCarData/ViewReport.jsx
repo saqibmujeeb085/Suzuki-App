@@ -224,7 +224,7 @@ const ViewReport = ({ navigation, route }) => {
 
   const handleSaveForLater = useCallback(() => {
     setShow((prevShow) => !prevShow);
-    navigation.navigate("Draft");
+    navigation.push("Draft");
   }, [navigation]);
 
   const ShowModal = useCallback(() => {
@@ -289,8 +289,8 @@ const ViewReport = ({ navigation, route }) => {
           );
 
           console.log("Status changed successfully");
-          // Navigate back to "Draft" or any other screen
-          navigation.navigate("Home");
+
+          navigation.push("Home");
         } else {
           console.log(
             "No car data found with the given tempID:",
@@ -571,6 +571,25 @@ const ViewReport = ({ navigation, route }) => {
                 {carInfo?.registrationCity}
               </AppText>
             </View>
+
+            <View style={styles.infoContainer}>
+              <AppText style={{ fontSize: mainStyles.h3FontSize }}>
+                Province:
+              </AppText>
+              <AppText
+                fontSize={mainStyles.h3FontSize}
+                width={150}
+                textAlign={"right"}
+                style={{
+                  fontSize: mainStyles.h3FontSize,
+                  color: colors.fontGrey,
+                  width: 200,
+                }}
+              >
+                {carInfo?.province}
+              </AppText>
+            </View>
+
             <View style={styles.infoContainer}>
               <AppText style={{ fontSize: mainStyles.h3FontSize }}>
                 Fuel Type:
