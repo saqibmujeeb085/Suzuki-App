@@ -22,6 +22,7 @@ import InspectionHeader from "../../components/header/InspectionHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FormDataContext } from "../../context/formDataContext";
 import { categories } from "../../data/categoriesdata";
+import { useTimer } from "../../context/timerContext";
 
 const InspectionBoard = ({ navigation, route }) => {
   const { id } = route.params || {};
@@ -45,7 +46,15 @@ const InspectionBoard = ({ navigation, route }) => {
     setCapacitiesData,
     citiesData,
     setCitiesData,
+    provinceData,
+    setProvinceData,
+    chasisData,
+    setChasisData,
+    engineData,
+    setEngineData,
   ] = useContext(FormDataContext);
+
+  const { formatTime, startTimer, stopTimer, isRunning } = useTimer();
 
   const [checkCategories, setCheckCategories] = useState([]);
   const [show, setShow] = useState(false);
@@ -53,8 +62,6 @@ const InspectionBoard = ({ navigation, route }) => {
   const [allInspectionsDone, setAllInspectionsDone] = useState(false);
   const [loading, setLoading] = useState(true); // Initialize loading to true
   const [carInfo, setCarInfo] = useState(null);
-
-  useEffect(() => {}, []);
 
   const fetchData = useCallback(async () => {
     await getCarDataByTempID(id);
@@ -148,6 +155,8 @@ const InspectionBoard = ({ navigation, route }) => {
         const carData = carFormDataArray.find((item) => item.tempID === tempID);
         if (carData) {
           setCarInfo(carData);
+          console.log(carData);
+
           return carData;
         } else {
           console.log("No data found with tempID:", tempID);
@@ -163,6 +172,12 @@ const InspectionBoard = ({ navigation, route }) => {
     }
   };
 
+  useEffect(() => {
+    if (!isRunning && carInfo != null) {
+      startTimer(carInfo?.timer);
+    }
+  }, [carInfo]);
+
   const ShowModal = useCallback(() => {
     setShow((prevShow) => !prevShow);
   }, []);
@@ -175,11 +190,14 @@ const InspectionBoard = ({ navigation, route }) => {
     setSubmitShow((prevShow) => !prevShow);
     navigation.navigate("ViewReport", {
       id: `${id}`,
+      time: formatTime(),
     });
   };
 
   const changeStatus = async () => {
     try {
+      const chasisCode = chasisData?.[carInfo?.carId]?.[0]?.value || "";
+      const engineCode = engineData?.[carInfo?.carId]?.[0]?.value || "";
       const storedData = await AsyncStorage.getItem("@carformdata");
       if (storedData !== null) {
         const carFormDataArray = JSON.parse(storedData);
@@ -187,7 +205,10 @@ const InspectionBoard = ({ navigation, route }) => {
           if (item.tempID === id) {
             return {
               ...item,
+              timer: formatTime(),
               status: "inspected",
+              engineNo: `${engineCode}-${carInfo.engineNo}`,
+              chasisNo: `${chasisCode}-${carInfo.chasisNo}`,
             };
           }
           return item;
@@ -197,6 +218,7 @@ const InspectionBoard = ({ navigation, route }) => {
           "@carformdata",
           JSON.stringify(updatedCarFormDataArray)
         );
+        stopTimer();
         setSubmitShow((prevShow) => !prevShow);
         navigation.push("Home");
       } else {
@@ -207,10 +229,35 @@ const InspectionBoard = ({ navigation, route }) => {
     }
   };
 
-  const handleSaveForLater = useCallback(() => {
-    setShow((prevShow) => !prevShow);
-    navigation.push("Draft");
-  }, [navigation]);
+  const handleSaveForLater = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carformdata");
+      if (storedData !== null) {
+        const carFormDataArray = JSON.parse(storedData);
+        const updatedCarFormDataArray = carFormDataArray.map((item) => {
+          if (item.tempID === id) {
+            return {
+              ...item,
+              timer: formatTime(),
+            };
+          }
+          return item;
+        });
+
+        await AsyncStorage.setItem(
+          "@carformdata",
+          JSON.stringify(updatedCarFormDataArray)
+        );
+        stopTimer();
+        setShow((prevShow) => !prevShow);
+        navigation.navigate("Draft");
+      } else {
+        console.log("No car data found in AsyncStorage");
+      }
+    } catch (error) {
+      console.error("Error updating Inspection Time:", error);
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -306,28 +353,31 @@ const InspectionBoard = ({ navigation, route }) => {
                   Varient: {getCarVarient(carInfo?.varientId, carInfo?.carId)}
                 </AppText>
               </View>
-              {/* <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
-                <View style={styles.timer}>
-                  <Image
-                    source={require("../../assets/componentsImages/timer.png")}
-                  />
-                  <View style={styles.time}>
-                    <AppText
-                      color={colors.fontWhite}
-                      fontSize={mainStyles.h4FontSize}
-                    >
-                      Time Left
-                    </AppText>
-                    <AppText
-                      color={colors.fontWhite}
-                      fontSize={mainStyles.h2FontSize}
-                    >
-                      19:25
-                    </AppText>
-                  </View>
+
+              <View style={styles.timer}>
+                <Image
+                  source={require("../../assets/componentsImages/timer.png")}
+                />
+                <View style={styles.time}>
+                  <AppText
+                    color={colors.fontWhite}
+                    fontSize={mainStyles.h4FontSize}
+                    width={100}
+                  >
+                    Total Time
+                  </AppText>
+                  <AppText
+                    color={
+                      formatTime() >= "20:00" ? colors.red : colors.fontWhite
+                    }
+                    fontSize={mainStyles.h2FontSize}
+                  >
+                    {formatTime()}
+                  </AppText>
                 </View>
-              </TouchableOpacity> */}
-              <Image
+              </View>
+
+              {/* <Image
                 source={require("../../assets/icon.png")}
                 style={{
                   width: 40,
@@ -335,7 +385,7 @@ const InspectionBoard = ({ navigation, route }) => {
                   objectFit: "contain",
                   borderRadius: 50,
                 }}
-              />
+              /> */}
             </View>
             <View style={styles.breakLine} />
             <View style={styles.summaryContainer}>

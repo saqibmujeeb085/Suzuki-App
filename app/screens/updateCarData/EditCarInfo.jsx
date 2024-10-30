@@ -181,10 +181,9 @@ const EditCarInfo = ({ navigation, route }) => {
     };
   }, []);
 
+  const chasisCode = chasisData?.[carModel]?.[0]?.value || "";
+  const engineCode = engineData?.[carModel]?.[0]?.value || "";
   const updateCarData = async () => {
-    const chasisCode = chasisData?.[carModel]?.[0]?.value || "";
-    const engineCode = engineData?.[carModel]?.[0]?.value || "";
-
     try {
       const storedData = await AsyncStorage.getItem("@carformdata");
       if (storedData !== null) {
@@ -203,8 +202,8 @@ const EditCarInfo = ({ navigation, route }) => {
               transmissionType: transmissionsType,
               engineDisplacement: engineCapacity,
               registrationCity: registrationCity,
-              chasisNo: chasisNoNew ? `${chasisCode}-${chasisNoNew}` : chasisNo,
-              EngineNo: engineNoNew ? `${engineCode}-${engineNoNew}` : engineNo,
+              chasisNo: chasisNoNew ? chasisNoNew : chasisNo,
+              EngineNo: engineNoNew ? engineNoNew : engineNo,
               mileage: milageNew ? milageNew : milage,
               NoOfOwners: owner,
               province: provienceNew,
@@ -334,7 +333,7 @@ const EditCarInfo = ({ navigation, route }) => {
           />
 
           <AppTextInput
-            placeholder={`Chasis no: ${chasisNo}`}
+            placeholder={`Chasis No After ${chasisCode}`}
             onChangeText={(value) => setChasisNoNew(value)}
             val={chasisNoNew}
           />
@@ -358,7 +357,7 @@ const EditCarInfo = ({ navigation, route }) => {
             />
           </View>
           <AppTextInput
-            placeholder={`Engine No: (${engineNo || "Enter Engine No"})`}
+            placeholder={`Engine No After ${engineCode}`}
             onChangeText={(value) => setEngineNoNew(value)}
             val={engineNoNew}
           />

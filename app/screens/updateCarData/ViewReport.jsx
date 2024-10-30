@@ -4,6 +4,7 @@ import {
   View,
   BackHandler,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import React, { useEffect, useState, useCallback, useContext } from "react";
 import AppScreen from "../../components/screen/Screen";
@@ -18,6 +19,7 @@ import { colors } from "../../constants/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Feather from "@expo/vector-icons/Feather";
 import GradientButton from "../../components/buttons/GradientButton";
+import { useTimer } from "../../context/timerContext";
 
 const ViewReport = ({ navigation, route }) => {
   const [
@@ -39,7 +41,15 @@ const ViewReport = ({ navigation, route }) => {
     setCapacitiesData,
     citiesData,
     setCitiesData,
+    provinceData,
+    setProvinceData,
+    chasisData,
+    setChasisData,
+    engineData,
+    setEngineData,
   ] = useContext(FormDataContext);
+
+  const { formatTime, startTimer, stopTimer, isRunning } = useTimer();
 
   const { id } = route.params || {};
   const [show, setShow] = useState(false);
@@ -222,33 +232,7 @@ const ViewReport = ({ navigation, route }) => {
     return "Unknown Model";
   };
 
-  const handleSaveForLater = useCallback(() => {
-    setShow((prevShow) => !prevShow);
-    navigation.push("Draft");
-  }, [navigation]);
-
-  const ShowModal = useCallback(() => {
-    setShow((prevShow) => !prevShow);
-  }, []);
-
-  const editInfo = () => {
-    navigation.navigate("EditCarInfo", { id: `${id}` });
-  };
-
-  const editProblems = (location) => {
-    navigation.navigate("EditProblems", { id: `${id}`, location: location });
-  };
-
-  const editIndicator = (id, mainCat, subCatName, indQuestion) => {
-    navigation.navigate("EditIndicatorsRating", {
-      id: id,
-      mainCat: mainCat,
-      subCatName: subCatName,
-      indQuestion: indQuestion,
-    });
-  };
-
-  const changeStatus = async () => {
+  const handleSaveForLater = async () => {
     try {
       // Retrieve the data from AsyncStorage
       const storedData = await AsyncStorage.getItem("@carformdata");
@@ -276,6 +260,89 @@ const ViewReport = ({ navigation, route }) => {
             if (item.tempID === tempIDAsNumber) {
               return {
                 ...item,
+                timer: formatTime(),
+              };
+            }
+            return item;
+          });
+
+          // Save the updated data back to AsyncStorage
+          await AsyncStorage.setItem(
+            "@carformdata",
+            JSON.stringify(updatedCarFormDataArray)
+          );
+
+          stopTimer();
+          setShow((prevShow) => !prevShow);
+          navigation.navigate("Draft");
+        } else {
+          console.log(
+            "No car data found with the given tempID:",
+            tempIDAsNumber
+          );
+        }
+      } else {
+        console.log("No car data found in AsyncStorage");
+      }
+    } catch (error) {
+      console.error("Error updating car status:", error);
+    }
+  };
+
+  const ShowModal = useCallback(() => {
+    setShow((prevShow) => !prevShow);
+  }, []);
+
+  const editInfo = () => {
+    navigation.navigate("EditCarInfo", { id: `${id}` });
+  };
+
+  const editProblems = (location) => {
+    navigation.navigate("EditProblems", { id: `${id}`, location: location });
+  };
+
+  const editIndicator = (id, mainCat, subCatName, indQuestion) => {
+    navigation.navigate("EditIndicatorsRating", {
+      id: id,
+      mainCat: mainCat,
+      subCatName: subCatName,
+      indQuestion: indQuestion,
+    });
+  };
+
+  const changeStatus = async () => {
+    try {
+      const chasisCode = chasisData?.[carInfo?.carId]?.[0]?.value || "";
+      const engineCode = engineData?.[carInfo?.carId]?.[0]?.value || "";
+      // Retrieve the data from AsyncStorage
+      const storedData = await AsyncStorage.getItem("@carformdata");
+
+      if (storedData !== null) {
+        // Parse the stored data
+        const carFormDataArray = JSON.parse(storedData);
+
+        // Log the carFormDataArray to see if it has valid data
+        console.log("Stored carFormDataArray:", carFormDataArray);
+
+        // Convert id to a number for comparison with tempID
+        const tempIDAsNumber = Number(id);
+
+        // Check if the array contains the car with the matching tempID
+        const carData = carFormDataArray.find(
+          (item) => item.tempID === tempIDAsNumber
+        );
+
+        if (carData) {
+          console.log("Found car data:", carData);
+
+          // Map through the array and update the status of the matching car
+          const updatedCarFormDataArray = carFormDataArray.map((item) => {
+            if (item.tempID === tempIDAsNumber) {
+              return {
+                ...item,
+                timer: formatTime(),
+                engineNo: `${engineCode}-${carInfo.engineNo}`,
+                chasisNo: `${chasisCode}-${carInfo.chasisNo}`,
                 status: "inspected", // Update status to "inspected"
               };
             }
@@ -289,7 +356,7 @@ const ViewReport = ({ navigation, route }) => {
           );
 
           console.log("Status changed successfully");
-
+          stopTimer();
           navigation.push("Home");
         } else {
           console.log(
@@ -328,6 +395,36 @@ const ViewReport = ({ navigation, route }) => {
       >
         Inspection Car Report
       </InspectionHeader>
+      <View
+        style={{
+          justifyContent: "flex-end",
+          flexDirection: "row",
+          paddingHorizontal: 20,
+          paddingBottom: 10,
+        }}
+      >
+        <View style={styles.timer}>
+          <Image
+            source={require("../../assets/componentsImages/timerblack.png")}
+            style={{ height: 30, width: 30 }}
+          />
+          <View style={styles.time}>
+            <AppText
+              color={colors.fontBlack}
+              fontSize={mainStyles.h4FontSize}
+              width={100}
+            >
+              Total Time
+            </AppText>
+            <AppText
+              color={formatTime() >= "20:00" ? colors.red : colors.fontBlack}
+              fontSize={mainStyles.h2FontSize}
+            >
+              {formatTime()}
+            </AppText>
+          </View>
+        </View>
+      </View>
 
       <ScrollView style={[{ marginBottom: 110 }, styles.container]}>
         <View style={styles.contentContainer}>
@@ -881,6 +978,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 16,
+    paddingTop: 0,
   },
 
   infoContainer: {
@@ -901,5 +999,20 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "100%",
     backgroundColor: colors.ligtGreyBg,
+  },
+
+  timer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 5,
+    backgroundColor: colors.whiteBg,
+    padding: 10,
+    borderRadius: 10,
+    elevation: 2,
+  },
+  time: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

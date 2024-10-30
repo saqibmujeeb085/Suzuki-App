@@ -165,10 +165,6 @@ const CarBodyDetails = ({ navigation, route }) => {
     };
   }, []);
 
-  // Ensure safe access to chasisData and engineData
-  const chasisCode = chasisData?.[carData?.carId]?.[0]?.value || "";
-  const engineCode = engineData?.[carData?.carId]?.[0]?.value || "";
-
   const addCarDetails = () => {
     if (
       chasisNo !== "" &&
@@ -186,8 +182,8 @@ const CarBodyDetails = ({ navigation, route }) => {
       setCarData((prevData) => {
         const updatedData = {
           ...prevData,
-          chasisNo: `${chasisCode}-${chasisNo}`,
-          EngineNo: `${engineCode}-${engineNo}`,
+          chasisNo: chasisNo,
+          EngineNo: engineNo,
           engineDisplacement: engineCapacity,
           transmissionType: transmissionsType,
           mileage: milage,

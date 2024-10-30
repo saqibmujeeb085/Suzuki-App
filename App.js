@@ -15,6 +15,7 @@ import {
 import { LoginDataProvider } from "./app/context/loginDataContext";
 import { FormDataProvider } from "./app/context/formDataContext";
 import { DataPostProvider } from "./app/context/dataPostContext";
+import { TimerProvider } from "./app/context/timerContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -55,7 +56,9 @@ export default function App() {
             <SafeAreaProvider>
               <InspecteCarProvider>
                 <DataPostProvider>
-                  <FeedNavigation />
+                  <TimerProvider>
+                    <FeedNavigation />
+                  </TimerProvider>
                 </DataPostProvider>
               </InspecteCarProvider>
             </SafeAreaProvider>

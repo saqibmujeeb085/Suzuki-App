@@ -214,6 +214,7 @@ const startPosting = async (obj, groupedData, carbodyques) => {
   formData.append("color", obj.color);
   formData.append("status", obj.status);
   formData.append("province", obj.province);
+  formData.append("totalTime", obj.timer);
 
   console.log(obj.vinImage);
 

@@ -176,6 +176,17 @@ const SingleCarInfo = ({ route, navigation }) => {
     setModalVisible(true);
   };
 
+  const downloadReport = async () => {
+    const url = `https://suzukiusedcars.com/generate-report.php?downloadreportdirect=${id}`;
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(`Unable to open this URL: ${url}`);
+    }
+  };
+
   let questionNumber = 1;
 
   const openPDFInBrowser = (pdfUrl) => {
@@ -875,6 +886,8 @@ const SingleCarInfo = ({ route, navigation }) => {
                 gap: 10,
                 alignItems: "center",
                 paddingVertical: 10,
+                borderColor: colors.fontGrey,
+                borderBottomWidth: 0.5,
                 flex: 1,
               }}
             >
@@ -904,6 +917,43 @@ const SingleCarInfo = ({ route, navigation }) => {
                 color={colors.fontBlack}
               />
               <AppText>{carInfo?.registration_city}</AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+                paddingVertical: 10,
+                flex: 1,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="timelapse"
+                size={24}
+                style={{
+                  width: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                }}
+                color={colors.fontGrey}
+              />
+              <AppText
+                color={colors.fontGrey}
+                numberOfLines={1}
+                ellipsizeMode={"tail"}
+                width={120}
+                flex={1}
+              >
+                Total Time
+              </AppText>
+              <Ionicons
+                name="remove-outline"
+                size={15}
+                color={colors.fontBlack}
+              />
+              <AppText>{carInfo?.totalTime}</AppText>
             </View>
           </View>
         </View>
@@ -1578,7 +1628,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                 alignItems: "center",
                 paddingHorizontal: 20,
               }}
-              onPress={() => {}}
+              onPress={() => downloadReport()}
             >
               <AppText
                 color={colors.fontBlack}

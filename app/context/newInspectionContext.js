@@ -29,6 +29,7 @@ const InspecteCarProvider = ({ children }) => {
     FuelType: "",
     provience: "",
     color: "",
+    timer: "00:00",
     status: "draft",
   };
 

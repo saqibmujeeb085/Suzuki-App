@@ -22,6 +22,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const EditProblems = ({ navigation, route }) => {
   const { id, location } = route.params || {};
   const [selectedImage, setSelectedImage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(null);
 
   const [problems, setProblems] = useState({
     repaint: {

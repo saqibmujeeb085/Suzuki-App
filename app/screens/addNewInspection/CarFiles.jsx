@@ -112,6 +112,7 @@ const CarFiles = ({ navigation }) => {
       registrationCity: carData.registrationCity,
       FuelType: carData.FuelType,
       color: carData.color,
+      timer: "00:00",
 
       // Add fallbacks for selectedImages and selectedDocuments to prevent errors
       images: (selectedImages || []).map((image, index) => ({
@@ -208,6 +209,7 @@ const CarFiles = ({ navigation }) => {
       registrationCity: carData.registrationCity,
       FuelType: carData.FuelType,
       color: carData.color,
+      timer: "00:00",
 
       // Add fallbacks for selectedImages and selectedDocuments to prevent errors
       images: (selectedImages || []).map((image, index) => ({
