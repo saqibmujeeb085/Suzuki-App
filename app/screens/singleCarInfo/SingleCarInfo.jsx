@@ -177,7 +177,7 @@ const SingleCarInfo = ({ route, navigation }) => {
   };
 
   const downloadReport = async () => {
-    const url = `https://suzukiusedcars.com/generate-report.php?downloadreportdirect=${id}`;
+    const url = `https://suzukiusedcars.com/report/report.php?downloadreportdirect=${id}`;
     const supported = await Linking.canOpenURL(url);
 
     if (supported) {

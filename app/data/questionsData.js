@@ -1199,7 +1199,7 @@ export const questions = [
               {
                 id: 1,
                 value: "good",
-                label: "Not Preset",
+                label: "Not Present",
                 color: colors.blue,
               },
               {
