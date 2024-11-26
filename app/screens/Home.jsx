@@ -54,6 +54,12 @@ const Home = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
 
+  useEffect(() => {
+    if (userData && userData.user && userData.user.duserid) {
+      inspectedCarsData();
+    }
+  }, [userData.user.duserid]);
+
   const getCarModel = (carId, manufacturerId) => {
     const models = modelsData[manufacturerId];
     if (models) {
@@ -123,12 +129,6 @@ const Home = ({ navigation }) => {
     });
     return () => unsubscribe();
   }, []);
-
-  useEffect(() => {
-    if (userData && userData.user && userData.user.duserid) {
-      inspectedCarsData();
-    }
-  }, [userData.user.duserid]);
 
   const userLogout = async () => {
     setUserData({ token: "", user: "" });
@@ -290,28 +290,41 @@ const Home = ({ navigation }) => {
           ))}
           {isConnected ? (
             <View>
-              {loading
-                ? Array(10)
-                    .fill(0)
-                    .map((_, index) => <SkeletonLoader key={index} />)
-                : inspectedCar.map((item) => (
-                    <InspectionCard
-                      key={item?.inpsectionid}
-                      carId={item?.inpsectionid}
-                      car={item?.carName}
-                      varient={item?.varientId}
-                      mileage={item?.mileage}
-                      date={item?.inspection_date}
-                      carImage={item?.carimage}
-                      rank={item?.rating}
-                      onPress={() =>
-                        navigation.navigate("SingleCar", {
-                          id: item?.inpsectionid,
-                          rating: item?.rating,
-                        })
-                      }
-                    />
-                  ))}
+              {loading ? (
+                Array(10)
+                  .fill(0)
+                  .map((_, index) => <SkeletonLoader key={index} />)
+              ) : inspectedCar.length > 0 ? (
+                inspectedCar.map((item) => (
+                  <InspectionCard
+                    key={item?.inpsectionid}
+                    carId={item?.inpsectionid}
+                    car={item?.carName}
+                    varient={item?.varientId}
+                    mileage={item?.mileage}
+                    date={item?.inspection_date}
+                    carImage={item?.carimage}
+                    rank={item?.rating}
+                    onPress={() =>
+                      navigation.navigate("SingleCar", {
+                        id: item?.inpsectionid,
+                        rating: item?.rating,
+                      })
+                    }
+                  />
+                ))
+              ) : (
+                <View
+                  style={{
+                    padding: 20,
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <AppText>You don't have any inspections.</AppText>
+                </View>
+              )}
             </View>
           ) : (
             <View
