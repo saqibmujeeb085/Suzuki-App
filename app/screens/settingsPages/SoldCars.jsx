@@ -77,30 +77,38 @@ const SoldCars = ({ navigation }) => {
       >
         {isConnected ? (
           <View>
-            {loading
-              ? Array(10)
-                  .fill(0)
-                  .map((_, index) => <SkeletonLoader key={index} />)
-              : inspectedCar.map((item) => (
-                  <InspectionCard
-                    key={item?.inpsectionid || index} // Handle undefined key case
-                    carId={item?.inpsectionid}
-                    car={item?.carName}
-                    variant={item?.varientId} // Correct typo if necessary
-                    mileage={item?.mileage}
-                    date={item?.inspection_date}
-                    carImage={item?.carimage}
-                    rank={item?.rating}
-                    onPress={
-                      () => {}
-                      //   navigation.navigate("SingleCar", {
-                      //     id: item?.inpsectionid,
-                      //     rating: item?.rating,
-                      //   }
-                      //   )
-                    }
-                  />
-                ))}
+            {loading ? (
+              Array(10)
+                .fill(0)
+                .map((_, index) => <SkeletonLoader key={index} />)
+            ) : inspectedCar.length > 0 ? (
+              inspectedCar.map((item) => (
+                <InspectionCard
+                  key={item?.inpsectionid || index} // Handle undefined key case
+                  carId={item?.inpsectionid}
+                  car={item?.carName}
+                  variant={item?.varientId} // Correct typo if necessary
+                  mileage={item?.mileage}
+                  date={item?.inspection_date}
+                  carImage={item?.carimage}
+                  rank={item?.rating}
+                  onPress={() => {
+                    // Add navigation logic here if needed
+                  }}
+                />
+              ))
+            ) : (
+              <View
+                style={{
+                  padding: 20,
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <AppText>You don't have any Sold Cars.</AppText>
+              </View>
+            )}
           </View>
         ) : (
           <View

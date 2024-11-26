@@ -126,66 +126,81 @@ const CustomersProfile = ({ navigation }) => {
               You Don't Have Any Customers Yet.
             </AppText>
           ) : (
-            customerData.map((customer) => (
-              <View
-                key={customer.customerId}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: 20,
-                  borderRadius: 10,
-                  elevation: 2,
-                  backgroundColor: colors.whiteBg,
-                  padding: 20,
-                }}
-              >
+            <View>
+              {customerData.length > 0 ? (
+                customerData.map((customer) => (
+                  <View
+                    key={customer?.customerId || Math.random()} // Fallback key if customerId is undefined
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: 20,
+                      borderRadius: 10,
+                      elevation: 2,
+                      backgroundColor: colors.whiteBg,
+                      padding: 20,
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        gap: 10,
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                      }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: colors.purple,
+                          padding: 10,
+                          height: 50,
+                          width: 50,
+                          borderRadius: 200,
+                          elevation: 2,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <FontAwesome5
+                          name="user"
+                          size={20}
+                          color={colors.whiteBg}
+                        />
+                      </View>
+                      <View style={{ gap: 5 }}>
+                        <AppText>Name: {customer.name}</AppText>
+                        <AppText>CNIC: {customer.cnic}</AppText>
+                      </View>
+                    </View>
+
+                    <View style={styles.actionButtons}>
+                      <TouchableOpacity
+                        style={styles.IconButton}
+                        activeOpacity={0.6}
+                      >
+                        <MaterialCommunityIcons
+                          name={"eye-outline"}
+                          size={25}
+                          color={colors.purple}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))
+              ) : (
                 <View
                   style={{
-                    flexDirection: "row",
-                    gap: 10,
-                    justifyContent: "flex-start",
+                    padding: 20,
+                    flex: 1,
+                    justifyContent: "center",
                     alignItems: "center",
                   }}
                 >
-                  <View
-                    style={{
-                      backgroundColor: colors.purple,
-                      padding: 10,
-                      height: 50,
-                      width: 50,
-                      borderRadius: 200,
-                      elevation: 2,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <FontAwesome5
-                      name="user"
-                      size={20}
-                      color={colors.whiteBg}
-                    />
-                  </View>
-                  <View style={{ gap: 5 }}>
-                    <AppText>Name: {customer.name}</AppText>
-                    <AppText>CNIC: {customer.cnic}</AppText>
-                  </View>
+                  <AppText>No Customer Found.</AppText>
                 </View>
-
-                <View style={styles.actionButtons}>
-                  <TouchableOpacity
-                    style={styles.IconButton}
-                    activeOpacity={0.6}
-                  >
-                    <MaterialCommunityIcons
-                      name={"eye-outline"}
-                      size={25}
-                      color={colors.purple}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))
+              )}
+            </View>
           )}
         </View>
       </ScrollView>
