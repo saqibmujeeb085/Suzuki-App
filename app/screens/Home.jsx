@@ -108,14 +108,14 @@ const Home = ({ navigation }) => {
   }, []);
 
   // Trigger event when AsyncStorage is updated
-  const updateAsyncStorage = async (newData) => {
-    try {
-      await AsyncStorage.setItem("@carformdata", JSON.stringify(newData));
-      DeviceEventEmitter.emit("dataUpdated"); // Emit the event for changes
-    } catch (error) {
-      console.error("Error updating AsyncStorage", error);
-    }
-  };
+  // const updateAsyncStorage = async (newData) => {
+  //   try {
+  //     await AsyncStorage.setItem("@carformdata", JSON.stringify(newData));
+  //     DeviceEventEmitter.emit("dataUpdated"); // Emit the event for changes
+  //   } catch (error) {
+  //     console.error("Error updating AsyncStorage", error);
+  //   }
+  // };
 
   useFocusEffect(
     useCallback(() => {
