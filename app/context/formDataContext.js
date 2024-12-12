@@ -472,13 +472,61 @@ const FormDataProvider = ({ children }) => {
 
   ///////////////////////////////////////////////////////////////
 
+  // useEffect(() => {
+  //   const checkNetworkAndLoadData = async () => {
+  //     const state = await NetInfo.fetch();
+  //     if (state.isConnected) {
+  //       await fetchDataFromServer();
+  //     } else {
+  //       loadLocalStorageData(); // Ensure this is called immediately if offline
+  //     }
+  //   };
+
+  //   checkNetworkAndLoadData();
+
+  //   // Subscribe to network status changes
+  //   const unsubscribe = NetInfo.addEventListener((state) => {
+  //     if (state.isConnected) {
+  //       fetchDataFromServer();
+  //     } else {
+  //       loadLocalStorageData();
+  //     }
+  //   });
+
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
+
+  // /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // useEffect(() => {
+  //   const unsubscribe = NetInfo.addEventListener(async (state) => {
+  //     if (state.isConnected) {
+  //       await fetchDataFromServer();
+  //     } else {
+  //       await loadLocalStorageData();
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
+
   useEffect(() => {
     const checkNetworkAndLoadData = async () => {
-      const state = await NetInfo.fetch();
-      if (state.isConnected) {
-        await fetchDataFromServer();
-      } else {
-        loadLocalStorageData(); // Ensure this is called immediately if offline
+      try {
+        const state = await NetInfo.fetch();
+
+        if (state.isConnected) {
+          // Add a 2-second delay for the initial fetch
+          setTimeout(async () => {
+            await fetchDataWithDelay();
+          }, 2000);
+        } else {
+          loadLocalStorageData(); // Load local data if offline
+        }
+      } catch (error) {
+        console.log("Error during initial check:", error);
       }
     };
 
@@ -487,7 +535,7 @@ const FormDataProvider = ({ children }) => {
     // Subscribe to network status changes
     const unsubscribe = NetInfo.addEventListener((state) => {
       if (state.isConnected) {
-        fetchDataFromServer();
+        fetchDataWithDelay();
       } else {
         loadLocalStorageData();
       }
@@ -497,6 +545,30 @@ const FormDataProvider = ({ children }) => {
       unsubscribe();
     };
   }, []);
+
+  // Function to handle fetch with delay
+  const fetchDataWithDelay = async () => {
+    const now = Date.now();
+
+    // Check the last update time from AsyncStorage
+    const lastUpdate = await AsyncStorage.getItem("@lastUpdateTimestamp");
+    const lastUpdateTime = lastUpdate ? parseInt(lastUpdate, 10) : 0;
+
+    // If it's been less than 2 hours since the last update, skip fetching
+    if (now - lastUpdateTime < 2 * 60 * 60 * 1000) {
+      console.log("Skipping fetch: Last update was within 2 hours.");
+      return;
+    }
+
+    // Proceed to fetch data and update the timestamp
+    try {
+      console.log("Fetching data from server...");
+      await fetchDataFromServer();
+      await AsyncStorage.setItem("@lastUpdateTimestamp", now.toString());
+    } catch (error) {
+      console.log("Error during fetch with delay:", error);
+    }
+  };
 
   return (
     <FormDataContext.Provider
