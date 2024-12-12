@@ -16,8 +16,7 @@
       "supportsTablet": true,
       "infoPlist": {
         "UIBackgroundModes": ["fetch", "processing"]  
-      },
-      "newArchEnabled": true
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -31,8 +30,7 @@
         "android.permission.WAKE_LOCK",  
         "android.permission.RECEIVE_BOOT_COMPLETED"  
       ],
-      "package": "com.saqibmujeeb.app",
-      "newArchEnabled": true
+      "package": "com.saqibmujeeb.app"
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
