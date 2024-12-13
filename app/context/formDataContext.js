@@ -472,49 +472,49 @@ const FormDataProvider = ({ children }) => {
 
   ///////////////////////////////////////////////////////////////
 
-  // useEffect(() => {
-  //   const checkNetworkAndLoadData = async () => {
-  //     const state = await NetInfo.fetch();
-  //     if (state.isConnected) {
-  //       await fetchDataFromServer();
-  //     } else {
-  //       loadLocalStorageData(); // Ensure this is called immediately if offline
-  //     }
-  //   };
-
-  //   checkNetworkAndLoadData();
-
-  //   // Subscribe to network status changes
-  //   const unsubscribe = NetInfo.addEventListener((state) => {
-  //     if (state.isConnected) {
-  //       fetchDataFromServer();
-  //     } else {
-  //       loadLocalStorageData();
-  //     }
-  //   });
-
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, []);
-
-  // /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
+    const checkNetworkAndLoadData = async () => {
+      const state = await NetInfo.fetch();
       if (state.isConnected) {
         setTimeout(async () => {
           await fetchDataFromServer();
-        }, 2000); // 2-second delay
+        }, 1000);
       } else {
-        setTimeout(async () => {
-          await loadLocalStorageData();
-        }, 2000); // 2-second delay
+        loadLocalStorageData(); // Ensure this is called immediately if offline
+      }
+    };
+
+    checkNetworkAndLoadData();
+
+    // Subscribe to network status changes
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      if (state.isConnected) {
+        fetchDataFromServer();
+      } else {
+        loadLocalStorageData();
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+    };
   }, []);
+
+  // useEffect(() => {
+  //   const unsubscribe = NetInfo.addEventListener((state) => {
+  //     if (state.isConnected) {
+  //       setTimeout(async () => {
+  //         await fetchDataFromServer();
+  //       }, 2000);
+  //     } else {
+  //       setTimeout(async () => {
+  //         await loadLocalStorageData();
+  //       }, 0);
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
 
   return (
     <FormDataContext.Provider
