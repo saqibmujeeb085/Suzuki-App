@@ -23,53 +23,6 @@ const FormDataProvider = ({ children }) => {
   const [engineData, setEngineData] = useState([]);
 
   // Function to load data from AsyncStorage
-  // const loadLocalStorageData = async () => {
-  //   try {
-  //     const keys = [
-  //       "@formDataManufacturers",
-  //       "@formDataModels",
-  //       "@formDataVarients",
-  //       "@formDataYears",
-  //       "@formDataColors",
-  //       "@formDataFuel",
-  //       "@formDataTransmissions",
-  //       "@formDataCapacity",
-  //       "@formDataCities",
-  //       "@formDataProvince",
-  //       "@formDataChasis",
-  //       "@formDataEngine",
-  //     ];
-
-  //     // Fetch all AsyncStorage values for the given keys
-  //     const values = await AsyncStorage.multiGet(keys);
-
-  //     // Check if any value exists for each key and set state, else set an empty array
-  //     const dataMapping = {
-  //       setManufacturersData: JSON.parse(values[0][1]) || [],
-  //       setModelsData: JSON.parse(values[1][1]) || [],
-  //       setVarientsData: JSON.parse(values[2][1]) || [],
-  //       setYearsData: JSON.parse(values[3][1]) || [],
-  //       setColorsData: JSON.parse(values[4][1]) || [],
-  //       setFuelsData: JSON.parse(values[5][1]) || [],
-  //       setTransmissionsData: JSON.parse(values[6][1]) || [],
-  //       setCapacitiesData: JSON.parse(values[7][1]) || [],
-  //       setCitiesData: JSON.parse(values[8][1]) || [],
-  //       setProvinceData: JSON.parse(values[9][1]) || [],
-  //       setChasisData: JSON.parse(values[10][1]) || [],
-  //       setEngineData: JSON.parse(values[11][1]) || [],
-  //     };
-
-  //     // Map over the object and apply the state setters
-  //     Object.entries(dataMapping).forEach(([setState, value]) => {
-  //       if (value.length > 0) {
-  //         window[setState](value);
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.log("Failed to load data from AsyncStorage", error);
-  //   }
-  // };
-
   const loadLocalStorageData = async () => {
     try {
       const keys = [
@@ -87,33 +40,80 @@ const FormDataProvider = ({ children }) => {
         "@formDataEngine",
       ];
 
-      const setters = [
-        setManufacturersData,
-        setModelsData,
-        setVarientsData,
-        setYearsData,
-        setColorsData,
-        setFuelsData,
-        setTransmissionsData,
-        setCapacitiesData,
-        setCitiesData,
-        setProvinceData,
-        setChasisData,
-        setEngineData,
-      ];
-
+      // Fetch all AsyncStorage values for the given keys
       const values = await AsyncStorage.multiGet(keys);
-      values.forEach(([key, value], index) => {
-        try {
-          setters[index](value ? JSON.parse(value) : []);
-        } catch (error) {
-          console.error(`Failed to parse data for ${key}`, error);
+
+      // Check if any value exists for each key and set state, else set an empty array
+      const dataMapping = {
+        setManufacturersData: JSON.parse(values[0][1]) || [],
+        setModelsData: JSON.parse(values[1][1]) || [],
+        setVarientsData: JSON.parse(values[2][1]) || [],
+        setYearsData: JSON.parse(values[3][1]) || [],
+        setColorsData: JSON.parse(values[4][1]) || [],
+        setFuelsData: JSON.parse(values[5][1]) || [],
+        setTransmissionsData: JSON.parse(values[6][1]) || [],
+        setCapacitiesData: JSON.parse(values[7][1]) || [],
+        setCitiesData: JSON.parse(values[8][1]) || [],
+        setProvinceData: JSON.parse(values[9][1]) || [],
+        setChasisData: JSON.parse(values[10][1]) || [],
+        setEngineData: JSON.parse(values[11][1]) || [],
+      };
+
+      // Map over the object and apply the state setters
+      Object.entries(dataMapping).forEach(([setState, value]) => {
+        if (value.length > 0) {
+          window[setState](value);
         }
       });
     } catch (error) {
-      console.error("Failed to load data from AsyncStorage", error);
+      console.log("Failed to load data from AsyncStorage", error);
     }
   };
+
+  // const loadLocalStorageData = async () => {
+  //   try {
+  //     const keys = [
+  //       "@formDataManufacturers",
+  //       "@formDataModels",
+  //       "@formDataVarients",
+  //       "@formDataYears",
+  //       "@formDataColors",
+  //       "@formDataFuel",
+  //       "@formDataTransmissions",
+  //       "@formDataCapacity",
+  //       "@formDataCities",
+  //       "@formDataProvince",
+  //       "@formDataChasis",
+  //       "@formDataEngine",
+  //     ];
+
+  //     const setters = [
+  //       setManufacturersData,
+  //       setModelsData,
+  //       setVarientsData,
+  //       setYearsData,
+  //       setColorsData,
+  //       setFuelsData,
+  //       setTransmissionsData,
+  //       setCapacitiesData,
+  //       setCitiesData,
+  //       setProvinceData,
+  //       setChasisData,
+  //       setEngineData,
+  //     ];
+
+  //     const values = await AsyncStorage.multiGet(keys);
+  //     values.forEach(([key, value], index) => {
+  //       try {
+  //         setters[index](value ? JSON.parse(value) : []);
+  //       } catch (error) {
+  //         console.error(`Failed to parse data for ${key}`, error);
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error("Failed to load data from AsyncStorage", error);
+  //   }
+  // };
 
   // Function to save data to AsyncStorage
   const saveDataToLocalStorage = async () => {
