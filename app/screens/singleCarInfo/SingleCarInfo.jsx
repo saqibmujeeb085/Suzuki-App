@@ -1021,7 +1021,7 @@ const SingleCarInfo = ({ route, navigation }) => {
                         size={7}
                         color={colors.purple}
                       />
-                      <AppText>P2: Polycate paint</AppText>
+                      <AppText>P2: Polyster paint</AppText>
                     </View>
                   </View>
                   <View style={{ width: "28%" }}>

@@ -109,8 +109,8 @@ const EditProblems = ({ navigation, route }) => {
       },
       {
         id: "2",
-        label: "Polycate paint",
-        value: "Polycate paint",
+        label: "Polyster paint",
+        value: "Polyster paint",
         color: colors.purple,
       },
     ],
