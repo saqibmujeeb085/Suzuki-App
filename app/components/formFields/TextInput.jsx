@@ -10,6 +10,9 @@ const AppTextInput = ({
   placeholder,
   val,
   bgColor = colors.ligtGreyBg,
+  border = 1,
+
+  marginRight = 0,
   ...inputType
 }) => {
   const [clicked, setClicked] = useState(false);
@@ -20,9 +23,10 @@ const AppTextInput = ({
     <View style={styles.textFieldBox}>
       <View
         style={{
-          // backgroundColor: colors.whiteBg,
           borderRadius: 5,
-          borderWidth: 1,
+          borderWidth: border,
+
+          marginRight: marginRight,
           borderColor: colors.fontGrey,
         }}
       >

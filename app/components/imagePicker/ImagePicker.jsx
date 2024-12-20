@@ -63,8 +63,8 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
   };
 
   const addImages = (newImages) => {
-    setImages((prevImages) => [...prevImages, ...newImages]);
-    onImagesSelected((prevImages) => [...prevImages, ...newImages]);
+    setImages((prevImages) => [...prevImages, ...newImages].slice(0, 6)); // Max 6 images
+    onImagesSelected((prevImages) => [...prevImages, ...newImages].slice(0, 6)); // Notify parent
   };
 
   const removeImage = (index) => {
@@ -114,7 +114,7 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
                   fontSize={mainStyles.h2FontSize}
                   color={colors.fontGrey}
                 >
-                  Add Photos
+                  Add Photos Minimum 6 Required
                 </AppText>
               </View>
             </View>
@@ -166,7 +166,7 @@ const AppImagePicker = ({ onImagesSelected, onRemoveImage }) => {
               />
             </TouchableOpacity>
           ))}
-          {images.length >= 1 && images.length < 5 && (
+          {images.length >= 1 && images.length < 6 && (
             <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
               <View style={styles.AddButton}>
                 <MaterialCommunityIcons
@@ -255,16 +255,16 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   thumbnail: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     marginHorizontal: 5,
     borderRadius: 5,
     borderWidth: 2,
     borderColor: colors.fontGrey,
   },
   AddButton: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     marginHorizontal: 5,
     borderRadius: 5,
     backgroundColor: "transparent",

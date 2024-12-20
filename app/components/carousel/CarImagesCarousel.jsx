@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   thumbnail: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     marginHorizontal: 5,
     borderRadius: 5,
     borderWidth: 2,

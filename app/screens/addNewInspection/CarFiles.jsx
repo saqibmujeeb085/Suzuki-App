@@ -267,7 +267,7 @@ const CarFiles = ({ navigation }) => {
 
   const handleImagesSelected = (images) => {
     setSelectedImages(images);
-    setIsImageUploaded(true);
+    setIsImageUploaded(images.length === 6);
   };
 
   const handleDocumentsSelected = (documents) => {
@@ -346,7 +346,7 @@ const CarFiles = ({ navigation }) => {
       <View style={styles.formButton}>
         <GradientButton
           onPress={ShowModal}
-          disabled={!isImageUploaded || !cplc || loading}
+          disabled={selectedImages.length !== 6 || !cplc || loading}
         >
           Start Inspection
         </GradientButton>

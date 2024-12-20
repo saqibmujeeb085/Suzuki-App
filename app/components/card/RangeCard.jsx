@@ -39,7 +39,7 @@ const RangeCard = ({
         minHeight: 10,
         padding: 20,
         gap: 20,
-        borderWidth: 0.5,
+        borderWidth: 1,
         borderColor: error ? colors.green : colors.whiteBg,
       }}
     >

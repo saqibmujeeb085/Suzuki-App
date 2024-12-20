@@ -84,13 +84,25 @@ export const questions = [
               {
                 id: 1,
                 value: "good",
-                label: "Non-Accidented",
+                label: "Ok",
                 color: colors.blue,
               },
               {
                 id: 2,
                 value: "bad",
-                label: "Accidented",
+                label: "Damaged",
+                color: colors.blue,
+              },
+              {
+                id: 3,
+                value: "bad",
+                label: "Repaired",
+                color: colors.blue,
+              },
+              {
+                id: 4,
+                value: "bad",
+                label: "Replaced",
                 color: colors.blue,
               },
             ],
@@ -1535,7 +1547,7 @@ export const questions = [
     data: [
       {
         subCatId: 9,
-        subCatName: "EXTERIOR LIGHTS & WIPERS",
+        subCatName: "EXTERIOR CONDITION",
         subCatData: [
           {
             id: 58,
@@ -1889,6 +1901,68 @@ export const questions = [
           {
             id: 70,
             type: "b",
+            question: "Front Windshield Condition",
+            options: [
+              {
+                id: 1,
+                value: "good",
+                label: "OK",
+                color: colors.blue,
+              },
+              {
+                id: 2,
+                value: "bad",
+                label: "Scratches",
+                color: colors.blue,
+              },
+              {
+                id: 3,
+                value: "worst",
+                label: "Cracked/Damage",
+                color: colors.blue,
+              },
+            ],
+            condition: false,
+            image: true,
+            imgCondition: true,
+            textCondition: false,
+            pointsCondition: false,
+            points: [],
+          },
+          {
+            id: 71,
+            type: "b",
+            question: "Rear Windshield Condition",
+            options: [
+              {
+                id: 1,
+                value: "good",
+                label: "OK",
+                color: colors.blue,
+              },
+              {
+                id: 2,
+                value: "bad",
+                label: "Scratches",
+                color: colors.blue,
+              },
+              {
+                id: 3,
+                value: "worst",
+                label: "Cracked/Damage",
+                color: colors.blue,
+              },
+            ],
+            condition: false,
+            image: true,
+            imgCondition: true,
+            textCondition: false,
+            pointsCondition: false,
+            points: [],
+          },
+          {
+            id: 72,
+            type: "b",
             question: "Wiper",
             options: [
               {
@@ -1912,7 +1986,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 71,
+            id: 73,
             type: "b",
             question: "Wiper Nozzle",
             options: [
@@ -1937,7 +2011,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 72,
+            id: 74,
             type: "b",
             question: "Rear Wiper",
             options: [
@@ -1974,42 +2048,42 @@ export const questions = [
         subCatName: "Tires",
         subCatData: [
           {
-            id: 73,
+            id: 75,
             question: "Front Right Tyre",
             type: "t",
             showType: "n",
             image: true,
           },
           {
-            id: 74,
+            id: 76,
             question: "Front Left Tyre",
             type: "t",
             showType: "n",
             image: true,
           },
           {
-            id: 75,
+            id: 77,
             question: "Rear Right Tyre",
             type: "t",
             showType: "n",
             image: true,
           },
           {
-            id: 76,
+            id: 78,
             question: "Rear Left Tyre",
             type: "t",
             showType: "n",
             image: true,
           },
           {
-            id: 77,
+            id: 79,
             question: "Tyre Size",
             type: "t",
             showType: "s",
             image: true,
           },
           {
-            id: 78,
+            id: 80,
             type: "b",
             question: "Rims",
             options: [
@@ -2040,7 +2114,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 79,
+            id: 81,
             type: "b",
             question: "Wheel Caps",
             options: [
@@ -2076,7 +2150,7 @@ export const questions = [
         subCatName: "WINDOWS & LOCKING",
         subCatData: [
           {
-            id: 80,
+            id: 82,
             type: "b",
             question: "Front Right power windows / Manual Lever ",
             options: [
@@ -2101,7 +2175,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 81,
+            id: 83,
             type: "b",
             question: "Front Left power windows / Manual Lever  ",
             options: [
@@ -2126,7 +2200,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 82,
+            id: 84,
             type: "b",
             question: "Rear Right power windows / Manual Lever  ",
             options: [
@@ -2151,7 +2225,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 83,
+            id: 85,
             type: "b",
             question: "Rear Left power windows / Manual Lever  ",
             options: [
@@ -2176,7 +2250,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 84,
+            id: 86,
             type: "b",
             question: "Door Handles  ",
             options: [
@@ -2201,7 +2275,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 85,
+            id: 87,
             type: "b",
             question: "Window Safety Lock ",
             options: [
@@ -2232,7 +2306,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 86,
+            id: 88,
             type: "b",
             question: "Central Locking",
             options: [
@@ -2263,7 +2337,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 87,
+            id: 89,
             type: "b",
             question: "Right Sideview Mirror (Condition)",
             options: [
@@ -2294,7 +2368,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 88,
+            id: 90,
             type: "b",
             question: "Right Sideview Mirror (Working)",
             options: [
@@ -2325,7 +2399,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 89,
+            id: 91,
             type: "b",
             question: "Left Sideview Mirror (Condition)",
             options: [
@@ -2356,7 +2430,7 @@ export const questions = [
             points: [],
           },
           {
-            id: 90,
+            id: 92,
             type: "b",
             question: "Left Sideview Mirror (Working)",
             options: [
@@ -2386,68 +2460,7 @@ export const questions = [
             pointsCondition: false,
             points: [],
           },
-          {
-            id: 91,
-            type: "b",
-            question: "Front Windshield Condition",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "OK",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Scratches",
-                color: colors.blue,
-              },
-              {
-                id: 3,
-                value: "worst",
-                label: "Cracked/Damage",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: true,
-            imgCondition: true,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
-          {
-            id: 92,
-            type: "b",
-            question: "Rear Windshield Condition",
-            options: [
-              {
-                id: 1,
-                value: "good",
-                label: "OK",
-                color: colors.blue,
-              },
-              {
-                id: 2,
-                value: "bad",
-                label: "Scratches",
-                color: colors.blue,
-              },
-              {
-                id: 3,
-                value: "worst",
-                label: "Cracked/Damage",
-                color: colors.blue,
-              },
-            ],
-            condition: false,
-            image: true,
-            imgCondition: true,
-            textCondition: false,
-            pointsCondition: false,
-            points: [],
-          },
+
           {
             id: 93,
             type: "b",
@@ -2723,6 +2736,12 @@ export const questions = [
                 id: 2,
                 value: "bad",
                 label: "Not Working",
+                color: colors.blue,
+              },
+              {
+                id: 3,
+                value: "worst",
+                label: "Damage",
                 color: colors.blue,
               },
             ],
@@ -3157,13 +3176,13 @@ export const questions = [
               {
                 id: 1,
                 value: "good",
-                label: "Opened",
+                label: "Not Opened",
                 color: colors.blue,
               },
               {
                 id: 2,
                 value: "bad",
-                label: "Not Opened",
+                label: "Opened",
                 color: colors.blue,
               },
               {

@@ -57,14 +57,14 @@ const CarBodyModal = ({
     repaint: [
       {
         id: "1",
-        label: "Painted",
-        value: "Painted",
+        label: "Shower Paint",
+        value: "Shower Paint",
         color: colors.purple,
       },
       {
         id: "2",
-        label: "Minor Paint",
-        value: "Minor Paint",
+        label: "Polyster Paint",
+        value: "Polyster Paint",
         color: colors.purple,
       },
     ],

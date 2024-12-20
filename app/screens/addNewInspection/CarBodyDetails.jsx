@@ -203,6 +203,16 @@ const CarBodyDetails = ({ navigation, route }) => {
       alert("Please Select and Fill All The Fields");
     }
   };
+  const handleMileageChange = (value) => {
+    // Remove all non-numeric characters
+    const numericValue = value.replace(/\D/g, "");
+
+    // Add dots after every 3 numbers
+    const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Update the state with the formatted value
+    setMilage(formattedValue);
+  };
 
   return (
     <AppScreen>
@@ -277,8 +287,9 @@ const CarBodyDetails = ({ navigation, route }) => {
             />
             <AppTextInput
               placeholder="Mileage"
-              onChangeText={(value) => setMilage(value)}
+              onChangeText={handleMileageChange} // Handle user input with formatting
               inputMode={"numeric"}
+              value={milage} // Display the formatted value in the input
               val={milage}
             />
 

@@ -54,6 +54,7 @@ const Customerform = ({ navigation, route }) => {
   const [ffsImage, setFfsImage] = useState(null);
   const [sfsImage, setSfsImage] = useState(null);
   const [tfsImage, setTfsImage] = useState(null);
+  const [cnicImage, setCnicImage] = useState(null);
 
   // Date picker visibility states
   const [isFfs, setFfs] = useState(false);
@@ -80,7 +81,8 @@ const Customerform = ({ navigation, route }) => {
       transferSlipImage &&
       ffsImage &&
       sfsImage &&
-      tfsImage
+      tfsImage &&
+      cnicImage
     );
   };
 
@@ -104,6 +106,7 @@ const Customerform = ({ navigation, route }) => {
     setFfsImage(null);
     setSfsImage(null);
     setTfsImage(null);
+    setCnicImage(null);
   };
 
   // Handle form submission
@@ -154,7 +157,11 @@ const Customerform = ({ navigation, route }) => {
       name: tfsImage.fileName,
       type: "image/jpeg",
     });
-
+    formData.append("cnic_pic", {
+      uri: cnicImage.uri,
+      name: cnicImage.fileName,
+      type: "image/jpeg",
+    });
     console.log("hello image", formData.tfs_image);
 
     try {
@@ -297,14 +304,53 @@ const Customerform = ({ navigation, route }) => {
               onChangeText={setCustomerName}
               val={customerName}
             />
-            <AppTextInput
+            {/* <AppTextInput
               placeholder="CNIC Number"
               inputMode={"numeric"}
               maxLength={15}
               value={cnicNumber}
               onChangeText={handleInputChange}
               val={cnicNumber}
-            />
+            /> */}
+            {/* ////////////////////////////////////////////////////////////// */}
+
+            <View style={styles.datePickerContainer}>
+              <View style={styles.cnicPickerButton}>
+                <AppTextInput
+                  placeholder="CNIC Number"
+                  inputMode={"numeric"}
+                  maxLength={15}
+                  value={cnicNumber}
+                  onChangeText={handleInputChange}
+                  val={cnicNumber}
+                  border={0}
+                  marginRight={15}
+                />
+                <TouchableOpacity
+                  onPress={
+                    cnicImage
+                      ? () => openImageModal(cnicImage.uri)
+                      : () => openCamera(setCnicImage)
+                  }
+                  style={styles.cameraButton}
+                >
+                  {cnicImage ? (
+                    <Image
+                      source={{ uri: cnicImage.uri }}
+                      style={styles.imageThumbnail}
+                    />
+                  ) : (
+                    <AntDesign
+                      name="camerao"
+                      size={24}
+                      color={colors.fontGrey}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* //////////////////////////////////////////////////////////////// */}
             <AppTextInput
               placeholder="Customer Contact"
               inputMode={"numeric"}
@@ -709,6 +755,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  cnicPickerButton: {
+    backgroundColor: "transparent",
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: colors.fontGrey,
+    padding: 0,
+    paddingRight: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   datePickerTouchable: {
     width: "80%",
     borderRightWidth: 0.5,
@@ -725,6 +782,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     overflow: "hidden",
   },
+
   imageThumbnail: {
     width: "100%",
     height: 40,
