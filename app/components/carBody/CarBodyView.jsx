@@ -6,8 +6,8 @@ import { mainStyles } from "../../constants/style";
 
 const CarBodyView = ({ carBodyData }) => {
   const shortCodeMapping = {
-    Painted: "P1",
-    "Minor Paint": "P2",
+    "Shower Paint": "P1",
+    "Polyster Paint": "P2",
     "Minor Dent": "D1",
     "Major Dent": "D2",
     "Minor Scratch": "S1",

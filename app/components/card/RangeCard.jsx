@@ -40,7 +40,7 @@ const RangeCard = ({
         padding: 20,
         gap: 20,
         borderWidth: 1,
-        borderColor: error ? colors.green : colors.whiteBg,
+        borderColor: error ? colors.red : colors.whiteBg,
       }}
     >
       <AppText

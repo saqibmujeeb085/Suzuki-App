@@ -226,18 +226,18 @@ const CarBodyDetails = ({ navigation, route }) => {
         <View style={styles.InspectionformContainer}>
           <View style={styles.FormInputFields}>
             <Dropdown
+              DropItems="Province"
+              Data={provinceData}
+              save={"value"}
+              selectedItem={ProvinceSelected}
+            />
+
+            <Dropdown
               DropItems="Registration City"
               Data={citiesData}
               save={"value"}
               selectedItem={RegistrationCitySelected}
               Search={true}
-            />
-
-            <Dropdown
-              DropItems="Province"
-              Data={provinceData}
-              save={"value"}
-              selectedItem={ProvinceSelected}
             />
 
             <Dropdown

@@ -1,23 +1,24 @@
-import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useState, useEffect } from "react";
+import { ScrollView, StyleSheet, View, Text } from "react-native";
 import AppScreen from "../../components/screen/Screen";
 import InspectionHeader from "../../components/header/InspectionHeader";
-import RangeCard from "../../components/card/RangeCard";
-import SelectCard from "../../components/card/SelectCard";
 import GradientButton from "../../components/buttons/GradientButton";
 import ToastManager from "toastify-react-native";
 import { colors } from "../../constants/colors";
 import Accordion from "../../components/accordian/Accordian";
 import TextCard from "../../components/card/TextCard";
 import { questions } from "../../data/questionsData";
-import CarBody from "../../components/carBody/CarBody";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import RangeCard from "../../components/card/RangeCard";
+import SelectCard from "../../components/card/SelectCard";
+import CarBody from "../../components/carBody/CarBody";
 
 const SingleInspection = ({ navigation, route }) => {
   const { tempID, catid, catName } = route.params || {};
 
   const [questionsData, setQuestionsData] = useState([]);
   const [values, setValues] = useState([]);
+  const [errors, setErrors] = useState({}); // State to track errors
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -65,20 +66,34 @@ const SingleInspection = ({ navigation, route }) => {
     setLoading(false);
   }, [tempID, catid]);
 
-  // Function to check whether a field is filled (returns true if field is filled)
-  const fieldIsFilled = (id) => {
-    const fieldValue = values.find((item) => item.IndID === id)?.value;
-    return !!fieldValue; // Returns true if the field has a value
-  };
-
-  // Handle real-time value change
+  // Handle value change and set errors for preceding fields
   const handleValueChange = (id, newValue) => {
     setValues((prevValues) =>
       prevValues.map((item) =>
         item.IndID === id ? { ...item, value: newValue } : item
       )
     );
+
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+
+      // Remove error for the current field if it is filled
+      if (newValue) {
+        delete newErrors[id];
+      }
+
+      // Add errors for all preceding fields that are empty
+      const fieldIndex = values.findIndex((item) => item.IndID === id);
+      for (let i = 0; i < fieldIndex; i++) {
+        if (!values[i].value) {
+          newErrors[values[i].IndID] = "This field must be filled.";
+        }
+      }
+
+      return newErrors;
+    });
   };
+  // Handle real-time value change
 
   const handleTextValueChange = (id, newValue) => {
     setValues((prevValues) =>
@@ -135,6 +150,15 @@ const SingleInspection = ({ navigation, route }) => {
   const saveQuestionsData = async () => {
     const hasEmptyFields = values.some((item) => !item.value); // Check for unfilled questions
     if (hasEmptyFields) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        values.forEach((item) => {
+          if (!item.value) {
+            newErrors[item.IndID] = "This field must be filled.";
+          }
+        });
+        return newErrors;
+      });
       return; // Exit if there are unfilled fields
     }
 
@@ -180,13 +204,27 @@ const SingleInspection = ({ navigation, route }) => {
       setLoading(false);
     }
   };
+  const fieldIsFilled = (id) => {
+    const fieldValue = values.find((item) => item.IndID === id)?.value;
+    return !!fieldValue; // Returns true if the field has a value
+  };
 
   useEffect(() => {
+    viewStoredData();
     // Disable the button if any fields are empty
     const hasEmptyFields = values.some((item) => !item.value);
     setIsButtonDisabled(hasEmptyFields);
   }, [values]);
-
+  const viewStoredData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem("@carQuestionsdata");
+      const parsedData = storedData ? JSON.parse(storedData) : [];
+      console.log("Stored Data:", parsedData);
+      return parsedData;
+    } catch (error) {
+      console.error("Error fetching stored data:", error);
+    }
+  };
   return (
     <AppScreen>
       <ToastManager />
@@ -203,7 +241,8 @@ const SingleInspection = ({ navigation, route }) => {
           <Accordion key={index} title={subCat.subCatName}>
             <View style={{ gap: 10 }}>
               {subCat.subCatData.map((question, index) => {
-                const isFilled = fieldIsFilled(question.id); // Check if the field is filled
+                const isFilled = fieldIsFilled(question.id);
+                const isError = errors[question.id]; // Check if there's an error for this field
                 return (
                   <View key={question.id}>
                     {question.type === "r" && (
@@ -213,7 +252,7 @@ const SingleInspection = ({ navigation, route }) => {
                         value={
                           values.find((val) => val.IndID === question.id)?.value
                         }
-                        error={isFilled} // Pass true if the field is filled
+                        error={isError} // Pass true if the field is filled
                         onValueChange={(newValue) =>
                           handleValueChange(question.id, newValue)
                         }
@@ -236,7 +275,7 @@ const SingleInspection = ({ navigation, route }) => {
                         value={
                           values.find((val) => val.IndID === question.id)?.value
                         }
-                        error={isFilled} // Pass true if the field is filled
+                        error={isError} // Pass true if the field is filled
                         onValueChange={(newValue) =>
                           handleValueChange(question.id, newValue)
                         }
@@ -260,7 +299,7 @@ const SingleInspection = ({ navigation, route }) => {
                         value={
                           values.find((val) => val.IndID === question.id)?.value
                         }
-                        error={isFilled} // Pass true if the field is filled
+                        error={isError}
                         showType={question.showType}
                         placeholder={question.placeHolder}
                         onValueChange={(newValue) =>
@@ -274,6 +313,11 @@ const SingleInspection = ({ navigation, route }) => {
                         onRemoveImage={handleRemoveImage}
                         val={isFilled}
                       />
+                    )}
+                    {isError && (
+                      <Text style={{ color: "red", fontSize: 12 }}>
+                        {isError}
+                      </Text>
                     )}
                   </View>
                 );

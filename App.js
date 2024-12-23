@@ -16,8 +16,18 @@ import { LoginDataProvider } from "./app/context/loginDataContext";
 import { FormDataProvider } from "./app/context/formDataContext";
 import { DataPostProvider } from "./app/context/dataPostContext";
 import { TimerProvider } from "./app/context/timerContext";
+import * as Sentry from "@sentry/react-native";
+
+Sentry.init({
+  dsn: "https://8d9e7346ac82febdfb4ecb87237e2a83@o4508448510443520.ingest.us.sentry.io/4508448523223040",
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // enableSpotlight: __DEV__,
+});
 
 SplashScreen.preventAutoHideAsync();
+
+// Initialize Bugsee with your API key
 
 export default function App() {
   const [fontsLoaded] = useFonts({

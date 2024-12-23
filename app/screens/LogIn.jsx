@@ -105,7 +105,7 @@ const LogIn = ({ navigation }) => {
             >
               Welcome to Suzuki Vehicle Evaluation Portal.
               <AppText fontSize={14} fontFamily={mainStyles.appFontBold}>
-                v1.0.0
+                v1.0.1
               </AppText>
             </AppText>
           </ImageBackground>

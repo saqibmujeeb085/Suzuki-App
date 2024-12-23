@@ -320,7 +320,7 @@ const startPosting = async (obj, groupedData, carbodyques) => {
     });
   });
 
-  console.log(formData.vinImage);
+  console.log(formData);
   try {
     const headers = {
       "Content-Type": "multipart/form-data",
