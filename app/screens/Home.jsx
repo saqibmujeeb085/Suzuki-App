@@ -53,9 +53,11 @@ const Home = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
+  const [carsInfos, setCarsInfos] = useState(false);
 
   useEffect(() => {
     if (userData && userData.user && userData.user.duserid) {
+      carsInfoData();
       inspectedCarsData();
     }
   }, [userData.user.duserid]);
@@ -160,10 +162,30 @@ const Home = ({ navigation }) => {
     }
   };
 
+  const carsInfoData = async () => {
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `auth/get_duserinspections.php?duserid=${userData.user.duserid}`,
+      headers: {},
+    };
+
+    try {
+      const response = await axios.request(config);
+      setCarsInfos(response.data);
+    } catch (error) {
+      console.log("Failed to Catch Car Infos:", error);
+      ToastManager.error("Failed to Catch Car Infos");
+    }
+  };
+
   const reload = () => {
+    carsInfoData();
     fetchDataFromAsyncStorage();
     inspectedCarsData();
   };
+
+  console.log(carsInfos);
 
   return (
     <AppScreen>
@@ -180,9 +202,9 @@ const Home = ({ navigation }) => {
               <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 User ID: {userData?.user?.duserid}
               </AppText>
-              <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
+              {/* <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
                 Name: {userData?.user?.userName}
-              </AppText>
+              </AppText> */}
             </View>
             <TouchableOpacity activeOpacity={0.6} onPress={userLogout}>
               <View style={styles.logOutButton}>
@@ -200,48 +222,59 @@ const Home = ({ navigation }) => {
           </View>
           <View style={styles.breakLine} />
           <View style={styles.summaryContainer}>
-            <View style={styles.summaryBox}>
+            {/* <View style={styles.summaryBox}>
               <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
-                Registrations
+                Total
               </AppText>
               <AppText
                 color={colors.fontWhite}
                 fontSize={mainStyles.h1FontSize}
               >
-                2,000K
+                {carsInfos != "" ? carsInfos.total_evaluations : "--"}
+              </AppText>
+            </View> */}
+            <View style={styles.summaryBox}>
+              <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
+                Pending
+              </AppText>
+              <AppText
+                color={colors.fontWhite}
+                fontSize={mainStyles.h1FontSize}
+              >
+                {carsInfos != "" ? carsInfos.total_pending : "--"}
               </AppText>
             </View>
             <View style={styles.summaryBox}>
               <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
-                Purchases
+                Approved
               </AppText>
               <AppText
                 color={colors.fontWhite}
                 fontSize={mainStyles.h1FontSize}
               >
-                1,500
+                {carsInfos != "" ? carsInfos.total_inspected : "--"}
               </AppText>
             </View>
             <View style={styles.summaryBox}>
               <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
-                Sales
+                Rejected
               </AppText>
               <AppText
                 color={colors.fontWhite}
                 fontSize={mainStyles.h1FontSize}
               >
-                1,200
+                {carsInfos !== "" ? carsInfos.objections : "--"}
               </AppText>
             </View>
             <View style={styles.summaryBox}>
               <AppText color={"#cccccc"} fontSize={mainStyles.h3FontSize}>
-                Downloads
+                Sold
               </AppText>
               <AppText
                 color={colors.fontWhite}
                 fontSize={mainStyles.h1FontSize}
               >
-                10,23
+                {carsInfos !== "" ? carsInfos.total_sold : "--"}
               </AppText>
             </View>
           </View>

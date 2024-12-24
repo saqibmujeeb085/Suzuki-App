@@ -25,6 +25,36 @@ const Settings = ({ navigation }) => {
           <TouchableOpacity
             style={styles.btn}
             activeOpacity={0.9}
+            onPress={() => navigation.navigate("PendingCars")}
+          >
+            <View style={styles.btnDesign}>
+              <MaterialCommunityIcons
+                name="car-clock"
+                size={30}
+                color={colors.purple}
+              />
+              <AppText>Pending Cars</AppText>
+            </View>
+            <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btn}
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate("RejectedCars")}
+          >
+            <View style={styles.btnDesign}>
+              <MaterialCommunityIcons
+                name="car-off"
+                size={30}
+                color={colors.purple}
+              />
+              <AppText>Rejected Cars</AppText>
+            </View>
+            <AntDesign name="arrowright" size={24} color={colors.fontBlack} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btn}
+            activeOpacity={0.9}
             onPress={() => navigation.navigate("SoldCars")}
           >
             <View style={styles.btnDesign}>

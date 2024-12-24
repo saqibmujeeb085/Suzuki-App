@@ -212,7 +212,7 @@ const startPosting = async (obj, groupedData, carbodyques) => {
   formData.append("registrationCity", obj.registrationCity);
   formData.append("FuelType", obj.FuelType);
   formData.append("color", obj.color);
-  formData.append("status", obj.status);
+  formData.append("status", "pendingFromRegion");
   formData.append("province", obj.province);
   formData.append("totalTime", obj.timer);
 
